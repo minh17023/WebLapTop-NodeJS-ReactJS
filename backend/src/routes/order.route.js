@@ -24,5 +24,6 @@ router.put('/:id/payment-status', orderController.updatePaymentStatus);
 // ===============================================
 router.post('/', verifyToken, orderController.create);
 router.get('/my-orders', verifyToken, orderController.getMyOrders);
+router.get('/:id', verifyToken, orderController.getById);
 
 module.exports = router;

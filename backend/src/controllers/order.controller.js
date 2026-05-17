@@ -31,6 +31,24 @@ class OrderController {
         }
     }
 
+    // API lấy chi tiết 1 đơn hàng: GET /api/orders/:id
+    async getById(req, res) {
+        try {
+            const { id } = req.params; // Lấy số ID từ đường dẫn truyền xuống
+
+            const result = await orderService.getById(id);
+
+            if (!result.success) {
+                return res.status(404).json(result);
+            }
+
+            return res.status(200).json(result);
+        } catch (error) {
+            console.error("Lỗi tại OrderController.getById:", error);
+            return res.status(500).json({ success: false, message: "Lỗi Server nội bộ" });
+        }
+    }
+
     // [PUT] User tự cập nhật trạng thái đơn hàng (Hủy đơn / Đã nhận hàng)
     async userUpdateStatus(req, res, next) {
         try {

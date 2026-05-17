@@ -79,6 +79,23 @@ class OrderService {
         });
     }
 
+    async getById(orderId) {
+        try {
+            // Tìm đơn hàng theo Khóa chính (Primary Key)
+            // (Đảm bảo gọi đúng tên model Order của bạn)
+            const order = await Order.findByPk(orderId);
+            
+            if (!order) {
+                return { success: false, message: 'Không tìm thấy đơn hàng này' };
+            }
+
+            return { success: true, data: order };
+        } catch (error) {
+            console.error("Lỗi tại OrderService.getById:", error);
+            throw error;
+        }
+    }
+
     async userUpdateOrderStatus(userId, orderId, newStatus) {
         // Chỉ tìm đơn hàng khớp với ID đơn và ID của chính user đó (Bảo mật)
         const order = await Order.findOne({
