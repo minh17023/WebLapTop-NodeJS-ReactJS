@@ -1,15 +1,28 @@
 const express = require('express');
 const router = express.Router();
 const orderController = require('../controllers/order.controller');
-const { verifyToken } = require('../middlewares/auth.middleware');
+// 🌟 Nhớ import thêm isAdmin
+const { verifyToken, isAdmin } = require('../middlewares/auth.middleware'); 
 
-// Áp dụng bộ lọc đăng nhập cho toàn bộ các API bên dưới
-router.use(verifyToken);
+// ===============================================
+// ROUTE DÀNH CHO ADMIN (Phải có isAdmin)
+// ===============================================
+// Lấy toàn bộ
+router.get('/', verifyToken, isAdmin, orderController.getAll);
+// Tìm kiếm
+router.get('/search', verifyToken, isAdmin, orderController.search);
+// [PUT] User tự cập nhật trạng thái đơn hàng (Hủy đơn / Đã nhận hàng)
+router.put('/:id/user-status', verifyToken, orderController.userUpdateStatus);
+// Cập nhật trạng thái
+router.put('/:id/status', verifyToken, isAdmin, orderController.updateStatus);
 
-// Đường dẫn tạo đơn hàng mới (POST: http://localhost:8080/api/orders)
-router.post('/', orderController.create);
+router.put('/:id/payment-status', orderController.updatePaymentStatus);
 
-// Đường dẫn lấy lịch sử đơn hàng (GET: http://localhost:8080/api/orders/my-orders)
-router.get('/my-orders', orderController.getMyOrders);
+
+// ===============================================
+// ROUTE DÀNH CHO USER BÌNH THƯỜNG
+// ===============================================
+router.post('/', verifyToken, orderController.create);
+router.get('/my-orders', verifyToken, orderController.getMyOrders);
 
 module.exports = router;

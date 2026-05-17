@@ -35,6 +35,20 @@ class UserController {
         } catch (error) { next(error); }
     }
 
+    async search(req, res, next) {
+        try {
+            const keyword = req.query.q || '';
+            const users = await userService.search(keyword);
+            
+            res.status(200).json({ 
+                success: true, 
+                data: users 
+            });
+        } catch (error) {
+            next(error);
+        }
+    }
+
     // ================= CRUD API =================
 
     // Lấy danh sách (Dành cho Admin)

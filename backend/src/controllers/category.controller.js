@@ -18,6 +18,21 @@ class CategoryController {
         } catch (error) { next(error); }
     }
 
+    // [GET] Tìm kiếm danh mục
+    async search(req, res, next) {
+        try {
+            const keyword = req.query.q || '';
+            const categories = await categoryService.search(keyword);
+            
+            res.status(200).json({ 
+                success: true, 
+                data: categories 
+            });
+        } catch (error) {
+            next(error); // Đẩy lỗi ra middleware xử lý lỗi chung của bạn
+        }
+    }
+
     // [POST] Thêm mới (Chỉ Admin)
     async create(req, res, next) {
         try {

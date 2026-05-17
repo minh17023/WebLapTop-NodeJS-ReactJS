@@ -6,7 +6,7 @@ const Category = sequelize.define('Category', {
     name: { type: DataTypes.STRING(100), allowNull: false },
     slug: { type: DataTypes.STRING(120), unique: true, allowNull: false },
     description: { type: DataTypes.TEXT },
-    image_url: {type: DataTypes.STRING(255)}
+    image_url: {type: DataTypes.TEXT}
 }, { tableName: 'categories' });
 
 module.exports = Category;

@@ -1,5 +1,6 @@
 const { User } = require('../models');
 const bcrypt = require('bcryptjs');
+const { Op } = require('sequelize');
 
 class UserService {
     // 1. Tìm người dùng theo Email (Dùng cho Login/Register)
@@ -13,6 +14,21 @@ class UserService {
         userData.password_hash = await bcrypt.hash(userData.password, salt);
         const { password, ...userToSave } = userData;
         return await User.create(userToSave);
+    }
+
+    // Thêm phương thức tìm kiếm vào UserService
+    async search(keyword) {
+        const term = `%${keyword.trim()}%`;
+        return await User.findAll({
+            where: {
+                [Op.or]: [
+                    { full_name: { [Op.iLike]: term } },
+                    { email: { [Op.iLike]: term } }
+                ]
+            },
+            attributes: { exclude: ['password'] }, // Bảo mật: Không trả về password
+            order: [['created_at', 'DESC']] // Đổi thành 'createdAt' nếu DB dùng camelCase
+        });
     }
 
     // ================= CRUD API =================

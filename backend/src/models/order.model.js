@@ -10,11 +10,9 @@ const Order = sequelize.define('Order', {
     shipping_address: { type: DataTypes.TEXT, allowNull: false },
     total_amount: { type: DataTypes.DECIMAL(15, 2), allowNull: false },
     payment_method: { type: DataTypes.STRING(50), defaultValue: 'COD' },
-    status: { 
-        type: DataTypes.ENUM('pending', 'processing', 'shipped', 'delivered', 'cancelled'), 
-        defaultValue: 'pending' 
-    },
-    order_note: { type: DataTypes.TEXT }
+    status: { type: DataTypes.ENUM('pending', 'processing', 'shipped', 'delivered', 'cancelled'), defaultValue: 'pending' },
+    order_note: { type: DataTypes.TEXT },
+    payment_status: { type: DataTypes.STRING,defaultValue: 'unpaid', comment: 'unpaid, paid, refunded'}
 }, { tableName: 'orders' });
 
 module.exports = Order;

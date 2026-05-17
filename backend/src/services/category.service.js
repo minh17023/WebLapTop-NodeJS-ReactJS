@@ -1,5 +1,6 @@
 const { Category } = require('../models');
 const slugify = require('slugify');
+const { Op } = require('sequelize');
 
 class CategoryService {
     // 1. Lấy tất cả danh mục
@@ -23,7 +24,7 @@ class CategoryService {
                     [Op.iLike]: term // Tìm kiếm không phân biệt chữ hoa/thường
                 }
             },
-            order: [['created_at', 'DESC']]
+            order: [['created_at', 'DESC']] // Lưu ý: Nếu DB của bạn dùng camelCase thì đổi thành 'createdAt'
         });
     }
 

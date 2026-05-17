@@ -7,6 +7,9 @@ const { verifyToken, isAdmin } = require('../middlewares/auth.middleware');
 router.post('/register', userController.register);
 router.post('/login', userController.login);
 
+// Tìm kiếm (Dùng cho Admin)
+router.get('/search', verifyToken, isAdmin, userController.search);
+
 // ================= CRUD API =================
 
 // Xem thông tin chi tiết (Yêu cầu phải đăng nhập)

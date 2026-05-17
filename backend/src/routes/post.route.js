@@ -8,6 +8,7 @@ router.get('/', postController.getAll);
 router.get('/:slug', postController.getBySlug);
 
 // Private API (Chỉ Admin mới được quản lý bài viết)
+router.get('/search', verifyToken, isAdmin, postController.search);
 router.post('/', verifyToken, isAdmin, postController.create);
 router.put('/:id', verifyToken, isAdmin, postController.update);
 router.delete('/:id', verifyToken, isAdmin, postController.delete);

@@ -4,12 +4,24 @@ const slugify = require('slugify');
 class PostService {
     // 1. Lấy tất cả bài viết (chỉ lấy bài đã xuất bản - is_published: true)
     async getAllPosts(isAdmin = false) {
-        const whereClause = isAdmin ? {} : { is_published: true };
+        const whereClause = isAdmin ? {} : {};
         
         return await Post.findAll({
             where: whereClause,
             include: [{ model: User, as: 'author', attributes: ['full_name'] }],
             order: [['created_at', 'DESC']]
+        });
+    }
+
+    async search(keyword) {
+        const term = `%${keyword.trim()}%`;
+        return await Post.findAll({
+            where: {
+                title: { // Giả sử cột tiêu đề của bạn tên là 'title'
+                    [Op.iLike]: term
+                }
+            },
+            order: [['created_at', 'DESC']] // Đổi thành 'createdAt' nếu DB dùng camelCase
         });
     }
 

@@ -11,6 +11,20 @@ class PostController {
         } catch (error) { next(error); }
     }
 
+    async search(req, res, next) {
+        try {
+            const keyword = req.query.q || '';
+            const posts = await postService.search(keyword);
+            
+            res.status(200).json({ 
+                success: true, 
+                data: posts 
+            });
+        } catch (error) {
+            next(error);
+        }
+    }
+
     // [GET] Chi tiết
     async getBySlug(req, res, next) {
         try {

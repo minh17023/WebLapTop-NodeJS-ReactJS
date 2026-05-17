@@ -5,6 +5,7 @@ const { verifyToken, isAdmin } = require('../middlewares/auth.middleware');
 
 // Public: Bất kỳ ai vào web cũng xem được danh mục
 router.get('/', categoryController.getAll);
+router.get('/search', categoryController.search);
 router.get('/:slug', categoryController.getBySlug);
 
 // Private (Chỉ Admin): Thêm, Sửa, Xóa
