@@ -9,7 +9,7 @@ const OrderItem = require('./order_item.model');
 const CartItem = require('./cart_item.model'); // Khai báo model mới
 const Post = require('./post.model');
 const Review = require('./review.model');
-
+const ChatMessage = require('./chat_message.model');
 // ========================================================
 // THIẾT LẬP MỐI QUAN HỆ (ASSOCIATIONS)
 // ========================================================
@@ -49,6 +49,10 @@ Review.belongsTo(Product, { foreignKey: 'product_id' });
 // 9. User - Review (1 - N)
 User.hasMany(Review, { foreignKey: 'user_id' });
 Review.belongsTo(User, { foreignKey: 'user_id', as: 'reviewer' });
+
+// 10. User - ChatMessage (1 - N)
+User.hasMany(ChatMessage, { foreignKey: 'user_id' });
+ChatMessage.belongsTo(User, { foreignKey: 'user_id' });
 
 // ========================================================
 // EXPORT TẤT CẢ MODULES
