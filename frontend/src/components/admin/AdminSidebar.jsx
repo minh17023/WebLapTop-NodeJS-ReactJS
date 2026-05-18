@@ -21,7 +21,7 @@ const AdminSidebar = () => {
                     <span className="text-lg font-black text-gray-800 tracking-tight">HNC<span className="text-red-600">ADMIN</span></span>
                 </div>
 
-                {/* 🌟 HỆ THỐNG NHIỀU DANH MỤC QUẢN LÝ */}
+                {/* HỆ THỐNG NHIỀU DANH MỤC QUẢN LÝ */}
                 <nav className="space-y-1">
                     <p className="px-4 text-[10px] font-black text-gray-400 uppercase tracking-widest mb-2">Bảng điều khiển</p>
                     <NavLink to="/admin" end className={navLinkStyle}>
@@ -50,10 +50,10 @@ const AdminSidebar = () => {
                         <MessageSquare size={16} /> Đánh giá bình luận
                     </NavLink>
 
-                    <p className="px-4 text-[10px] font-black text-gray-400 uppercase tracking-widest pt-4 mb-2">Hệ thống</p>
+                    {/* <p className="px-4 text-[10px] font-black text-gray-400 uppercase tracking-widest pt-4 mb-2">Hệ thống</p>
                     <NavLink to="/admin/settings" className={navLinkStyle}>
                         <Settings size={16} /> Cấu hình Web
-                    </NavLink>
+                    </NavLink> */}
                 </nav>
             </div>
         </aside>
