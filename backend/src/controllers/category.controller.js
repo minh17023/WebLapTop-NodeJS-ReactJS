@@ -29,7 +29,7 @@ class CategoryController {
                 data: categories 
             });
         } catch (error) {
-            next(error); // Đẩy lỗi ra middleware xử lý lỗi chung của bạn
+            next(error);
         }
     }
 

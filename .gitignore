@@ -1,0 +1,17 @@
+# Chặn node_modules ở mọi ngóc ngách
+node_modules/
+
+# Chặn file môi trường của backend và frontend (bao gồm cả các file .env.local nếu có)
+backend/.env
+backend/.env.*
+frontend/.env
+frontend/.env.*
+
+# Chặn thư mục build sản phẩm của Vite Frontend
+frontend/dist/
+dist/
+
+# Logs và file rác hệ thống
+*.log
+.DS_Store
+.eslintcache
