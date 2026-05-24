@@ -71,9 +71,10 @@ class OrderService {
         }
     }
 
-    // 2. Logic Xem Lịch sử Đơn hàng (Dành cho trang cá nhân của Khách)
-    async getUserOrders(userId) {
-        return await Order.findAll({
+    // 2. Logic Xem Lịch sử Đơn hàng (Dành cho trang cá nhân của Khách, có phân trang)
+    async getUserOrders(userId, page = 1, limit = 10) {
+        const offset = (page - 1) * limit;
+        const { rows, count } = await Order.findAndCountAll({
             where: { user_id: userId },
             include: [{
                 model: OrderItem,
@@ -84,8 +85,18 @@ class OrderService {
                     attributes: ['name', 'main_image', 'slug']
                 }]
             }],
+            limit: Number(limit),
+            offset: Number(offset),
             order: [['created_at', 'DESC']]
         });
+
+        return {
+            totalItems: count,
+            totalPages: Math.ceil(count / limit),
+            currentPage: Number(page),
+            limit: Number(limit),
+            orders: rows
+        };
     }
 
     async getById(orderId) {
@@ -155,8 +166,9 @@ class OrderService {
     // CÁC HÀM DÀNH CHO ADMIN (QUẢN LÝ ĐƠN HÀNG)
     // ===============================================
 
-    async getAllOrders() {
-        return await Order.findAll({
+    async getAllOrders(page = 1, limit = 10) {
+        const offset = (page - 1) * limit;
+        const { rows, count } = await Order.findAndCountAll({
             include: [{
                 model: OrderItem,
                 as: 'items',
@@ -166,8 +178,18 @@ class OrderService {
                     attributes: ['name', 'main_image']
                 }]
             }],
+            limit: Number(limit),
+            offset: Number(offset),
             order: [['created_at', 'DESC']]
         });
+
+        return {
+            totalItems: count,
+            totalPages: Math.ceil(count / limit),
+            currentPage: Number(page),
+            limit: Number(limit),
+            orders: rows
+        };
     }
 
     async searchOrders(keyword) {
@@ -243,6 +265,127 @@ class OrderService {
         order.status = newStatus;
         await order.save();
         return order;
+    }
+
+    // 🌟 BỔ SUNG: Lấy dữ liệu chi tiết hóa đơn
+    async getInvoiceData(orderId) {
+        const order = await Order.findByPk(orderId);
+        if (!order) return null;
+
+        const items = await OrderItem.findAll({
+            where: { order_id: orderId },
+            include: [{
+                model: Product,
+                as: 'product',
+                attributes: ['name', 'main_image']
+            }]
+        });
+
+        return { order, items };
+    }
+
+    // 🌟 BỔ SUNG: Tính toán dữ liệu thống kê Dashboard KPIs
+    async getDashboardStats(startDate, endDate) {
+        const start = new Date(startDate);
+        start.setHours(0, 0, 0, 0);
+        const end = new Date(endDate);
+        end.setHours(23, 59, 59, 999);
+
+        // Lấy tất cả đơn hàng trong kỳ lọc
+        const filteredOrders = await Order.findAll({
+            where: {
+                created_at: { [Op.between]: [start, end] }
+            },
+            order: [['created_at', 'DESC']]
+        });
+
+        // 1. Tổng doanh thu (không tính đơn hủy)
+        const totalRevenue = filteredOrders
+            .filter(o => o.status !== 'cancelled')
+            .reduce((sum, o) => sum + Number(o.total_amount), 0);
+
+        // 2. Tổng đơn hàng trong kỳ
+        const totalOrders = filteredOrders.length;
+
+        // 3. Tổng số khách hàng
+        const totalCustomers = await User.count({
+            where: { role: { [Op.ne]: 'admin' } }
+        });
+
+        // 4. Tổng số sản phẩm
+        const totalProducts = await Product.count();
+
+        // 5. Thống kê trạng thái đơn hàng
+        const statusMap = { pending: 0, processing: 0, shipped: 0, delivered: 0, cancelled: 0 };
+        filteredOrders.forEach(o => {
+            if (statusMap[o.status] !== undefined) statusMap[o.status]++;
+        });
+
+        const orderStatusData = [
+            { name: 'Chờ xác nhận', count: statusMap.pending, fill: '#EAB308' },
+            { name: 'Đang xử lý', count: statusMap.processing, fill: '#3B82F6' },
+            { name: 'Đang giao', count: statusMap.shipped, fill: '#A855F7' },
+            { name: 'Đã giao', count: statusMap.delivered, fill: '#22C55E' },
+            { name: 'Đã hủy', count: statusMap.cancelled, fill: '#EF4444' }
+        ];
+
+        // 6. Lấy 5 đơn hàng mới nhất
+        const recentOrders = filteredOrders.slice(0, 5).map(o => ({
+            id: o.order_id || o.id,
+            customer: o.full_name,
+            total: o.total_amount,
+            status: o.status,
+            date: new Date(o.created_at || o.createdAt).toLocaleString('vi-VN')
+        }));
+
+        return {
+            totalRevenue,
+            totalOrders,
+            totalCustomers,
+            totalProducts,
+            orderStatusData,
+            recentOrders
+        };
+    }
+
+    // 🌟 BỔ SUNG: Tính toán dữ liệu biểu đồ doanh thu
+    async getDashboardRevenueChart(startDate, endDate) {
+        const start = new Date(startDate);
+        start.setHours(0, 0, 0, 0);
+        const end = new Date(endDate);
+        end.setHours(23, 59, 59, 999);
+
+        const filteredOrders = await Order.findAll({
+            where: {
+                created_at: { [Op.between]: [start, end] }
+            }
+        });
+
+        const dateList = [];
+        let currentLoopDate = new Date(start);
+        while (currentLoopDate <= end) {
+            dateList.push(currentLoopDate.toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit' }));
+            currentLoopDate.setDate(currentLoopDate.getDate() + 1);
+        }
+
+        const revenueMap = {};
+        dateList.forEach(d => revenueMap[d] = 0);
+
+        filteredOrders.forEach(o => {
+            if (o.status !== 'cancelled') {
+                const dateStr = new Date(o.created_at || o.createdAt).toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit' });
+                if (revenueMap[dateStr] !== undefined) {
+                    revenueMap[dateStr] += Number(o.total_amount);
+                }
+            }
+        });
+
+        const revenueData = dateList.map(date => ({
+            name: date,
+            total: revenueMap[date]
+        }));
+
+        return revenueData;
     }
 }
 

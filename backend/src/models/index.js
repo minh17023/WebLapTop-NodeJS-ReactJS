@@ -66,5 +66,6 @@ module.exports = {
     OrderItem,
     CartItem,
     Post,
-    Review
+    Review,
+    ChatMessage
 };

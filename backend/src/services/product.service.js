@@ -3,12 +3,23 @@ const slugify = require('slugify');
 const { Op } = require('sequelize');
 
 class ProductService {
-    // 1. Lấy tất cả sản phẩm (kèm tên danh mục)
-    async getAllProducts() {
-        return await Product.findAll({
+    // 1. Lấy tất cả sản phẩm (phân trang, kèm tên danh mục)
+    async getAllProducts(page = 1, limit = 12) {
+        const offset = (page - 1) * limit;
+        const { rows, count } = await Product.findAndCountAll({
             include: [{ model: Category, attributes: ['name', 'slug'] }],
+            limit: Number(limit),
+            offset: Number(offset),
             order: [['created_at', 'DESC']]
         });
+
+        return {
+            totalItems: count,
+            totalPages: Math.ceil(count / limit),
+            currentPage: Number(page),
+            limit: Number(limit),
+            products: rows
+        };
     }
 
     // 2. Lấy chi tiết sản phẩm theo Slug
@@ -19,16 +30,27 @@ class ProductService {
         });
     }
 
-    // Lấy sản phẩm theo Slug của danh mục
-    async getProductsByCategorySlug(categorySlug) {
-        return await Product.findAll({
+    // Lấy sản phẩm theo Slug của danh mục (phân trang)
+    async getProductsByCategorySlug(categorySlug, page = 1, limit = 12) {
+        const offset = (page - 1) * limit;
+        const { rows, count } = await Product.findAndCountAll({
             include: [{ 
                 model: Category, 
                 where: { slug: categorySlug }, // Lọc theo danh mục
                 attributes: ['name', 'slug', 'description'] 
             }],
+            limit: Number(limit),
+            offset: Number(offset),
             order: [['created_at', 'DESC']]
         });
+
+        return {
+            totalItems: count,
+            totalPages: Math.ceil(count / limit),
+            currentPage: Number(page),
+            limit: Number(limit),
+            products: rows
+        };
     }
 
     //Tìm kiếm sản phẩm

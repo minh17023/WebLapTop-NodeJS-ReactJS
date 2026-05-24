@@ -2,8 +2,8 @@ import api from './api';
 
 export const postService = {
     // Cho User xem bài viết
-    getAll: async () => {
-        const response = await api.get('/posts');
+    getAll: async (page = 1, limit = 10) => {
+        const response = await api.get(`/posts?page=${page}&limit=${limit}`);
         return response.data;
     },
     getBySlug: async (slug) => {

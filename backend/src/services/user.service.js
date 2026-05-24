@@ -26,19 +26,30 @@ class UserService {
                     { email: { [Op.iLike]: term } }
                 ]
             },
-            attributes: { exclude: ['password'] }, // Bảo mật: Không trả về password
+            attributes: { exclude: ['password_hash'] },
             order: [['created_at', 'DESC']] // Đổi thành 'createdAt' nếu DB dùng camelCase
         });
     }
 
     // ================= CRUD API =================
 
-    // 3. Lấy danh sách tất cả người dùng (ẩn mật khẩu)
-    async getAllUsers() {
-        return await User.findAll({
+    // 3. Lấy danh sách tất cả người dùng (ẩn mật khẩu, có phân trang)
+    async getAllUsers(page = 1, limit = 10) {
+        const offset = (page - 1) * limit;
+        const { rows, count } = await User.findAndCountAll({
             attributes: { exclude: ['password_hash'] },
+            limit: Number(limit),
+            offset: Number(offset),
             order: [['created_at', 'DESC']]
         });
+
+        return {
+            totalItems: count,
+            totalPages: Math.ceil(count / limit),
+            currentPage: Number(page),
+            limit: Number(limit),
+            users: rows
+        };
     }
 
     // 4. Lấy chi tiết một người dùng

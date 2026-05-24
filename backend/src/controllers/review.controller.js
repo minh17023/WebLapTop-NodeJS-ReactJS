@@ -1,21 +1,46 @@
 const reviewService = require('../services/review.service');
 
 class ReviewController {
-    // 🌟 THÊM MỚI: Hàm lấy tất cả cho Admin
+    // 🌟 THÊM MỚI: Hàm lấy tất cả cho Admin (có phân trang, lọc theo rating)
     async getAll(req, res, next) {
         try {
-            const reviews = await reviewService.getAll();
-            res.status(200).json({ success: true, data: reviews });
+            const page = parseInt(req.query.page) || 1;
+            const limit = parseInt(req.query.limit) || 10;
+            const rating = req.query.rating || null;
+
+            const result = await reviewService.getAll(page, limit, rating);
+            res.status(200).json({ 
+                success: true, 
+                pagination: {
+                    totalItems: result.totalItems,
+                    totalPages: result.totalPages,
+                    currentPage: result.currentPage,
+                    limit: result.limit
+                },
+                data: result.reviews 
+            });
         } catch (error) {
             next(error);
         }
     }
 
-    // [GET] Lấy danh sách đánh giá theo ID sản phẩm
+    // [GET] Lấy danh sách đánh giá theo ID sản phẩm (có phân trang)
     async getByProduct(req, res, next) {
         try {
-            const reviews = await reviewService.getReviewsByProductId(req.params.productId);
-            res.status(200).json({ success: true, data: reviews });
+            const page = parseInt(req.query.page) || 1;
+            const limit = parseInt(req.query.limit) || 10;
+
+            const result = await reviewService.getReviewsByProductId(req.params.productId, page, limit);
+            res.status(200).json({ 
+                success: true, 
+                pagination: {
+                    totalItems: result.totalItems,
+                    totalPages: result.totalPages,
+                    currentPage: result.currentPage,
+                    limit: result.limit
+                },
+                data: result.reviews 
+            });
         } catch (error) { next(error); }
     }
 

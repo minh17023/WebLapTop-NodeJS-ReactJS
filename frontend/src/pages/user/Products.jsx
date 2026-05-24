@@ -9,14 +9,21 @@ const Products = () => {
     const [products, setProducts] = useState([]);
     const [filteredProducts, setFilteredProducts] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(1);
+    const limit = 12;
 
     useEffect(() => {
         const fetchProducts = async () => {
+            setLoading(true);
             try {
-                const res = await productService.getAll();
+                const res = await productService.getAll(currentPage, limit);
                 if (res.success) {
                     setProducts(res.data);
                     setFilteredProducts(res.data);
+                    if (res.pagination) {
+                        setTotalPages(res.pagination.totalPages);
+                    }
                 }
             } catch (error) {
                 toast.error('Lỗi khi tải danh sách sản phẩm');
@@ -25,7 +32,7 @@ const Products = () => {
             }
         };
         fetchProducts();
-    }, []);
+    }, [currentPage]);
 
     // Logic xử lý khi người dùng chọn bộ lọc
     const handleFilterChange = (filters) => {
@@ -68,39 +75,70 @@ const Products = () => {
                 {/* CỘT PHẢI: DANH SÁCH SẢN PHẨM (Chiếm 3/4) */}
                 <div className="w-full md:w-3/4">
                     {filteredProducts.length > 0 ? (
-                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                            {filteredProducts.map((product) => (
-                                <div key={product.product_id} className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-lg transition flex flex-col">
-                                    <Link to={`/product/${product.slug}`}>
-                                        <img src={product.main_image || "https://via.placeholder.com/400x300"} alt={product.name} className="w-full h-48 object-cover p-4 hover:scale-105 transition duration-300" />
-                                    </Link>
-                                    <div className="p-4 flex flex-col flex-grow">
+                        <>
+                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                                {filteredProducts.map((product) => (
+                                    <div key={product.product_id} className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-lg transition flex flex-col">
                                         <Link to={`/product/${product.slug}`}>
-                                            <h3 className="font-bold text-gray-800 hover:text-red-600 line-clamp-2 h-12">{product.name}</h3>
+                                            <img src={product.main_image || "https://via.placeholder.com/400x300"} alt={product.name} className="w-full h-48 object-cover p-4 hover:scale-105 transition duration-300" />
                                         </Link>
-                                        <div className="text-xs text-gray-500 mt-2 space-y-1 bg-gray-50 p-2 rounded">
-                                            <p>CPU: {product.specifications?.cpu || 'Đang cập nhật'}</p>
-                                            <p>RAM: {product.specifications?.ram || 'Đang cập nhật'}</p>
-                                        </div>
-                                        <div className="mt-auto pt-4 flex items-center justify-between">
-                                            <div className="flex flex-col">
-                                                {product.discount_price ? (
-                                                    <>
-                                                        <span className="font-extrabold text-red-600 text-lg">{formatPrice(product.discount_price)}</span>
-                                                        <span className="text-xs text-gray-400 line-through">{formatPrice(product.price)}</span>
-                                                    </>
-                                                ) : (
-                                                    <span className="font-extrabold text-red-600 text-lg">{formatPrice(product.price)}</span>
-                                                )}
+                                        <div className="p-4 flex flex-col flex-grow">
+                                            <Link to={`/product/${product.slug}`}>
+                                                <h3 className="font-bold text-gray-800 hover:text-red-600 line-clamp-2 h-12">{product.name}</h3>
+                                            </Link>
+                                            <div className="text-xs text-gray-500 mt-2 space-y-1 bg-gray-50 p-2 rounded">
+                                                <p>CPU: {product.specifications?.cpu || 'Đang cập nhật'}</p>
+                                                <p>RAM: {product.specifications?.ram || 'Đang cập nhật'}</p>
                                             </div>
-                                            <button className="bg-red-50 hover:bg-red-600 text-red-600 hover:text-white p-2 rounded-full transition">
-                                                <ShoppingCart size={20} />
-                                            </button>
+                                            <div className="mt-auto pt-4 flex items-center justify-between">
+                                                <div className="flex flex-col">
+                                                    {product.discount_price ? (
+                                                        <>
+                                                            <span className="font-extrabold text-red-600 text-lg">{formatPrice(product.discount_price)}</span>
+                                                            <span className="text-xs text-gray-400 line-through">{formatPrice(product.price)}</span>
+                                                        </>
+                                                    ) : (
+                                                        <span className="font-extrabold text-red-600 text-lg">{formatPrice(product.price)}</span>
+                                                    )}
+                                                </div>
+                                                <button className="bg-red-50 hover:bg-red-600 text-red-600 hover:text-white p-2 rounded-full transition">
+                                                    <ShoppingCart size={20} />
+                                                </button>
+                                            </div>
                                         </div>
                                     </div>
+                                ))}
+                            </div>
+
+                            {/* THANH PHÂN TRANG */}
+                            {totalPages > 1 && (
+                                <div className="flex justify-center items-center gap-4 mt-12 bg-white p-4 rounded-xl border border-gray-100 shadow-sm w-fit mx-auto">
+                                    <button 
+                                        disabled={currentPage === 1}
+                                        onClick={() => {
+                                            setCurrentPage(prev => prev - 1);
+                                            window.scrollTo({ top: 0, behavior: 'smooth' });
+                                        }}
+                                        className="px-4 py-2 text-sm font-semibold text-gray-700 bg-gray-50 hover:bg-red-600 hover:text-white border border-gray-200 rounded-lg transition disabled:opacity-40 disabled:hover:bg-gray-50 disabled:hover:text-gray-700 disabled:cursor-not-allowed cursor-pointer"
+                                    >
+                                        Trước
+                                    </button>
+                                    <span className="text-sm font-semibold text-gray-600 bg-red-50 px-3 py-1.5 rounded-md border border-red-100">
+                                        Trang {currentPage} / {totalPages}
+                                    </span>
+                                    <button 
+                                        disabled={currentPage === totalPages}
+                                        onClick={() => {
+                                            setCurrentPage(prev => prev + 1);
+                                            window.scrollTo({ top: 0, behavior: 'smooth' });
+                                        }}
+                                        className="px-4 py-2 text-sm font-semibold text-gray-700 bg-gray-50 hover:bg-red-600 hover:text-white border border-gray-200 rounded-lg transition disabled:opacity-40 disabled:hover:bg-gray-50 disabled:hover:text-gray-700 disabled:cursor-not-allowed cursor-pointer"
+                                    >
+                                        Sau
+                                    </button>
                                 </div>
-                            ))}
-                        </div>
+                            )}
+                        </>
                     ) : (
                         <div className="text-center py-20 bg-white rounded-xl border border-gray-100">
                             <p className="text-gray-500 text-lg">Không tìm thấy sản phẩm nào phù hợp với bộ lọc.</p>

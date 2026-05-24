@@ -6,8 +6,8 @@ export const orderService = {
         const response = await api.post('/orders', data);
         return response.data;
     },
-    getMyOrders: async () => {
-        const response = await api.get('/orders/my-orders');
+    getMyOrders: async (page = 1, limit = 10) => {
+        const response = await api.get(`/orders/my-orders?page=${page}&limit=${limit}`);
         return response.data;
     },
     // User tự cập nhật trạng thái đơn hàng (Hủy đơn / Đã nhận hàng)
@@ -26,8 +26,8 @@ export const orderService = {
     },
 
     // 2. DÀNH CHO ADMIN (Phải có 3 hàm này thì trang ManageOrders mới chạy được)
-    getAll: async () => {
-        const response = await api.get('/orders');
+    getAll: async (page = 1, limit = 10) => {
+        const response = await api.get(`/orders?page=${page}&limit=${limit}`);
         return response.data;
     },
     search: async (keyword) => {
@@ -36,6 +36,20 @@ export const orderService = {
     },
     updateStatus: async (id, status) => {
         const response = await api.put(`/orders/${id}/status`, { status });
+        return response.data;
+    },
+    getDashboardStats: async (startDate, endDate) => {
+        const response = await api.get(`/orders/dashboard/stats?startDate=${startDate}&endDate=${endDate}`);
+        return response.data;
+    },
+    getDashboardRevenueChart: async (startDate, endDate) => {
+        const response = await api.get(`/orders/dashboard/revenue-chart?startDate=${startDate}&endDate=${endDate}`);
+        return response.data;
+    },
+    exportInvoice: async (id) => {
+        const response = await api.get(`/orders/${id}/invoice`, {
+            responseType: 'blob'
+        });
         return response.data;
     }
 };

@@ -22,8 +22,8 @@ export const userService = {
     // ==========================================
 
     // Lấy toàn bộ danh sách người dùng
-    getAll: async () => {
-        const response = await api.get('/users');
+    getAll: async (page = 1, limit = 10) => {
+        const response = await api.get(`/users?page=${page}&limit=${limit}`);
         return response.data;
     },
 

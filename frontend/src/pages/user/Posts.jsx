@@ -7,12 +7,21 @@ import { toast } from 'react-toastify';
 const Posts = () => {
     const [posts, setPosts] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(1);
+    const limit = 6; // 6 bài viết mỗi trang
 
     useEffect(() => {
         const fetchPosts = async () => {
+            setLoading(true);
             try {
-                const res = await postService.getAll();
-                if (res.success) setPosts(res.data);
+                const res = await postService.getAll(currentPage, limit);
+                if (res.success) {
+                    setPosts(res.data);
+                    if (res.pagination) {
+                        setTotalPages(res.pagination.totalPages);
+                    }
+                }
             } catch (error) {
                 toast.error('Lỗi tải danh sách bài viết');
             } finally {
@@ -20,7 +29,7 @@ const Posts = () => {
             }
         };
         fetchPosts();
-    }, []);
+    }, [currentPage]);
 
     // Format ngày hiển thị đẹp hơn
     const formatDate = (dateString) => {
@@ -68,6 +77,35 @@ const Posts = () => {
                     <p className="text-gray-500 col-span-full text-center py-10">Chưa có bài viết nào được xuất bản.</p>
                 )}
             </div>
+
+            {/* THANH PHÂN TRANG */}
+            {totalPages > 1 && (
+                <div className="flex justify-center items-center gap-4 mt-12 bg-white p-4 rounded-xl border border-gray-100 shadow-sm w-fit mx-auto">
+                    <button 
+                        disabled={currentPage === 1}
+                        onClick={() => {
+                            setCurrentPage(prev => prev - 1);
+                            window.scrollTo({ top: 0, behavior: 'smooth' });
+                        }}
+                        className="px-4 py-2 text-sm font-semibold text-gray-700 bg-gray-50 hover:bg-red-600 hover:text-white border border-gray-200 rounded-lg transition disabled:opacity-40 disabled:hover:bg-gray-50 disabled:hover:text-gray-700 disabled:cursor-not-allowed cursor-pointer"
+                    >
+                        Trước
+                    </button>
+                    <span className="text-sm font-semibold text-gray-600 bg-red-50 px-3 py-1.5 rounded-md border border-red-100">
+                        Trang {currentPage} / {totalPages}
+                    </span>
+                    <button 
+                        disabled={currentPage === totalPages}
+                        onClick={() => {
+                            setCurrentPage(prev => prev + 1);
+                            window.scrollTo({ top: 0, behavior: 'smooth' });
+                        }}
+                        className="px-4 py-2 text-sm font-semibold text-gray-700 bg-gray-50 hover:bg-red-600 hover:text-white border border-gray-200 rounded-lg transition disabled:opacity-40 disabled:hover:bg-gray-50 disabled:hover:text-gray-700 disabled:cursor-not-allowed cursor-pointer"
+                    >
+                        Sau
+                    </button>
+                </div>
+            )}
         </div>
     );
 };

@@ -10,13 +10,6 @@ import { productService } from '../../services/product.service';
 const Dashboard = () => {
     const [isLoading, setIsLoading] = useState(true);
 
-    // ================= STATE LƯU DỮ LIỆU GỐC TỪ API =================
-    const [rawData, setRawData] = useState({
-        orders: [],
-        users: [],
-        products: []
-    });
-
     // ================= STATE BỘ LỌC NGÀY THÁNG =================
     // Mặc định: Từ 7 ngày trước đến Ngày hôm nay
     const [startDate, setStartDate] = useState(() => {
@@ -39,114 +32,31 @@ const Dashboard = () => {
         recentOrders: []
     });
 
-    // 1. Gọi API lấy dữ liệu thô ban đầu (Chỉ chạy 1 lần khi load trang)
+    // 🌟 BỔ SUNG: Gọi API lấy dữ liệu thống kê từ Server
     useEffect(() => {
-        const fetchRawData = async () => {
+        const fetchDashboardData = async () => {
+            setIsLoading(true);
             try {
-                const [ordersRes, usersRes, productsRes] = await Promise.all([
-                    orderService.getAll(),
-                    userService.getAll(),
-                    productService.getAll()
+                const [statsRes, chartRes] = await Promise.all([
+                    orderService.getDashboardStats(startDate, endDate),
+                    orderService.getDashboardRevenueChart(startDate, endDate)
                 ]);
 
-                setRawData({
-                    orders: ordersRes.data || ordersRes || [],
-                    users: usersRes.data || usersRes || [],
-                    products: productsRes.data || productsRes || []
-                });
+                if (statsRes.success && chartRes.success) {
+                    setStats({
+                        ...statsRes.data,
+                        revenueData: chartRes.data
+                    });
+                }
             } catch (error) {
-                console.error("Lỗi đồng bộ dữ liệu Dashboard:", error);
+                console.error("Lỗi đồng bộ dữ liệu Dashboard từ Server:", error);
             } finally {
                 setIsLoading(false);
             }
         };
-        fetchRawData();
-    }, []);
 
-    // 2. TỰ ĐỘNG TÍNH TOÁN LẠI THỐNG KÊ KHI DỮ LIỆU GỐC HOẶC BỘ LỌC NGÀY THAY ĐỔI
-    useEffect(() => {
-        if (rawData.orders.length === 0 && rawData.users.length === 0 && rawData.products.length === 0) return;
-
-        // Chuyển đổi ngày từ chuỗi input sang đối tượng Date để so sánh (Đặt mốc giờ chuẩn)
-        const start = new Date(startDate);
-        start.setHours(0, 0, 0, 0);
-        const end = new Date(endDate);
-        end.setHours(23, 59, 59, 999);
-
-        // 🌟 BƯỚC LỌC ĐƠN HÀNG THEO KHOẢNG NGÀY CHỌN
-        const filteredOrders = rawData.orders.filter(o => {
-            const orderDate = new Date(o.created_at || o.createdAt);
-            return orderDate >= start && orderDate <= end;
-        });
-
-        // 🌟 TÍNH TOÁN SỐ LIỆU DỰA TRÊN MẢNG ĐÃ LỌC
-        const totalRevenue = filteredOrders
-            .filter(o => o.status !== 'cancelled')
-            .reduce((sum, o) => sum + Number(o.total_amount), 0);
-        
-        const totalOrders = filteredOrders.length;
-        const totalCustomers = rawData.users.filter(u => u.role !== 'admin').length; // Giữ nguyên tổng khách
-        const totalProducts = rawData.products.length; // Giữ nguyên tổng sp
-
-        // Thống kê trạng thái đơn hàng theo khoảng ngày
-        const statusCount = { pending: 0, processing: 0, shipped: 0, delivered: 0 };
-        filteredOrders.forEach(o => {
-            if (statusCount[o.status] !== undefined) statusCount[o.status]++;
-        });
-        
-        const orderStatusData = [
-            { name: 'Chờ xác nhận', count: statusCount.pending, fill: '#EAB308' },
-            { name: 'Đang xử lý', count: statusCount.processing, fill: '#3B82F6' },
-            { name: 'Đang giao', count: statusCount.shipped, fill: '#A855F7' },
-            { name: 'Đã giao', count: statusCount.delivered, fill: '#22C55E' },
-        ];
-
-        // 5 Đơn hàng mới nhất trong khoảng ngày này
-        const recentOrders = filteredOrders.slice(0, 5).map(o => ({
-            id: o.order_id || o.id,
-            customer: o.full_name,
-            total: o.total_amount,
-            status: o.status,
-            date: new Date(o.created_at || o.createdAt).toLocaleString('vi-VN')
-        }));
-
-        // Dựng trục X cho biểu đồ doanh thu theo các ngày nằm trong khoảng lọc
-        const dateList = [];
-        let currentLoopDate = new Date(start);
-        while (currentLoopDate <= end) {
-            dateList.push(currentLoopDate.toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit' }));
-            currentLoopDate.setDate(currentLoopDate.getDate() + 1);
-        }
-
-        const revenueByDate = {};
-        dateList.forEach(date => revenueByDate[date] = 0);
-
-        filteredOrders.forEach(o => {
-            if (o.status !== 'cancelled') {
-                const orderDateStr = new Date(o.created_at || o.createdAt).toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit' });
-                if (revenueByDate[orderDateStr] !== undefined) {
-                    revenueByDate[orderDateStr] += Number(o.total_amount);
-                }
-            }
-        });
-
-        const revenueData = dateList.map(date => ({
-            name: date,
-            total: revenueByDate[date]
-        }));
-
-        // Cập nhật State thống kê
-        setStats({
-            totalRevenue,
-            totalOrders,
-            totalCustomers,
-            totalProducts,
-            orderStatusData,
-            recentOrders,
-            revenueData
-        });
-
-    }, [rawData, startDate, endDate]);
+        fetchDashboardData();
+    }, [startDate, endDate]);
 
     // Hàm reset ngày về mặc định (7 ngày qua)
     const handleResetFilter = () => {

@@ -51,17 +51,34 @@ class UserController {
 
     // ================= CRUD API =================
 
-    // Lấy danh sách (Dành cho Admin)
+    // Lấy danh sách (Dành cho Admin, có phân trang)
     async getAll(req, res, next) {
         try {
-            const users = await userService.getAllUsers();
-            res.status(200).json({ success: true, data: users });
+            const page = parseInt(req.query.page) || 1;
+            const limit = parseInt(req.query.limit) || 10;
+
+            const result = await userService.getAllUsers(page, limit);
+            res.status(200).json({ 
+                success: true, 
+                pagination: {
+                    totalItems: result.totalItems,
+                    totalPages: result.totalPages,
+                    currentPage: result.currentPage,
+                    limit: result.limit
+                },
+                data: result.users 
+            });
         } catch (error) { next(error); }
     }
 
     // Lấy chi tiết
     async getById(req, res, next) {
         try {
+            // Bảo mật: Chỉ Admin hoặc chính chủ tài khoản mới được xem thông tin chi tiết
+            if (req.user.role !== 'admin' && req.user.id !== Number(req.params.id)) {
+                return res.status(403).json({ success: false, message: 'Bạn không có quyền truy cập thông tin này!' });
+            }
+
             const user = await userService.getUserById(req.params.id);
             if (!user) return res.status(404).json({ success: false, message: 'Không tìm thấy người dùng' });
             res.status(200).json({ success: true, data: user });
@@ -71,6 +88,11 @@ class UserController {
     // Cập nhật người dùng
     async update(req, res, next) {
         try {
+            // Bảo mật: Chỉ Admin hoặc chính chủ tài khoản mới được cập nhật thông tin
+            if (req.user.role !== 'admin' && req.user.id !== Number(req.params.id)) {
+                return res.status(403).json({ success: false, message: 'Bạn không có quyền cập nhật thông tin này!' });
+            }
+
             const updatedUser = await userService.updateUser(req.params.id, req.body);
             if (!updatedUser) return res.status(404).json({ success: false, message: 'Không tìm thấy người dùng để cập nhật' });
             

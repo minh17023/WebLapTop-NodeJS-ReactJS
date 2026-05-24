@@ -8,8 +8,11 @@ const ManageUsers = () => {
     const [users, setUsers] = useState([]);
     const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState('');
+    const [debouncedSearch, setDebouncedSearch] = useState('');
     
     const [currentPage, setCurrentPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(1);
+    const [totalItems, setTotalItems] = useState(0);
     const usersPerPage = 5;
 
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -26,18 +29,26 @@ const ManageUsers = () => {
     const [formData, setFormData] = useState(initialFormState);
 
     // ================= FETCH DATA =================
-    const fetchUsersAPI = async (keyword = '') => {
+    const fetchUsersAPI = async (keyword = '', page = 1) => {
         setLoading(true);
         try {
             let res;
             if (keyword.trim() !== '') {
                 res = await userService.search(keyword);
+                const userList = res?.data || res || [];
+                setUsers(Array.isArray(userList) ? userList : []);
+                setTotalPages(1);
+                setTotalItems(userList.length);
             } else {
-                res = await userService.getAll();
+                res = await userService.getAll(page, usersPerPage);
+                if (res.success) {
+                    setUsers(res.data);
+                    if (res.pagination) {
+                        setTotalPages(res.pagination.totalPages);
+                        setTotalItems(res.pagination.totalItems);
+                    }
+                }
             }
-            const userList = res?.data || res || [];
-            setUsers(Array.isArray(userList) ? userList : []);
-            setCurrentPage(1); 
         } catch (error) {
             console.error("Lỗi lấy danh sách user:", error);
             toast.error("Không thể tải danh sách tài khoản!");
@@ -46,18 +57,28 @@ const ManageUsers = () => {
         }
     };
 
+    // Debounce tìm kiếm
     useEffect(() => {
-        const delayDebounceFn = setTimeout(() => {
-            fetchUsersAPI(searchTerm);
+        const handler = setTimeout(() => {
+            setDebouncedSearch(searchTerm);
         }, 500);
-        return () => clearTimeout(delayDebounceFn);
+        return () => clearTimeout(handler);
     }, [searchTerm]);
+
+    // Khi từ khóa đã debounce thay đổi, reset về trang 1
+    useEffect(() => {
+        setCurrentPage(1);
+    }, [debouncedSearch]);
+
+    // Một useEffect duy nhất chịu trách nhiệm fetch dữ liệu khi trang hoặc từ khóa debounce thay đổi
+    useEffect(() => {
+        fetchUsersAPI(debouncedSearch, currentPage);
+    }, [currentPage, debouncedSearch]);
 
     // ================= PHÂN TRANG =================
     const indexOfLastUser = currentPage * usersPerPage;
     const indexOfFirstUser = indexOfLastUser - usersPerPage;
-    const currentUsers = users.slice(indexOfFirstUser, indexOfLastUser);
-    const totalPages = Math.ceil(users.length / usersPerPage);
+    const currentUsers = users; // Phân trang ở Backend
     const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
     // ================= XỬ LÝ FORM =================
@@ -221,10 +242,10 @@ const ManageUsers = () => {
                 </div>
 
                 {/* Pagination */}
-                {!loading && users.length > usersPerPage && (
+                {!loading && totalPages > 1 && (
                     <div className="p-4 border-t border-gray-100 flex items-center justify-between bg-gray-50/50 rounded-b-2xl">
                         <p className="text-xs text-gray-500 font-medium">
-                            Hiển thị <span className="font-bold text-gray-800">{indexOfFirstUser + 1}</span> - <span className="font-bold text-gray-800">{Math.min(indexOfLastUser, users.length)}</span> / <span className="font-bold text-gray-800">{users.length}</span>
+                            Hiển thị <span className="font-bold text-gray-800">{totalItems > 0 ? indexOfFirstUser + 1 : 0}</span> - <span className="font-bold text-gray-800">{Math.min(indexOfLastUser, totalItems)}</span> / <span className="font-bold text-gray-800">{totalItems}</span>
                         </p>
                         <div className="flex items-center gap-1">
                             <button onClick={() => paginate(currentPage - 1)} disabled={currentPage === 1} className="p-2 rounded-lg border border-gray-200 text-gray-500 hover:bg-white hover:text-blue-600 disabled:opacity-50 transition bg-transparent"><ChevronLeft size={16} /></button>

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Search, Filter, Eye, Package, Check, X as CloseIcon, CreditCard, Truck } from 'lucide-react'; 
+import { Search, Filter, Eye, Package, Check, X as CloseIcon, CreditCard, Truck, Download } from 'lucide-react'; 
 import { toast } from 'react-toastify';
 import { orderService } from '../../services/order.service';
 
@@ -8,27 +8,38 @@ const ManageOrders = () => {
     const [orders, setOrders] = useState([]);
     const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState('');
+    const [debouncedSearch, setDebouncedSearch] = useState('');
     const [filterStatus, setFilterStatus] = useState('all'); 
     
     const [currentPage, setCurrentPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(1);
+    const [totalItems, setTotalItems] = useState(0);
     const ordersPerPage = 10;
 
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [selectedOrder, setSelectedOrder] = useState(null);
 
     // ================= FETCH DATA =================
-    const fetchOrdersAPI = async (keyword = '') => {
+    const fetchOrdersAPI = async (keyword = '', page = 1) => {
         setLoading(true);
         try {
             let res;
             if (keyword.trim() !== '') {
                 res = await orderService.search(keyword);
+                const orderList = res?.data || res || [];
+                setOrders(Array.isArray(orderList) ? orderList : []);
+                setTotalPages(1);
+                setTotalItems(orderList.length);
             } else {
-                res = await orderService.getAll();
+                res = await orderService.getAll(page, ordersPerPage);
+                if (res.success) {
+                    setOrders(res.data);
+                    if (res.pagination) {
+                        setTotalPages(res.pagination.totalPages);
+                        setTotalItems(res.pagination.totalItems);
+                    }
+                }
             }
-            const orderList = res?.data || res || [];
-            setOrders(Array.isArray(orderList) ? orderList : []);
-            setCurrentPage(1); 
         } catch (error) {
             toast.error("Không thể tải danh sách đơn hàng!");
         } finally {
@@ -36,12 +47,23 @@ const ManageOrders = () => {
         }
     };
 
+    // Debounce tìm kiếm
     useEffect(() => {
-        const delayDebounceFn = setTimeout(() => {
-            fetchOrdersAPI(searchTerm);
+        const handler = setTimeout(() => {
+            setDebouncedSearch(searchTerm);
         }, 500);
-        return () => clearTimeout(delayDebounceFn);
+        return () => clearTimeout(handler);
     }, [searchTerm]);
+
+    // Khi từ khóa đã debounce thay đổi, reset về trang 1
+    useEffect(() => {
+        setCurrentPage(1);
+    }, [debouncedSearch]);
+
+    // Một useEffect duy nhất chịu trách nhiệm fetch dữ liệu khi trang hoặc từ khóa debounce thay đổi
+    useEffect(() => {
+        fetchOrdersAPI(debouncedSearch, currentPage);
+    }, [currentPage, debouncedSearch]);
 
     // ================= LỌC & PHÂN TRANG =================
     const processedOrders = orders.filter(order => {
@@ -49,11 +71,7 @@ const ManageOrders = () => {
         return order.status === filterStatus;
     });
 
-    const indexOfLastOrder = currentPage * ordersPerPage;
-    const indexOfFirstOrder = indexOfLastOrder - ordersPerPage;
-    const currentOrders = processedOrders.slice(indexOfFirstOrder, indexOfLastOrder);
-    const totalPages = Math.ceil(processedOrders.length / ordersPerPage);
-    const paginate = (pageNumber) => setCurrentPage(pageNumber);
+    const currentOrders = processedOrders; // Sử dụng danh sách đã được phân trang từ backend
 
     // ================= LOGIC CHUYỂN TRẠNG THÁI GIAO HÀNG =================
     const handleStatusChange = async (orderId, newStatus) => {
@@ -86,6 +104,27 @@ const ManageOrders = () => {
             // Nếu API lỗi thì trả lại dữ liệu cũ
             setOrders(originalOrders);
             toast.error("Lỗi cập nhật thanh toán!");
+        }
+    };
+
+    // ================= LOGIC XUẤT HÓA ĐƠN PDF =================
+    const handleDownloadInvoice = async (orderId) => {
+        try {
+            toast.info("Đang khởi tạo hóa đơn...");
+            const blob = await orderService.exportInvoice(orderId);
+            
+            // Tạo URL ảo để tự động tải về file PDF
+            const url = window.URL.createObjectURL(new Blob([blob]));
+            const link = document.createElement('a');
+            link.href = url;
+            link.setAttribute('download', `Invoice_#${orderId}.pdf`);
+            document.body.appendChild(link);
+            link.click();
+            link.parentNode.removeChild(link);
+            toast.success("Tải hóa đơn thành công!");
+        } catch (error) {
+            console.error("Lỗi tải hóa đơn:", error);
+            toast.error("Không thể xuất hóa đơn!");
         }
     };
 
@@ -238,9 +277,12 @@ const ManageOrders = () => {
                                             <td className="px-6 py-4 align-middle">
                                                 {renderActionButtons(orderId, order.status)}
                                             </td>
-                                            <td className="px-6 py-4 text-right align-middle">
+                                            <td className="px-6 py-4 text-right align-middle flex justify-end gap-2">
                                                 <button onClick={() => { setSelectedOrder(order); setIsModalOpen(true); }} className="p-2 text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-xl transition inline-flex items-center gap-2 text-xs font-bold">
                                                     <Eye size={16} /> Xem
+                                                </button>
+                                                <button onClick={() => handleDownloadInvoice(orderId)} className="p-2 text-red-600 bg-red-50 hover:bg-red-100 rounded-xl transition inline-flex items-center gap-2 text-xs font-bold" title="Tải hóa đơn PDF">
+                                                    <Download size={16} /> Hóa đơn
                                                 </button>
                                             </td>
                                         </tr>
@@ -252,14 +294,26 @@ const ManageOrders = () => {
                 </div>
 
                 {/* Phân trang */}
-                {!loading && processedOrders.length > ordersPerPage && (
+                {!loading && totalPages > 1 && (
                     <div className="p-4 border-t border-gray-100 flex items-center justify-between bg-gray-50/50 rounded-b-2xl">
-                        <p className="text-xs text-gray-500 font-medium">
-                            Hiển thị <span className="font-bold text-gray-800">{indexOfFirstOrder + 1}</span> - <span className="font-bold text-gray-800">{Math.min(indexOfLastOrder, processedOrders.length)}</span> / <span className="font-bold text-gray-800">{processedOrders.length}</span>
+                        <p className="text-xs text-gray-500 font-semibold">
+                            Trang <span className="font-extrabold text-blue-600">{currentPage}</span> / <span className="font-bold text-gray-800">{totalPages}</span> (Tổng số {totalItems} đơn hàng)
                         </p>
-                        <div className="flex items-center gap-1">
-                            <button onClick={() => paginate(currentPage - 1)} disabled={currentPage === 1} className="p-2 rounded-lg border border-gray-200 text-gray-500 hover:bg-white hover:text-blue-600 disabled:opacity-50 transition bg-transparent">Trước</button>
-                            <button onClick={() => paginate(currentPage + 1)} disabled={currentPage === totalPages} className="p-2 rounded-lg border border-gray-200 text-gray-500 hover:bg-white hover:text-blue-600 disabled:opacity-50 transition bg-transparent">Sau</button>
+                        <div className="flex items-center gap-1.5">
+                            <button 
+                                onClick={() => setCurrentPage(prev => prev - 1)} 
+                                disabled={currentPage === 1} 
+                                className="px-3 py-1.5 rounded-lg border border-gray-200 text-xs font-semibold text-gray-500 hover:bg-white hover:text-blue-600 disabled:opacity-40 transition bg-transparent cursor-pointer disabled:cursor-not-allowed"
+                            >
+                                Trước
+                            </button>
+                            <button 
+                                onClick={() => setCurrentPage(prev => prev + 1)} 
+                                disabled={currentPage === totalPages} 
+                                className="px-3 py-1.5 rounded-lg border border-gray-200 text-xs font-semibold text-gray-500 hover:bg-white hover:text-blue-600 disabled:opacity-40 transition bg-transparent cursor-pointer disabled:cursor-not-allowed"
+                            >
+                                Sau
+                            </button>
                         </div>
                     </div>
                 )}
@@ -341,7 +395,7 @@ const ManageOrders = () => {
 
                         {/* TỔNG KẾT TIỀN */}
                         <div className="p-6 border-t border-gray-100 bg-gray-50/50 flex justify-between items-center">
-                            <div className="flex gap-4 items-center">
+                            <div className="flex gap-3 items-center">
                                 <span className={`px-3 py-1.5 rounded-lg text-xs font-bold border ${
                                     selectedOrder.payment_status === 'paid' ? 'bg-green-50 text-green-700 border-green-200' : 
                                     selectedOrder.payment_status === 'refunded' ? 'bg-gray-100 text-gray-600 border-gray-200' : 
@@ -349,6 +403,9 @@ const ManageOrders = () => {
                                 }`}>
                                     {selectedOrder.payment_status === 'paid' ? 'Đã thu tiền' : selectedOrder.payment_status === 'refunded' ? 'Đã hoàn tiền' : 'Chưa thu tiền'}
                                 </span>
+                                <button onClick={() => handleDownloadInvoice(selectedOrder.order_id || selectedOrder.id)} className="bg-red-600 hover:bg-red-700 text-white px-3 py-1.5 rounded-lg text-xs font-bold transition shadow-sm flex items-center gap-1.5">
+                                    <Download size={14} /> Xuất Hóa Đơn (PDF)
+                                </button>
                             </div>
                             <div className="text-right">
                                 {/* 🌟 Hiển thị thêm dòng Phí Ship */}

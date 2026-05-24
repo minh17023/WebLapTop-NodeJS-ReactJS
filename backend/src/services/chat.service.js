@@ -1,6 +1,5 @@
 const { GoogleGenerativeAI } = require('@google/generative-ai');
-const Product = require('../models/product.model');
-const ChatMessage = require('../models/chat_message.model');
+const { Product, ChatMessage } = require('../models');
 
 class ChatService {
     // Xử lý gửi tin nhắn AI và lưu DB

@@ -1,16 +1,16 @@
 import api from './api';
 
 export const productService = {
-    getAll: async () => {
-        const response = await api.get('/products');
+    getAll: async (page = 1, limit = 12) => {
+        const response = await api.get(`/products?page=${page}&limit=${limit}`);
         return response.data;
     },
     getBySlug: async (slug) => {
         const response = await api.get(`/products/${slug}`);
         return response.data;
     },
-    getByCategory: async (slug) => {
-        const response = await api.get(`/products/category/${slug}`);
+    getByCategory: async (slug, page = 1, limit = 12) => {
+        const response = await api.get(`/products/category/${slug}?page=${page}&limit=${limit}`);
         return response.data;
     },
     search: async (keyword) => {

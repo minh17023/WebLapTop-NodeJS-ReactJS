@@ -2,15 +2,26 @@ const { Post, User } = require('../models');
 const slugify = require('slugify');
 
 class PostService {
-    // 1. Lấy tất cả bài viết (chỉ lấy bài đã xuất bản - is_published: true)
-    async getAllPosts(isAdmin = false) {
-        const whereClause = isAdmin ? {} : {};
+    // 1. Lấy tất cả bài viết (có phân trang, chỉ lấy bài đã xuất bản nếu không phải admin)
+    async getAllPosts(isAdmin = false, page = 1, limit = 10) {
+        const offset = (page - 1) * limit;
+        const whereClause = isAdmin ? {} : { is_published: true };
         
-        return await Post.findAll({
+        const { rows, count } = await Post.findAndCountAll({
             where: whereClause,
             include: [{ model: User, as: 'author', attributes: ['full_name'] }],
+            limit: Number(limit),
+            offset: Number(offset),
             order: [['created_at', 'DESC']]
         });
+
+        return {
+            totalItems: count,
+            totalPages: Math.ceil(count / limit),
+            currentPage: Number(page),
+            limit: Number(limit),
+            posts: rows
+        };
     }
 
     async search(keyword) {

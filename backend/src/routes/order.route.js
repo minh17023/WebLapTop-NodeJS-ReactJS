@@ -11,13 +11,20 @@ const { verifyToken, isAdmin } = require('../middlewares/auth.middleware');
 router.get('/', verifyToken, isAdmin, orderController.getAll);
 // Tìm kiếm
 router.get('/search', verifyToken, isAdmin, orderController.search);
+
+// 🌟 BỔ SUNG: Route Thống kê Dashboard dành cho Admin
+router.get('/dashboard/stats', verifyToken, isAdmin, orderController.getDashboardStats);
+router.get('/dashboard/revenue-chart', verifyToken, isAdmin, orderController.getDashboardRevenueChart);
+
 // [PUT] User tự cập nhật trạng thái đơn hàng (Hủy đơn / Đã nhận hàng)
 router.put('/:id/user-status', verifyToken, orderController.userUpdateStatus);
 // Cập nhật trạng thái
 router.put('/:id/status', verifyToken, isAdmin, orderController.updateStatus);
 
-router.put('/:id/payment-status', orderController.updatePaymentStatus);
+router.put('/:id/payment-status', verifyToken, isAdmin, orderController.updatePaymentStatus);
 
+// 🌟 BỔ SUNG: Route Xuất hóa đơn PDF
+router.get('/:id/invoice', verifyToken, orderController.exportInvoice);
 
 // ===============================================
 // ROUTE DÀNH CHO USER BÌNH THƯỜNG

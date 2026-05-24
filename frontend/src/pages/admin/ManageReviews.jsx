@@ -8,26 +8,42 @@ const ManageReviews = () => {
     const [reviews, setReviews] = useState([]);
     const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState('');
+    const [debouncedSearch, setDebouncedSearch] = useState('');
     
     // Bộ lọc theo số sao
     const [filterRating, setFilterRating] = useState('all'); 
     
     const [currentPage, setCurrentPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(1);
+    const [totalItems, setTotalItems] = useState(0);
     const reviewsPerPage = 6;
 
     // ================= FETCH DATA CHUẨN API =================
-    const fetchReviewsAPI = async (keyword = '') => {
+    const fetchReviewsAPI = async (keyword = '', page = 1, rating = 'all') => {
         setLoading(true);
         try {
             let res;
             if (keyword.trim() !== '') {
                 res = await reviewService.search(keyword);
+                const reviewList = res?.data || res || [];
+                setReviews(Array.isArray(reviewList) ? reviewList : []);
+                setTotalPages(1);
+                setTotalItems(reviewList.length);
             } else {
-                res = await reviewService.getAll();
+                res = await reviewService.getAll(page, reviewsPerPage, rating);
+                if (res.success) {
+                    setReviews(res.data);
+                    if (res.pagination) {
+                        setTotalPages(res.pagination.totalPages);
+                        setTotalItems(res.pagination.totalItems);
+                    }
+                } else {
+                    const reviewList = res?.data || res || [];
+                    setReviews(Array.isArray(reviewList) ? reviewList : []);
+                    setTotalPages(1);
+                    setTotalItems(reviewList.length);
+                }
             }
-            const reviewList = res?.data || res || [];
-            setReviews(Array.isArray(reviewList) ? reviewList : []);
-            setCurrentPage(1); 
         } catch (error) {
             console.error("Lỗi lấy đánh giá:", error);
             toast.error("Không thể tải danh sách đánh giá!");
@@ -36,23 +52,33 @@ const ManageReviews = () => {
         }
     };
 
+    // Debounce tìm kiếm nội dung đánh giá
     useEffect(() => {
-        const delayDebounceFn = setTimeout(() => {
-            fetchReviewsAPI(searchTerm);
+        const handler = setTimeout(() => {
+            setDebouncedSearch(searchTerm);
         }, 500);
-        return () => clearTimeout(delayDebounceFn);
+        return () => clearTimeout(handler);
     }, [searchTerm]);
 
-    // ================= LỌC & PHÂN TRANG =================
-    const processedReviews = reviews.filter(review => {
-        if (filterRating === 'all') return true;
-        return review.rating === Number(filterRating);
-    });
+    // Khi bộ lọc số sao thay đổi, reset về trang 1
+    useEffect(() => {
+        setCurrentPage(1);
+    }, [filterRating]);
 
+    // Khi từ khóa đã debounce thay đổi, reset về trang 1
+    useEffect(() => {
+        setCurrentPage(1);
+    }, [debouncedSearch]);
+
+    // Một useEffect duy nhất chịu trách nhiệm fetch dữ liệu khi trang, bộ lọc hoặc từ khóa debounce thay đổi
+    useEffect(() => {
+        fetchReviewsAPI(debouncedSearch, currentPage, filterRating);
+    }, [currentPage, debouncedSearch, filterRating]);
+
+    // ================= PHÂN TRANG =================
     const indexOfLastReview = currentPage * reviewsPerPage;
     const indexOfFirstReview = indexOfLastReview - reviewsPerPage;
-    const currentReviews = processedReviews.slice(indexOfFirstReview, indexOfLastReview);
-    const totalPages = Math.ceil(processedReviews.length / reviewsPerPage);
+    const currentReviews = reviews; // Đã lọc và phân trang ở Backend
     const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
     // ================= XÓA =================
@@ -178,10 +204,10 @@ const ManageReviews = () => {
                 </div>
 
                 {/* Pagination */}
-                {!loading && processedReviews.length > reviewsPerPage && (
+                {!loading && totalPages > 1 && (
                     <div className="p-4 border-t border-gray-100 flex items-center justify-between bg-gray-50/50 rounded-b-2xl">
                         <p className="text-xs text-gray-500 font-medium">
-                            Hiển thị <span className="font-bold text-gray-800">{indexOfFirstReview + 1}</span> - <span className="font-bold text-gray-800">{Math.min(indexOfLastReview, processedReviews.length)}</span> / <span className="font-bold text-gray-800">{processedReviews.length}</span>
+                            Hiển thị <span className="font-bold text-gray-800">{totalItems > 0 ? indexOfFirstReview + 1 : 0}</span> - <span className="font-bold text-gray-800">{Math.min(indexOfLastReview, totalItems)}</span> / <span className="font-bold text-gray-800">{totalItems}</span>
                         </p>
                         <div className="flex items-center gap-1">
                             <button onClick={() => paginate(currentPage - 1)} disabled={currentPage === 1} className="p-2 rounded-lg border border-gray-200 text-gray-500 hover:bg-white hover:text-yellow-600 disabled:opacity-50 transition bg-transparent"><ChevronLeft size={16} /></button>

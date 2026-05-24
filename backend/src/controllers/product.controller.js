@@ -1,11 +1,23 @@
 const productService = require('../services/product.service');
 
 class ProductController {
-    // Lấy danh sách public
+    // Lấy danh sách public (có phân trang)
     async getAll(req, res, next) {
         try {
-            const products = await productService.getAllProducts();
-            res.status(200).json({ success: true, data: products });
+            const page = parseInt(req.query.page) || 1;
+            const limit = parseInt(req.query.limit) || 12;
+
+            const result = await productService.getAllProducts(page, limit);
+            res.status(200).json({ 
+                success: true, 
+                pagination: {
+                    totalItems: result.totalItems,
+                    totalPages: result.totalPages,
+                    currentPage: result.currentPage,
+                    limit: result.limit
+                },
+                data: result.products 
+            });
         } catch (error) { next(error); }
     }
 
@@ -18,11 +30,23 @@ class ProductController {
         } catch (error) { next(error); }
     }
 
-    // Lấy danh sách sản phẩm theo danh mục
+    // Lấy danh sách sản phẩm theo danh mục (có phân trang)
     async getByCategory(req, res, next) {
         try {
-            const products = await productService.getProductsByCategorySlug(req.params.slug);
-            res.status(200).json({ success: true, data: products });
+            const page = parseInt(req.query.page) || 1;
+            const limit = parseInt(req.query.limit) || 12;
+
+            const result = await productService.getProductsByCategorySlug(req.params.slug, page, limit);
+            res.status(200).json({ 
+                success: true, 
+                pagination: {
+                    totalItems: result.totalItems,
+                    totalPages: result.totalPages,
+                    currentPage: result.currentPage,
+                    limit: result.limit
+                },
+                data: result.products 
+            });
         } catch (error) { next(error); }
     }
 

@@ -18,14 +18,23 @@ class OrderController {
         }
     }
 
-    // Xử lý Request xem lịch sử đơn hàng của User
+    // Xử lý Request xem lịch sử đơn hàng của User (có phân trang)
     async getMyOrders(req, res, next) {
         try {
-            const orders = await orderService.getUserOrders(req.user.id);
+            const page = parseInt(req.query.page) || 1;
+            const limit = parseInt(req.query.limit) || 10;
+
+            const result = await orderService.getUserOrders(req.user.id, page, limit);
             
             res.status(200).json({
                 success: true,
-                data: orders
+                pagination: {
+                    totalItems: result.totalItems,
+                    totalPages: result.totalPages,
+                    currentPage: result.currentPage,
+                    limit: result.limit
+                },
+                data: result.orders
             });
         } catch (error) {
             next(error);
@@ -41,6 +50,12 @@ class OrderController {
 
             if (!result.success) {
                 return res.status(404).json(result);
+            }
+
+            // Bảo mật: Chỉ Admin hoặc chính khách hàng mua đơn này mới được phép xem chi tiết
+            const order = result.data;
+            if (req.user.role !== 'admin' && req.user.id !== order.user_id) {
+                return res.status(403).json({ success: false, message: "Bạn không có quyền truy cập đơn hàng này!" });
             }
 
             return res.status(200).json(result);
@@ -99,8 +114,20 @@ class OrderController {
 
     async getAll(req, res, next) {
         try {
-            const orders = await orderService.getAllOrders();
-            res.status(200).json({ success: true, data: orders });
+            const page = parseInt(req.query.page) || 1;
+            const limit = parseInt(req.query.limit) || 10;
+
+            const result = await orderService.getAllOrders(page, limit);
+            res.status(200).json({ 
+                success: true, 
+                pagination: {
+                    totalItems: result.totalItems,
+                    totalPages: result.totalPages,
+                    currentPage: result.currentPage,
+                    limit: result.limit
+                },
+                data: result.orders 
+            });
         } catch (error) {
             next(error);
         }
@@ -134,6 +161,64 @@ class OrderController {
                 message: 'Cập nhật trạng thái thành công', 
                 data: updatedOrder 
             });
+        } catch (error) {
+            next(error);
+        }
+    }
+
+    // 🌟 BỔ SUNG: Lấy số liệu thống kê KPIs Dashboard
+    async getDashboardStats(req, res, next) {
+        try {
+            const { startDate, endDate } = req.query;
+            if (!startDate || !endDate) {
+                return res.status(400).json({ success: false, message: 'Vui lòng cung cấp khoảng ngày lọc!' });
+            }
+            const stats = await orderService.getDashboardStats(startDate, endDate);
+            return res.status(200).json({ success: true, data: stats });
+        } catch (error) {
+            next(error);
+        }
+    }
+
+    // 🌟 BỔ SUNG: Lấy biểu đồ doanh thu theo ngày
+    async getDashboardRevenueChart(req, res, next) {
+        try {
+            const { startDate, endDate } = req.query;
+            if (!startDate || !endDate) {
+                return res.status(400).json({ success: false, message: 'Vui lòng cung cấp khoảng ngày lọc!' });
+            }
+            const chartData = await orderService.getDashboardRevenueChart(startDate, endDate);
+            return res.status(200).json({ success: true, data: chartData });
+        } catch (error) {
+            next(error);
+        }
+    }
+
+    // 🌟 BỔ SUNG: Xuất hóa đơn PDF
+    async exportInvoice(req, res, next) {
+        try {
+            const { id } = req.params;
+            
+            // Lấy thông tin chi tiết đơn hàng cùng các món hàng
+            const invoiceData = await orderService.getInvoiceData(id);
+            if (!invoiceData) {
+                return res.status(404).json({ success: false, message: 'Đơn hàng không tồn tại' });
+            }
+
+            const { order, items } = invoiceData;
+            
+            // Bảo mật: Chỉ Admin hoặc chính User mua hàng mới được xuất hóa đơn
+            if (req.user.role !== 'admin' && req.user.id !== order.user_id) {
+                return res.status(403).json({ success: false, message: 'Bạn không có quyền truy cập hóa đơn này!' });
+            }
+
+            // Cấu hình header tải về file PDF
+            res.setHeader('Content-Type', 'application/pdf');
+            res.setHeader('Content-Disposition', `attachment; filename=Invoice_#${id}.pdf`);
+
+            // Gọi tiện ích xuất PDF ghi trực tiếp vào response stream
+            const { generateInvoicePDF } = require('../utils/pdf.util');
+            generateInvoicePDF(order, items, res);
         } catch (error) {
             next(error);
         }

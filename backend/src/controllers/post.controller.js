@@ -1,13 +1,25 @@
 const postService = require('../services/post.service');
 
 class PostController {
-    // [GET] Danh sách (Khách chỉ thấy bài đã xuất bản, Admin thấy hết)
+    // [GET] Danh sách (Khách chỉ thấy bài đã xuất bản, Admin thấy hết, có phân trang)
     async getAll(req, res, next) {
         try {
             // Kiểm tra xem người gọi API có phải admin không (dựa vào header token nếu có)
             const isAdmin = req.user && req.user.role === 'admin';
-            const posts = await postService.getAllPosts(isAdmin);
-            res.status(200).json({ success: true, data: posts });
+            const page = parseInt(req.query.page) || 1;
+            const limit = parseInt(req.query.limit) || 10;
+
+            const result = await postService.getAllPosts(isAdmin, page, limit);
+            res.status(200).json({ 
+                success: true, 
+                pagination: {
+                    totalItems: result.totalItems,
+                    totalPages: result.totalPages,
+                    currentPage: result.currentPage,
+                    limit: result.limit
+                },
+                data: result.posts 
+            });
         } catch (error) { next(error); }
     }
 

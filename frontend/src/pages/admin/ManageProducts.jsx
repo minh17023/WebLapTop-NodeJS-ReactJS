@@ -10,9 +10,12 @@ const ManageProducts = () => {
     const [categories, setCategories] = useState([]);
     const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState('');
+    const [debouncedSearch, setDebouncedSearch] = useState('');
 
     // ================= STATE PHÂN TRANG =================
     const [currentPage, setCurrentPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(1);
+    const [totalItems, setTotalItems] = useState(0);
     const productsPerPage = 5;
 
     // ================= STATE MODAL =================
@@ -42,22 +45,31 @@ const ManageProducts = () => {
     }, []);
 
     // ================= FETCH SẢN PHẨM =================
-    const fetchProductsAPI = async (keyword = '') => {
+    const fetchProductsAPI = async (keyword = '', page = 1) => {
         setLoading(true);
         try {
             let res;
             if (keyword.trim() !== '') {
                 res = await productService.search(keyword);
+                const productList = res?.data || res || [];
+                setProducts(Array.isArray(productList) ? productList : []);
+                setTotalPages(1);
+                setTotalItems(productList.length);
             } else {
-                if (typeof productService.getProducts === 'function') {
-                    res = await productService.getProducts();
+                res = await productService.getAll(page, productsPerPage);
+                if (res.success) {
+                    setProducts(res.data);
+                    if (res.pagination) {
+                        setTotalPages(res.pagination.totalPages);
+                        setTotalItems(res.pagination.totalItems);
+                    }
                 } else {
-                    res = await productService.getAll();
+                    const productList = res?.data || res || [];
+                    setProducts(Array.isArray(productList) ? productList : []);
+                    setTotalPages(1);
+                    setTotalItems(productList.length);
                 }
             }
-            const productList = res?.data || res || [];
-            setProducts(Array.isArray(productList) ? productList : []);
-            setCurrentPage(1); 
         } catch (error) {
             console.error("Lỗi lấy sản phẩm:", error);
             toast.error("Không thể tải danh sách sản phẩm!");
@@ -66,17 +78,27 @@ const ManageProducts = () => {
         }
     };
 
+    // Debounce tìm kiếm
     useEffect(() => {
-        const delayDebounceFn = setTimeout(() => {
-            fetchProductsAPI(searchTerm);
+        const handler = setTimeout(() => {
+            setDebouncedSearch(searchTerm);
         }, 500);
-        return () => clearTimeout(delayDebounceFn);
+        return () => clearTimeout(handler);
     }, [searchTerm]);
+
+    // Khi từ khóa đã debounce thay đổi, reset về trang 1
+    useEffect(() => {
+        setCurrentPage(1);
+    }, [debouncedSearch]);
+
+    // Một useEffect duy nhất chịu trách nhiệm fetch dữ liệu khi trang hoặc từ khóa debounce thay đổi
+    useEffect(() => {
+        fetchProductsAPI(debouncedSearch, currentPage);
+    }, [currentPage, debouncedSearch]);
 
     const indexOfLastProduct = currentPage * productsPerPage;
     const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
-    const currentProducts = products.slice(indexOfFirstProduct, indexOfLastProduct);
-    const totalPages = Math.ceil(products.length / productsPerPage);
+    const currentProducts = products; // Đã phân trang ở Backend
     const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
     // ================= XỬ LÝ ẢNH =================
@@ -275,10 +297,10 @@ const ManageProducts = () => {
                 </div>
 
                 {/* Phân trang */}
-                {!loading && products.length > productsPerPage && (
+                {!loading && totalPages > 1 && (
                     <div className="p-4 border-t border-gray-100 flex items-center justify-between bg-gray-50/50 rounded-b-2xl">
                         <p className="text-xs text-gray-500 font-medium">
-                            Hiển thị <span className="font-bold text-gray-800">{indexOfFirstProduct + 1}</span> - <span className="font-bold text-gray-800">{Math.min(indexOfLastProduct, products.length)}</span> / <span className="font-bold text-gray-800">{products.length}</span>
+                            Hiển thị <span className="font-bold text-gray-800">{totalItems > 0 ? indexOfFirstProduct + 1 : 0}</span> - <span className="font-bold text-gray-800">{Math.min(indexOfLastProduct, totalItems)}</span> / <span className="font-bold text-gray-800">{totalItems}</span>
                         </p>
                         <div className="flex items-center gap-1">
                             <button onClick={() => paginate(currentPage - 1)} disabled={currentPage === 1} className="p-2 rounded-lg border border-gray-200 text-gray-500 hover:bg-white hover:text-red-600 disabled:opacity-50 transition bg-transparent"><ChevronLeft size={16} /></button>

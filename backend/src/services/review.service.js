@@ -2,29 +2,57 @@ const { Review, User } = require('../models');
 const { Op } = require('sequelize');
 
 class ReviewService {
-    // 🌟 THÊM MỚI: Lấy tất cả đánh giá (Cho Admin)
-    async getAll() {
-        return await Review.findAll({
+    // 🌟 THÊM MỚI: Lấy tất cả đánh giá (Cho Admin, có phân trang, hỗ trợ lọc theo số sao)
+    async getAll(page = 1, limit = 10, rating = null) {
+        const offset = (page - 1) * limit;
+        const whereClause = {};
+        if (rating !== null && rating !== undefined && rating !== 'all') {
+            whereClause.rating = Number(rating);
+        }
+
+        const { rows, count } = await Review.findAndCountAll({
+            where: whereClause,
             include: [{ 
                 model: User, 
                 as: 'reviewer', // Đảm bảo đúng alias trong models
                 attributes: ['full_name'] 
             }],
+            limit: Number(limit),
+            offset: Number(offset),
             order: [['created_at', 'DESC']]
         });
+
+        return {
+            totalItems: count,
+            totalPages: Math.ceil(count / limit),
+            currentPage: Number(page),
+            limit: Number(limit),
+            reviews: rows
+        };
     }
 
-    // 1. Lấy tất cả đánh giá của một sản phẩm
-    async getReviewsByProductId(productId) {
-        return await Review.findAll({
+    // 1. Lấy tất cả đánh giá của một sản phẩm (có phân trang)
+    async getReviewsByProductId(productId, page = 1, limit = 10) {
+        const offset = (page - 1) * limit;
+        const { rows, count } = await Review.findAndCountAll({
             where: { product_id: productId },
             include: [{ 
                 model: User, 
                 as: 'reviewer', 
                 attributes: ['full_name'] 
             }],
+            limit: Number(limit),
+            offset: Number(offset),
             order: [['created_at', 'DESC']]
         });
+
+        return {
+            totalItems: count,
+            totalPages: Math.ceil(count / limit),
+            currentPage: Number(page),
+            limit: Number(limit),
+            reviews: rows
+        };
     }
 
     async search(keyword) {
