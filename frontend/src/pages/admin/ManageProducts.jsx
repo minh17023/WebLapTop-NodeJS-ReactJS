@@ -27,7 +27,8 @@ const ManageProducts = () => {
     const initialFormState = {
         name: '', price: '', discount_price: '', stock_quantity: '',
         category_id: '', brand: '', main_image: '', description: '',
-        spec_cpu: '', spec_ram: '', spec_gpu: '', spec_screen: '', spec_storage: ''
+        spec_cpu: '', spec_ram: '', spec_gpu: '', spec_screen: '', spec_storage: '',
+        spec_weight: '', spec_length: '', spec_width: '', spec_height: ''
     };
     const [formData, setFormData] = useState(initialFormState);
 
@@ -148,7 +149,11 @@ const ManageProducts = () => {
             spec_ram: specs.ram || '',
             spec_gpu: specs.gpu || '',
             spec_screen: specs.screen || '',
-            spec_storage: specs.storage || ''
+            spec_storage: specs.storage || '',
+            spec_weight: specs.weight || '',
+            spec_length: specs.length || '',
+            spec_width: specs.width || '',
+            spec_height: specs.height || ''
         });
         setIsModalOpen(true);
     };
@@ -177,7 +182,11 @@ const ManageProducts = () => {
                     ram: formData.spec_ram,
                     gpu: formData.spec_gpu,
                     screen: formData.spec_screen,
-                    storage: formData.spec_storage
+                    storage: formData.spec_storage,
+                    weight: formData.spec_weight ? Number(formData.spec_weight) : 2000,
+                    length: formData.spec_length ? Number(formData.spec_length) : 35,
+                    width: formData.spec_width ? Number(formData.spec_width) : 25,
+                    height: formData.spec_height ? Number(formData.spec_height) : 10
                 }
             };
 
@@ -394,6 +403,29 @@ const ManageProducts = () => {
                                         <div className="md:col-span-2">
                                             <label className="block text-[11px] font-bold text-gray-500 uppercase mb-2">Ổ cứng (Storage)</label>
                                             <input type="text" name="spec_storage" placeholder="VD: 512GB SSD NVMe..." value={formData.spec_storage} onChange={handleInputChange} className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-red-500 outline-none text-sm font-medium transition" />
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {/* 🌟 KHỐI VẬN CHUYỂN (DÙNG CHO GHN, LƯU VÀO JSONB) */}
+                                <div className="pt-2">
+                                    <h3 className="text-[11px] font-black text-red-600 uppercase tracking-wider mb-4 border-b border-gray-100 pb-2">Thông số đóng gói & Vận chuyển (GHN)</h3>
+                                    <div className="grid grid-cols-2 md:grid-cols-4 gap-5">
+                                        <div>
+                                            <label className="block text-[11px] font-bold text-gray-500 uppercase mb-2">Cân nặng (gram)</label>
+                                            <input type="number" name="spec_weight" placeholder="VD: 2000..." value={formData.spec_weight} onChange={handleInputChange} className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-red-500 outline-none text-sm font-medium transition" />
+                                        </div>
+                                        <div>
+                                            <label className="block text-[11px] font-bold text-gray-500 uppercase mb-2">Chiều dài (cm)</label>
+                                            <input type="number" name="spec_length" placeholder="VD: 35..." value={formData.spec_length} onChange={handleInputChange} className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-red-500 outline-none text-sm font-medium transition" />
+                                        </div>
+                                        <div>
+                                            <label className="block text-[11px] font-bold text-gray-500 uppercase mb-2">Chiều rộng (cm)</label>
+                                            <input type="number" name="spec_width" placeholder="VD: 25..." value={formData.spec_width} onChange={handleInputChange} className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-red-500 outline-none text-sm font-medium transition" />
+                                        </div>
+                                        <div>
+                                            <label className="block text-[11px] font-bold text-gray-500 uppercase mb-2">Chiều cao (cm)</label>
+                                            <input type="number" name="spec_height" placeholder="VD: 10..." value={formData.spec_height} onChange={handleInputChange} className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-red-500 outline-none text-sm font-medium transition" />
                                         </div>
                                     </div>
                                 </div>

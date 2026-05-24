@@ -82,10 +82,14 @@ class GHNService {
                 to_address: orderInfo.shipping_address,
                 to_ward_code: orderInfo.ward_code,
                 to_district_id: parseInt(orderInfo.district_id),
-                weight: 2000, // Cân nặng mặc định 1 đơn laptop là 2kg
+                // Nhận thông số động từ orderInfo
+                weight: orderInfo.weight ? parseInt(orderInfo.weight) : 2000,
+                length: orderInfo.length ? parseInt(orderInfo.length) : 35,
+                width: orderInfo.width ? parseInt(orderInfo.width) : 25,
+                height: orderInfo.height ? parseInt(orderInfo.height) : 10,
                 items: orderInfo.items, // Danh sách sản phẩm GHN yêu cầu format: [{name, quantity, weight}]
                 cod_amount: parseInt(orderInfo.cod_amount) || 0,
-                insurance_value: parseInt(orderInfo.cod_amount) || 0 
+                insurance_value: orderInfo.insurance_value ? parseInt(orderInfo.insurance_value) : 0 
             }, {
                 headers: { 
                     ...this.headers,

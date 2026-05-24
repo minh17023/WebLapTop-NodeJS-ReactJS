@@ -236,12 +236,37 @@ class OrderService {
         if (!order) return null;
 
         if (newStatus === 'shipped' && !order.tracking_code) {
-            // 1. Format lại danh sách sản phẩm cho chuẩn với GHN
-            const ghnItems = order.items.map(item => ({
-                name: item.product ? item.product.name : 'Laptop HNC',
-                quantity: item.quantity,
-                weight: 2000 // 2kg/máy
-            }));
+            // 1. Format lại danh sách sản phẩm cho chuẩn với GHN và tính các thông số động
+            let totalWeight = 0;
+            let maxLength = 0;
+            let maxWidth = 0;
+            let totalHeight = 0;
+
+            const ghnItems = order.items.map(item => {
+                const specs = item.product && item.product.specifications ? item.product.specifications : {};
+                const q = item.quantity;
+                const w = specs.weight ? Number(specs.weight) : 2000;
+                const l = specs.length ? Number(specs.length) : 35;
+                const wd = specs.width ? Number(specs.width) : 25;
+                const h = specs.height ? Number(specs.height) : 10;
+
+                totalWeight += w * q;
+                if (l > maxLength) maxLength = l;
+                if (wd > maxWidth) maxWidth = wd;
+                totalHeight += h * q;
+
+                return {
+                    name: item.product ? item.product.name : 'Laptop HNC',
+                    quantity: q,
+                    weight: w
+                };
+            });
+
+            // Nếu kích thước bằng 0 thì dùng mặc định
+            if (maxLength === 0) maxLength = 35;
+            if (maxWidth === 0) maxWidth = 25;
+            if (totalHeight === 0) totalHeight = 10;
+            if (totalWeight === 0) totalWeight = 2000;
             
             const totalAmountInt = Math.round(Number(order.total_amount));
             const codAmount = order.payment_status === 'unpaid' ? totalAmountInt : 0;
@@ -254,7 +279,13 @@ class OrderService {
                 district_id: order.district_id,
                 note: order.order_note,
                 cod_amount: codAmount,
-                items: ghnItems
+                items: ghnItems,
+                // Đẩy thông số động
+                weight: totalWeight,
+                length: maxLength,
+                width: maxWidth,
+                height: totalHeight,
+                insurance_value: totalAmountInt // Luôn bảo hiểm 100% giá trị đơn hàng!
             });
 
             // 3. Cập nhật mã vận đơn vừa lấy được vào Database
