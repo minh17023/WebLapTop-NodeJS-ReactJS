@@ -1,65 +1,74 @@
 const { Order, OrderItem, Product, User, CartItem, sequelize } = require('../models');
+const ghnService = require('./shipping.service');
+const { Op } = require('sequelize');
 
 class OrderService {
     // 1. Logic Tiến hành Đặt Hàng
     async createOrder(userId, orderData) {
-    const t = await sequelize.transaction();
-    try {
-        // Lấy thông tin họ tên và email của User từ DB để làm hóa đơn
-        const user = await User.findByPk(userId);
-        if (!user) throw new Error('Tài khoản người dùng không tồn tại');
+        const t = await sequelize.transaction();
+        try {
+            // Lấy thông tin họ tên và email của User từ DB để làm hóa đơn
+            const user = await User.findByPk(userId);
+            if (!user) throw new Error('Tài khoản người dùng không tồn tại');
 
-        // Tính toán tổng tiền từ danh sách sản phẩm Frontend gửi lên
-        let totalAmount = 0;
-        for (const item of orderData.items) {
-            totalAmount += Number(item.price) * Number(item.quantity);
-        }
+            // Tính toán tiền hàng từ danh sách sản phẩm Frontend gửi lên
+            let itemsAmount = 0;
+            for (const item of orderData.items) {
+                itemsAmount += Number(item.price) * Number(item.quantity);
+            }
 
-        // Bước A: Tạo hóa đơn chính (Bảng orders)
-        const newOrder = await Order.create({
-            user_id: userId,
-            full_name: user.full_name || user.fullName || 'Khách hàng', 
-            email: user.email,
-            phone: orderData.phone,
-            shipping_address: orderData.shipping_address,
-            total_amount: totalAmount,
-            payment_method: orderData.payment_method || 'COD',
-            status: 'pending',
-            order_note: orderData.order_note || null
-        }, { transaction: t });
+            // 🌟 BỔ SUNG: Tính phí ship và cộng vào tổng tiền cuối cùng
+            const shippingFee = Number(orderData.shipping_fee) || 0;
+            const totalAmount = itemsAmount + shippingFee;
 
-        // Bước B: Chuẩn bị dữ liệu và lưu hàng loạt vào bảng Chi tiết hóa đơn (order_items)
-        const orderItemsPayload = orderData.items.map(item => ({
-            order_id: newOrder.order_id,
-            product_id: item.product_id,
-            quantity: item.quantity,
-            price_at_purchase: item.price 
-        }));
-
-        await OrderItem.bulkCreate(orderItemsPayload, { transaction: t });
-
-        // =================================================================
-        // 🌟 BƯỚC C ĐÃ SỬA: CHỈ XÓA NHỮNG MÓN ĐÃ ĐƯỢC CHỌN MUA KHỎI GIỎ HÀNG
-        // =================================================================
-        // Lọc lấy mảng các product_id mà khách hàng thực sự nhấn mua
-        const purchasedProductIds = orderData.items.map(item => item.product_id);
-
-        await CartItem.destroy({
-            where: { 
+            // Bước A: Tạo hóa đơn chính (Bảng orders)
+            const newOrder = await Order.create({
                 user_id: userId,
-                product_id: purchasedProductIds // Chỉ xóa sản phẩm nằm trong danh sách chốt đơn này
-            },
-            transaction: t
-        });
+                full_name: user.full_name || user.fullName || 'Khách hàng', 
+                email: user.email,
+                phone: orderData.phone,
+                shipping_address: orderData.shipping_address,
+                total_amount: totalAmount,
+                payment_method: orderData.payment_method || 'COD',
+                status: 'pending',
+                order_note: orderData.order_note || null,
+                
+                // 🌟 BỔ SUNG: Lưu thông tin Giao Hàng Nhanh
+                shipping_fee: shippingFee,
+                district_id: orderData.district_id || null,
+                ward_code: orderData.ward_code || null,
+                tracking_code: null // Sẽ tự cập nhật sau khi đẩy đơn sang GHN thành công
+            }, { transaction: t });
 
-        // Hoàn tất mọi tiến trình lưu trữ
-        await t.commit();
-        return newOrder;
-    } catch (error) {
-        // Nếu có bất kỳ lỗi nào, hoàn nguyên dữ liệu lại từ đầu
-        await t.rollback();
-        throw error;
-    }
+            // Bước B: Chuẩn bị dữ liệu và lưu hàng loạt vào bảng Chi tiết hóa đơn (order_items)
+            const orderItemsPayload = orderData.items.map(item => ({
+                order_id: newOrder.order_id,
+                product_id: item.product_id,
+                quantity: item.quantity,
+                price_at_purchase: item.price 
+            }));
+
+            await OrderItem.bulkCreate(orderItemsPayload, { transaction: t });
+
+            // Bước C: CHỈ XÓA NHỮNG MÓN ĐÃ ĐƯỢC CHỌN MUA KHỎI GIỎ HÀNG
+            const purchasedProductIds = orderData.items.map(item => item.product_id);
+
+            await CartItem.destroy({
+                where: { 
+                    user_id: userId,
+                    product_id: purchasedProductIds 
+                },
+                transaction: t
+            });
+
+            // Hoàn tất mọi tiến trình lưu trữ
+            await t.commit();
+            return newOrder;
+        } catch (error) {
+            // Nếu có bất kỳ lỗi nào, hoàn nguyên dữ liệu lại từ đầu
+            await t.rollback();
+            throw error;
+        }
     }
 
     // 2. Logic Xem Lịch sử Đơn hàng (Dành cho trang cá nhân của Khách)
@@ -68,21 +77,19 @@ class OrderService {
             where: { user_id: userId },
             include: [{
                 model: OrderItem,
-                as: 'items', // Khớp với alias thiết lập ở models/index.js
+                as: 'items', 
                 include: [{
                     model: Product,
                     as: 'product',
                     attributes: ['name', 'main_image', 'slug']
                 }]
             }],
-            order: [['created_at', 'DESC']] // Đơn hàng mới nhất xếp lên đầu
+            order: [['created_at', 'DESC']]
         });
     }
 
     async getById(orderId) {
         try {
-            // Tìm đơn hàng theo Khóa chính (Primary Key)
-            // (Đảm bảo gọi đúng tên model Order của bạn)
             const order = await Order.findByPk(orderId);
             
             if (!order) {
@@ -97,7 +104,6 @@ class OrderService {
     }
 
     async userUpdateOrderStatus(userId, orderId, newStatus) {
-        // Chỉ tìm đơn hàng khớp với ID đơn và ID của chính user đó (Bảo mật)
         const order = await Order.findOne({
             where: { order_id: orderId, user_id: userId }
         });
@@ -119,14 +125,12 @@ class OrderService {
     // Cập nhật trạng thái thanh toán
     async updatePaymentStatus(orderId, payment_status) {
         try {
-            // Đảm bảo bạn đang gọi đúng model Order của bạn
             const order = await Order.findByPk(orderId);
             
             if (!order) {
                 return { success: false, message: 'Không tìm thấy đơn hàng này' };
             }
 
-            // Cập nhật trạng thái
             order.payment_status = payment_status;
 
             // Logic thông minh: Nếu admin set là 'paid' và đơn đang 'pending', tự động chuyển sang 'processing'
@@ -143,7 +147,7 @@ class OrderService {
             };
         } catch (error) {
             console.error("Lỗi tại OrderService.updatePaymentStatus:", error);
-            throw error; // Ném lỗi ra cho Controller bắt
+            throw error; 
         }
     }
 
@@ -151,7 +155,6 @@ class OrderService {
     // CÁC HÀM DÀNH CHO ADMIN (QUẢN LÝ ĐƠN HÀNG)
     // ===============================================
 
-    // 1. Lấy toàn bộ danh sách đơn hàng
     async getAllOrders() {
         return await Order.findAll({
             include: [{
@@ -160,18 +163,16 @@ class OrderService {
                 include: [{
                     model: Product,
                     as: 'product',
-                    attributes: ['name', 'main_image'] // Admin cần xem ảnh và tên sp trong đơn
+                    attributes: ['name', 'main_image']
                 }]
             }],
             order: [['created_at', 'DESC']]
         });
     }
 
-    // 2. Tìm kiếm đơn hàng (Theo tên khách, số điện thoại hoặc mã đơn hàng)
     async searchOrders(keyword) {
         const term = `%${keyword.trim()}%`;
         
-        // Kiểm tra xem keyword có phải là một số không (để tìm theo mã ID)
         const isNumeric = !isNaN(keyword) && keyword.trim() !== '';
         
         const whereCondition = {
@@ -200,14 +201,45 @@ class OrderService {
         });
     }
 
-    // 3. Cập nhật trạng thái đơn hàng
     async updateOrderStatus(orderId, newStatus) {
-        const order = await Order.findByPk(orderId);
+        // Tìm đơn hàng kèm theo danh sách sản phẩm bên trong nó
+        const order = await Order.findByPk(orderId, {
+            include: [{
+                model: OrderItem,
+                as: 'items',
+                include: [{ model: Product, as: 'product' }]
+            }]
+        });
+        
         if (!order) return null;
 
-        // Nếu trạng thái là 'cancelled' (Hủy đơn), có thể bạn sẽ muốn viết thêm logic 
-        // cộng lại số lượng (stock) cho bảng Product ở đây.
+        if (newStatus === 'shipped' && !order.tracking_code) {
+            // 1. Format lại danh sách sản phẩm cho chuẩn với GHN
+            const ghnItems = order.items.map(item => ({
+                name: item.product ? item.product.name : 'Laptop HNC',
+                quantity: item.quantity,
+                weight: 2000 // 2kg/máy
+            }));
+            
+            const totalAmountInt = Math.round(Number(order.total_amount));
+            const codAmount = order.payment_status === 'unpaid' ? totalAmountInt : 0;
+            // 2. Gọi API tạo đơn sang GHN
+            const trackingCode = await ghnService.createShippingOrder({
+                customer_name: order.full_name,
+                customer_phone: order.phone,
+                shipping_address: order.shipping_address,
+                ward_code: order.ward_code,
+                district_id: order.district_id,
+                note: order.order_note,
+                cod_amount: codAmount,
+                items: ghnItems
+            });
 
+            // 3. Cập nhật mã vận đơn vừa lấy được vào Database
+            order.tracking_code = trackingCode;
+        }
+
+        // Cập nhật trạng thái mới và lưu lại
         order.status = newStatus;
         await order.save();
         return order;

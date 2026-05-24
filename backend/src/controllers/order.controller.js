@@ -5,6 +5,7 @@ class OrderController {
     async create(req, res, next) {
         try {
             // req.user.id lấy từ Middleware verifyToken sau khi giải mã JWT
+            // Toàn bộ dữ liệu (bao gồm district_id, ward_code, shipping_fee) từ req.body sẽ được ném sang Service
             const newOrder = await orderService.createOrder(req.user.id, req.body);
             
             res.status(201).json({
@@ -34,7 +35,7 @@ class OrderController {
     // API lấy chi tiết 1 đơn hàng: GET /api/orders/:id
     async getById(req, res) {
         try {
-            const { id } = req.params; // Lấy số ID từ đường dẫn truyền xuống
+            const { id } = req.params; 
 
             const result = await orderService.getById(id);
 
@@ -60,7 +61,6 @@ class OrderController {
             }
             res.status(200).json({ success: true, message: 'Cập nhật đơn hàng thành công!', data: updatedOrder });
         } catch (error) {
-            // Trả về lỗi 400 nếu vi phạm logic (ví dụ: Hủy đơn đang giao)
             res.status(400).json({ success: false, message: error.message });
         }
     }
@@ -71,7 +71,6 @@ class OrderController {
             const { id } = req.params;
             const { payment_status } = req.body;
 
-            // Validate dữ liệu đầu vào
             const validPaymentStatuses = ['unpaid', 'paid', 'refunded'];
             if (!validPaymentStatuses.includes(payment_status)) {
                 return res.status(400).json({ 
@@ -80,7 +79,6 @@ class OrderController {
                 });
             }
 
-            // Gọi sang Service để xử lý Database
             const result = await orderService.updatePaymentStatus(id, payment_status);
 
             if (!result.success) {
@@ -99,7 +97,6 @@ class OrderController {
     // CÁC HÀM DÀNH CHO ADMIN
     // ===============================================
 
-    // [GET] Lấy toàn bộ đơn hàng
     async getAll(req, res, next) {
         try {
             const orders = await orderService.getAllOrders();
@@ -109,7 +106,6 @@ class OrderController {
         }
     }
 
-    // [GET] Tìm kiếm đơn hàng
     async search(req, res, next) {
         try {
             const keyword = req.query.q || '';
@@ -120,7 +116,6 @@ class OrderController {
         }
     }
 
-    // [PUT] Cập nhật trạng thái đơn hàng
     async updateStatus(req, res, next) {
         try {
             const { status } = req.body;

@@ -21,7 +21,7 @@ const sequelize = new Sequelize(
 
 // Test kết nối
 sequelize.authenticate()
-    .then(() => console.log('🔗 Sequelize: Đã kết nối thành công với PostgreSQL!'))
-    .catch(err => console.error('❌ Sequelize: Kết nối thất bại:', err));
+    .then(() => console.log('Sequelize: Đã kết nối thành công với PostgreSQL!'))
+    .catch(err => console.error('Sequelize: Kết nối thất bại:', err));
 
 module.exports = sequelize;

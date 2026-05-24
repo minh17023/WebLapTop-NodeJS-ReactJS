@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Package, Clock, CheckCircle, XCircle, Truck, AlertTriangle } from 'lucide-react';
+import { Package, Clock, CheckCircle, XCircle, Truck, AlertTriangle, Search } from 'lucide-react';
 import { toast } from 'react-toastify';
 import { orderService } from '../../services/order.service';
 
@@ -86,6 +86,27 @@ const MyOrders = () => {
                                         </div>
                                     </div>
 
+                                    {/* 🌟 VÙNG MỚI: HIỂN THỊ MÃ VẬN ĐƠN (NẾU CÓ) */}
+                                    {order.tracking_code && (
+                                        <div className="px-5 py-3 bg-blue-50/40 border-b border-blue-100 flex flex-wrap items-center justify-between gap-3">
+                                            <div className="flex items-center gap-2 text-sm text-blue-800">
+                                                <Truck size={16} className="text-blue-600" />
+                                                <span className="font-medium">Mã vận đơn GHN:</span>
+                                                <span className="font-black tracking-widest text-blue-700 bg-white px-2.5 py-1 rounded-md shadow-sm border border-blue-200">
+                                                    {order.tracking_code}
+                                                </span>
+                                            </div>
+                                            <a 
+                                                href={`https://donhang.ghn.vn/?order_code=${order.tracking_code}`} 
+                                                target="_blank" 
+                                                rel="noopener noreferrer"
+                                                className="flex items-center gap-1.5 text-xs font-bold text-white bg-blue-600 hover:bg-blue-700 px-3 py-1.5 rounded-lg transition shadow-sm shadow-blue-200"
+                                            >
+                                                <Search size={14} /> Tra cứu hành trình
+                                            </a>
+                                        </div>
+                                    )}
+
                                     {/* Danh sách sản phẩm trong đơn */}
                                     <div className="p-5 space-y-4">
                                         {order.items && order.items.map((item, index) => (
@@ -114,7 +135,7 @@ const MyOrders = () => {
                                             <p className="text-xl font-black text-red-600">{formatPrice(order.total_amount)}</p>
                                         </div>
 
-                                        {/* 🌟 NÚT HÀNH ĐỘNG ẨN/HIỆN THÔNG MINH */}
+                                        {/* NÚT HÀNH ĐỘNG ẨN/HIỆN THÔNG MINH */}
                                         <div className="flex flex-wrap items-center gap-3 w-full sm:w-auto justify-end">
                                             
                                             {/* Nút Hủy Đơn (Chỉ hiện khi pending) */}

@@ -9,6 +9,7 @@ const orderRoute = require('./order.route');
 const cartRoute = require('./cart.route');
 const chatRoute = require('./chat.route');
 const paymentRoute = require('./payment.route');
+const shippingRoutes = require('./shipping.route');
 
 router.use('/products', productRoute);
 router.use('/users', userRoute);
@@ -19,5 +20,6 @@ router.use('/orders', orderRoute);
 router.use('/cart', cartRoute);
 router.use('/chat', chatRoute);
 router.use('/payment', paymentRoute);
+router.use('/shipping', shippingRoutes);
 
 module.exports = router;
