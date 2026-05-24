@@ -4,7 +4,7 @@ import { productService } from '../../services/product.service';
 import { ShoppingCart, Check, Shield, ArrowLeft } from 'lucide-react';
 import { toast } from 'react-toastify';
 import ReviewSection from '../../components/user/ReviewSection';
-import { CartContext } from '../../context/user/CartContext'; // Import CartContext
+import { CartContext } from '../../context/CartContext'; // Import CartContext
 
 const ProductDetail = () => {
     const { slug } = useParams();

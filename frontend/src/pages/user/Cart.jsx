@@ -1,8 +1,8 @@
 import { useContext, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom'; 
 import { Trash2, Plus, Minus, ArrowLeft, ArrowRight, ShoppingBag } from 'lucide-react';
-import { CartContext } from '../../context/user/CartContext';
-import { AuthContext } from '../../context/user/AuthContext';
+import { CartContext } from '../../context/CartContext';
+import { AuthContext } from '../../context/AuthContext';
 import { toast } from 'react-toastify';
 
 const Cart = () => {

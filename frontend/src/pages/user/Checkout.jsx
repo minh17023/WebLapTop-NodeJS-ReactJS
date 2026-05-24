@@ -1,8 +1,8 @@
 import { useContext, useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom'; 
 import { ArrowLeft, Phone, MapPin, FileText, CreditCard, ShoppingBag, Truck, Loader2 } from 'lucide-react';
-import { CartContext } from '../../context/user/CartContext';
-import { AuthContext } from '../../context/user/AuthContext';
+import { CartContext } from '../../context/CartContext';
+import { AuthContext } from '../../context/AuthContext';
 import { userService } from '../../services/user.service';
 import { orderService } from '../../services/order.service';
 import { shippingService } from '../../services/shipping.service'; // Bổ sung API Giao Hàng Nhanh

@@ -5,7 +5,7 @@ import { categoryService } from '../../services/category.service';
 import { ShoppingCart } from 'lucide-react';
 import { toast } from 'react-toastify';
 import ProductFilter from '../../components/user/ProductFilter';
-import { CartContext } from '../../context/user/CartContext'; // Import CartContext
+import { CartContext } from '../../context/CartContext'; // Import CartContext
 
 const Category = () => {
     const { slug } = useParams();

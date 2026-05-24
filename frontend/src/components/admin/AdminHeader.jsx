@@ -1,6 +1,6 @@
 import { useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { AuthContext } from '../../context/user/AuthContext';
+import { AuthContext } from '../../context/AuthContext';
 import { LogOut, User, Bell } from 'lucide-react';
 import { toast } from 'react-toastify';
 

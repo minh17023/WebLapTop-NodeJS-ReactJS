@@ -1,8 +1,8 @@
 import { useContext, useState, useEffect, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { ShoppingCart, Search, User as UserIcon, LogOut, Package, UserCircle } from 'lucide-react';
-import { AuthContext } from '../../context/user/AuthContext';
-import { CartContext } from '../../context/user/CartContext';
+import { AuthContext } from '../../context/AuthContext';
+import { CartContext } from '../../context/CartContext';
 import { productService } from '../../services/product.service';
 
 const Header = () => {

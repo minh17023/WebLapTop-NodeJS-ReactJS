@@ -3,8 +3,8 @@ import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 // ======================= CONTEXT GLOBAL =======================
-import { AuthProvider } from './context/user/AuthContext';
-import { CartProvider } from './context/user/CartContext';
+import { AuthProvider } from './context/AuthContext';
+import { CartProvider } from './context/CartContext';
 
 // ======================= PHÂN VÙNG USER (KHÁCH HÀNG) =======================
 import Layout from './components/user/Layout';

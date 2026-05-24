@@ -1,5 +1,5 @@
 import { useState, useContext, useEffect } from 'react';
-import { AuthContext } from '../../context/user/AuthContext';
+import { AuthContext } from '../../context/AuthContext';
 import { userService } from '../../services/user.service';
 import { toast } from 'react-toastify';
 import { User, Phone, MapPin, Mail, Save, Edit3, X } from 'lucide-react';

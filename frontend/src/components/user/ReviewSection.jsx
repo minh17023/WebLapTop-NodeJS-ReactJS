@@ -2,7 +2,7 @@ import { useState, useEffect, useContext } from 'react';
 import { Star, User } from 'lucide-react';
 import { toast } from 'react-toastify';
 import { reviewService } from '../../services/review.service';
-import { AuthContext } from '../../context/user/AuthContext';
+import { AuthContext } from '../../context/AuthContext';
 
 const ReviewSection = ({ productId }) => {
     const { user } = useContext(AuthContext);
