@@ -1,18 +1,14 @@
 const sequelize = require('../config/database');
 
-// Import tất cả các Model chuẩn style dự án
 const Category = require('./category.model');
 const Product = require('./product.model');
 const User = require('./user.model');
 const Order = require('./order.model');
 const OrderItem = require('./order_item.model');
-const CartItem = require('./cart_item.model'); // Khai báo model mới
+const CartItem = require('./cart_item.model');
 const Post = require('./post.model');
 const Review = require('./review.model');
 const ChatMessage = require('./chat_message.model');
-// ========================================================
-// THIẾT LẬP MỐI QUAN HỆ (ASSOCIATIONS)
-// ========================================================
 
 // 1. Category - Product (1 - N)
 Category.hasMany(Product, { foreignKey: 'category_id' });
@@ -54,9 +50,6 @@ Review.belongsTo(User, { foreignKey: 'user_id', as: 'reviewer' });
 User.hasMany(ChatMessage, { foreignKey: 'user_id' });
 ChatMessage.belongsTo(User, { foreignKey: 'user_id' });
 
-// ========================================================
-// EXPORT TẤT CẢ MODULES
-// ========================================================
 module.exports = {
     sequelize,
     Category,

@@ -1,9 +1,6 @@
 const paymentService = require('../services/payment.service');
 
 class PaymentController {
-    /**
-     * Nhận và xử lý webhook tự động gạch nợ từ SePay
-     */
     async sepayWebhook(req, res) {
         try {
             // 0. Xác thực Webhook từ SePay bằng API Key bảo mật trong Header Authorization

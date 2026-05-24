@@ -7,9 +7,6 @@ const Review = sequelize.define('Review', {
     user_id: { type: DataTypes.INTEGER },
     rating: { type: DataTypes.INTEGER },
     comment: { type: DataTypes.TEXT }
-}, { 
-    tableName: 'reviews', 
-    updatedAt: false // Bảng này chỉ có created_at theo SQL của bạn
-});
+}, { tableName: 'reviews', updatedAt: false });
 
 module.exports = Review;
