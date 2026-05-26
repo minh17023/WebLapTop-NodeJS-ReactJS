@@ -134,7 +134,7 @@ const ManageOrders = () => {
             case 'processing': return <span className="bg-blue-50 text-blue-600 border border-blue-200 px-2 py-1 rounded text-xs font-bold w-full block text-center">Đang chuẩn bị</span>;
             case 'shipped': return <span className="bg-purple-50 text-purple-600 border border-purple-200 px-2 py-1 rounded text-xs font-bold w-full block text-center">Đang giao hàng</span>;
             case 'delivered': return <span className="bg-green-50 text-green-600 border border-green-200 px-2 py-1 rounded text-xs font-bold w-full block text-center">Đã giao</span>;
-            case 'cancelled': return <span className="bg-red-50 text-red-600 border border-red-200 px-2 py-1 rounded text-xs font-bold w-full block text-center">Đã hủy</span>;
+            case 'cancelled': return <span className="bg-blue-50 text-blue-600 border border-blue-200 px-2 py-1 rounded text-xs font-bold w-full block text-center">Đã hủy</span>;
             default: return <span className="bg-gray-50 text-gray-600 border border-gray-200 px-2 py-1 rounded text-xs font-bold w-full block text-center">Không xác định</span>;
         }
     };
@@ -157,7 +157,7 @@ const ManageOrders = () => {
                 return (
                     <div className="flex flex-col gap-1.5">
                         <button onClick={() => handleStatusChange(orderId, 'delivered')} className="bg-green-600 text-white px-3 py-1.5 rounded-lg text-[11px] font-bold hover:bg-green-700 transition w-full text-center shadow-sm">Giao Thành Công</button>
-                        <button onClick={() => handleStatusChange(orderId, 'cancelled')} className="bg-red-50 text-red-600 border border-red-200 px-3 py-1.5 rounded-lg text-[11px] font-bold hover:bg-red-100 transition w-full text-center">Giao Thất Bại</button>
+                        <button onClick={() => handleStatusChange(orderId, 'cancelled')} className="bg-blue-50 text-blue-600 border border-blue-200 px-3 py-1.5 rounded-lg text-[11px] font-bold hover:bg-blue-100 transition w-full text-center">Giao Thất Bại</button>
                     </div>
                 );
             case 'delivered':
@@ -237,7 +237,7 @@ const ManageOrders = () => {
                                             <td className="px-6 py-4">
                                                 <p className="font-black text-gray-800">#{orderId}</p>
                                                 <p className="text-[11px] text-gray-500 mt-0.5">{new Date(order.created_at || order.createdAt).toLocaleString('vi-VN')}</p>
-                                                <p className="font-bold text-red-600 mt-1">{formatPrice(order.total_amount)}</p>
+                                                <p className="font-bold text-blue-600 mt-1">{formatPrice(order.total_amount)}</p>
                                                 <span className="text-[10px] uppercase font-bold text-gray-400">{order.payment_method}</span>
                                             </td>
                                             <td className="px-6 py-4">
@@ -255,7 +255,7 @@ const ManageOrders = () => {
                                                             ? 'bg-green-50 text-green-700 border-green-200' 
                                                             : order.payment_status === 'refunded'
                                                                 ? 'bg-gray-100 text-gray-600 border-gray-200'
-                                                                : 'bg-red-50 text-red-600 border-red-200'
+                                                                : 'bg-blue-50 text-blue-600 border-blue-200'
                                                     }`}
                                                 >
                                                     <option value="unpaid">Chưa thu tiền</option>
@@ -281,7 +281,7 @@ const ManageOrders = () => {
                                                 <button onClick={() => { setSelectedOrder(order); setIsModalOpen(true); }} className="p-2 text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-xl transition inline-flex items-center gap-2 text-xs font-bold">
                                                     <Eye size={16} /> Xem
                                                 </button>
-                                                <button onClick={() => handleDownloadInvoice(orderId)} className="p-2 text-red-600 bg-red-50 hover:bg-red-100 rounded-xl transition inline-flex items-center gap-2 text-xs font-bold" title="Tải hóa đơn PDF">
+                                                <button onClick={() => handleDownloadInvoice(orderId)} className="p-2 text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-xl transition inline-flex items-center gap-2 text-xs font-bold" title="Tải hóa đơn PDF">
                                                     <Download size={16} /> Hóa đơn
                                                 </button>
                                             </td>
@@ -330,7 +330,7 @@ const ManageOrders = () => {
                                 </h2>
                                 <p className="text-xs text-gray-500 mt-1">Ngày đặt: {new Date(selectedOrder.created_at || selectedOrder.createdAt).toLocaleString('vi-VN')}</p>
                             </div>
-                            <button onClick={() => setIsModalOpen(false)} className="text-gray-400 hover:text-red-600 bg-white p-2 rounded-full shadow-sm transition border border-gray-100"><CloseIcon size={20} /></button>
+                            <button onClick={() => setIsModalOpen(false)} className="text-gray-400 hover:text-blue-600 bg-white p-2 rounded-full shadow-sm transition border border-gray-100"><CloseIcon size={20} /></button>
                         </div>
 
                         <div className="p-6 overflow-y-auto custom-scrollbar flex-1 space-y-6">
@@ -385,7 +385,7 @@ const ManageOrders = () => {
                                             </div>
                                             <div className="text-right">
                                                 <p className="text-xs text-gray-500 mb-1">SL: <span className="font-bold text-gray-800 text-sm">x{item.quantity}</span></p>
-                                                <p className="font-black text-red-600 text-sm">{formatPrice(item.price_at_purchase * item.quantity)}</p>
+                                                <p className="font-black text-blue-600 text-sm">{formatPrice(item.price_at_purchase * item.quantity)}</p>
                                             </div>
                                         </div>
                                     ))}
@@ -399,11 +399,11 @@ const ManageOrders = () => {
                                 <span className={`px-3 py-1.5 rounded-lg text-xs font-bold border ${
                                     selectedOrder.payment_status === 'paid' ? 'bg-green-50 text-green-700 border-green-200' : 
                                     selectedOrder.payment_status === 'refunded' ? 'bg-gray-100 text-gray-600 border-gray-200' : 
-                                    'bg-red-50 text-red-600 border-red-200'
+                                    'bg-blue-50 text-blue-600 border-blue-200'
                                 }`}>
                                     {selectedOrder.payment_status === 'paid' ? 'Đã thu tiền' : selectedOrder.payment_status === 'refunded' ? 'Đã hoàn tiền' : 'Chưa thu tiền'}
                                 </span>
-                                <button onClick={() => handleDownloadInvoice(selectedOrder.order_id || selectedOrder.id)} className="bg-red-600 hover:bg-red-700 text-white px-3 py-1.5 rounded-lg text-xs font-bold transition shadow-sm flex items-center gap-1.5">
+                                <button onClick={() => handleDownloadInvoice(selectedOrder.order_id || selectedOrder.id)} className="bg-blue-600 hover:bg-red-700 text-white px-3 py-1.5 rounded-lg text-xs font-bold transition shadow-sm flex items-center gap-1.5">
                                     <Download size={14} /> Xuất Hóa Đơn (PDF)
                                 </button>
                             </div>
@@ -415,7 +415,7 @@ const ManageOrders = () => {
                                 </div>
                                 <div className="flex justify-end items-end gap-4 mt-2">
                                     <p className="text-xs font-bold text-gray-500 uppercase pb-1">Tổng cộng:</p>
-                                    <p className="text-2xl font-black text-red-600 leading-none">{formatPrice(selectedOrder.total_amount)}</p>
+                                    <p className="text-2xl font-black text-blue-600 leading-none">{formatPrice(selectedOrder.total_amount)}</p>
                                 </div>
                             </div>
                         </div>

@@ -8,7 +8,7 @@ const AdminSidebar = () => {
     const navLinkStyle = ({ isActive }) => 
         `flex items-center gap-3 px-4 py-3 rounded-xl font-bold text-xs uppercase tracking-wider transition-all duration-200 ${
             isActive 
-                ? 'bg-red-600 text-white shadow-lg shadow-red-500/20' 
+                ? 'bg-blue-600 text-white shadow-lg shadow-blue-500/20' 
                 : 'text-gray-500 hover:bg-gray-50 hover:text-gray-900'
         }`;
 
@@ -17,8 +17,8 @@ const AdminSidebar = () => {
             <div className="overflow-y-auto pr-1 space-y-6">
                 {/* Logo phân hệ Admin */}
                 <div className="px-4 py-4 border-b border-gray-50 flex items-center gap-2">
-                    <ShieldAlert className="text-red-600 animate-pulse" size={22} />
-                    <span className="text-lg font-black text-gray-800 tracking-tight">HNC<span className="text-red-600">ADMIN</span></span>
+                    <ShieldAlert className="text-blue-600 animate-pulse" size={22} />
+                    <span className="text-lg font-black text-gray-800 tracking-tight">HNC<span className="text-blue-600">ADMIN</span></span>
                 </div>
 
                 {/* HỆ THỐNG NHIỀU DANH MỤC QUẢN LÝ */}

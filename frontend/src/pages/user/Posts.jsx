@@ -59,7 +59,7 @@ const Posts = () => {
                                 <span className="flex items-center"><User size={14} className="mr-1" /> {post.author?.full_name || 'Admin'}</span>
                             </div>
                             <Link to={`/post/${post.slug}`}>
-                                <h2 className="text-xl font-bold text-gray-900 hover:text-red-600 mb-3 line-clamp-2">
+                                <h2 className="text-xl font-bold text-gray-900 hover:text-blue-600 mb-3 line-clamp-2">
                                     {post.title}
                                 </h2>
                             </Link>
@@ -67,7 +67,7 @@ const Posts = () => {
                                 {post.summary || "Đang cập nhật nội dung tóm tắt..."}
                             </p>
                             <div className="mt-auto pt-4 border-t border-gray-50">
-                                <Link to={`/post/${post.slug}`} className="text-red-600 font-semibold hover:text-red-800 text-sm flex items-center">
+                                <Link to={`/post/${post.slug}`} className="text-blue-600 font-semibold hover:text-red-800 text-sm flex items-center">
                                     Đọc tiếp →
                                 </Link>
                             </div>
@@ -87,11 +87,11 @@ const Posts = () => {
                             setCurrentPage(prev => prev - 1);
                             window.scrollTo({ top: 0, behavior: 'smooth' });
                         }}
-                        className="px-4 py-2 text-sm font-semibold text-gray-700 bg-gray-50 hover:bg-red-600 hover:text-white border border-gray-200 rounded-lg transition disabled:opacity-40 disabled:hover:bg-gray-50 disabled:hover:text-gray-700 disabled:cursor-not-allowed cursor-pointer"
+                        className="px-4 py-2 text-sm font-semibold text-gray-700 bg-gray-50 hover:bg-blue-600 hover:text-white border border-gray-200 rounded-lg transition disabled:opacity-40 disabled:hover:bg-gray-50 disabled:hover:text-gray-700 disabled:cursor-not-allowed cursor-pointer"
                     >
                         Trước
                     </button>
-                    <span className="text-sm font-semibold text-gray-600 bg-red-50 px-3 py-1.5 rounded-md border border-red-100">
+                    <span className="text-sm font-semibold text-gray-600 bg-blue-50 px-3 py-1.5 rounded-md border border-blue-100">
                         Trang {currentPage} / {totalPages}
                     </span>
                     <button 
@@ -100,7 +100,7 @@ const Posts = () => {
                             setCurrentPage(prev => prev + 1);
                             window.scrollTo({ top: 0, behavior: 'smooth' });
                         }}
-                        className="px-4 py-2 text-sm font-semibold text-gray-700 bg-gray-50 hover:bg-red-600 hover:text-white border border-gray-200 rounded-lg transition disabled:opacity-40 disabled:hover:bg-gray-50 disabled:hover:text-gray-700 disabled:cursor-not-allowed cursor-pointer"
+                        className="px-4 py-2 text-sm font-semibold text-gray-700 bg-gray-50 hover:bg-blue-600 hover:text-white border border-gray-200 rounded-lg transition disabled:opacity-40 disabled:hover:bg-gray-50 disabled:hover:text-gray-700 disabled:cursor-not-allowed cursor-pointer"
                     >
                         Sau
                     </button>

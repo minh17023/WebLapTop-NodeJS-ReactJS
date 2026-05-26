@@ -33,7 +33,7 @@ const PostDetail = () => {
     return (
         <div className="bg-white">
             <div className="max-w-4xl mx-auto px-4 py-12">
-                <Link to="/posts" className="inline-flex items-center text-gray-500 hover:text-red-600 font-medium mb-8 transition">
+                <Link to="/posts" className="inline-flex items-center text-gray-500 hover:text-blue-600 font-medium mb-8 transition">
                     <ArrowLeft size={20} className="mr-2" /> Quay lại danh sách tin tức
                 </Link>
 
@@ -56,7 +56,7 @@ const PostDetail = () => {
                     )}
 
                     {post.summary && (
-                        <div className="text-xl text-gray-600 font-medium italic border-l-4 border-red-500 pl-4 mb-10">
+                        <div className="text-xl text-gray-600 font-medium italic border-l-4 border-blue-500 pl-4 mb-10">
                             {post.summary}
                         </div>
                     )}

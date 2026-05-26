@@ -17,24 +17,24 @@ const WarrantyPolicy = () => {
                     {/* Section 1 */}
                     <div className="bg-white p-8 md:p-10 rounded-[2rem] shadow-[0_10px_40px_rgba(0,0,0,0.04)] border border-gray-100">
                         <h2 className="text-2xl font-black text-[#0a0a0a] mb-6 flex items-center gap-3">
-                            <span className="w-10 h-10 bg-red-50 text-[#E30019] rounded-xl flex items-center justify-center"><Clock size={20} /></span>
+                            <span className="w-10 h-10 bg-blue-50 text-[#0071E3] rounded-xl flex items-center justify-center"><Clock size={20} /></span>
                             Thời Gian Bảo Hành
                         </h2>
                         <ul className="space-y-4 text-gray-600 leading-relaxed">
                             <li className="flex items-start gap-3">
-                                <div className="mt-1.5 w-1.5 h-1.5 rounded-full bg-[#E30019] flex-shrink-0"></div>
+                                <div className="mt-1.5 w-1.5 h-1.5 rounded-full bg-[#0071E3] flex-shrink-0"></div>
                                 <p><strong>Laptop mới 100%:</strong> Bảo hành chính hãng từ 12 - 24 tháng tùy theo quy định của nhà sản xuất (Dell, HP, Asus, Apple, Lenovo...).</p>
                             </li>
                             <li className="flex items-start gap-3">
-                                <div className="mt-1.5 w-1.5 h-1.5 rounded-full bg-[#E30019] flex-shrink-0"></div>
+                                <div className="mt-1.5 w-1.5 h-1.5 rounded-full bg-[#0071E3] flex-shrink-0"></div>
                                 <p><strong>Laptop cũ / Like New:</strong> Bảo hành 6 - 12 tháng phần cứng tại HNC LAPTOP.</p>
                             </li>
                             <li className="flex items-start gap-3">
-                                <div className="mt-1.5 w-1.5 h-1.5 rounded-full bg-[#E30019] flex-shrink-0"></div>
+                                <div className="mt-1.5 w-1.5 h-1.5 rounded-full bg-[#0071E3] flex-shrink-0"></div>
                                 <p><strong>Phụ kiện (Chuột, Phím, Sạc):</strong> Bảo hành 3 - 6 tháng.</p>
                             </li>
                             <li className="flex items-start gap-3">
-                                <div className="mt-1.5 w-1.5 h-1.5 rounded-full bg-[#E30019] flex-shrink-0"></div>
+                                <div className="mt-1.5 w-1.5 h-1.5 rounded-full bg-[#0071E3] flex-shrink-0"></div>
                                 <p><strong>Đặc quyền:</strong> <span className="font-bold text-[#0a0a0a]">1 ĐỔI 1 TRONG 30 NGÀY</span> đầu tiên nếu phát sinh lỗi phần cứng từ nhà sản xuất.</p>
                             </li>
                         </ul>
@@ -43,7 +43,7 @@ const WarrantyPolicy = () => {
                     {/* Section 2 */}
                     <div className="bg-white p-8 md:p-10 rounded-[2rem] shadow-[0_10px_40px_rgba(0,0,0,0.04)] border border-gray-100">
                         <h2 className="text-2xl font-black text-[#0a0a0a] mb-6 flex items-center gap-3">
-                            <span className="w-10 h-10 bg-red-50 text-[#E30019] rounded-xl flex items-center justify-center"><Monitor size={20} /></span>
+                            <span className="w-10 h-10 bg-blue-50 text-[#0071E3] rounded-xl flex items-center justify-center"><Monitor size={20} /></span>
                             Điều Kiện Tiếp Nhận Bảo Hành
                         </h2>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -55,8 +55,8 @@ const WarrantyPolicy = () => {
                                     <li>• Sản phẩm bị lỗi kỹ thuật do nhà sản xuất.</li>
                                 </ul>
                             </div>
-                            <div className="bg-red-50/50 p-6 rounded-2xl border border-red-100">
-                                <h3 className="font-bold text-[#E30019] mb-3 flex items-center gap-2"><AlertTriangle size={16} /> Từ chối bảo hành</h3>
+                            <div className="bg-blue-50/50 p-6 rounded-2xl border border-blue-100">
+                                <h3 className="font-bold text-[#0071E3] mb-3 flex items-center gap-2"><AlertTriangle size={16} /> Từ chối bảo hành</h3>
                                 <ul className="space-y-2 text-sm text-gray-600">
                                     <li>• Sản phẩm bị hư hỏng do tác động vật lý (rơi rớt, va đập, nứt vỡ).</li>
                                     <li>• Sản phẩm bị vào nước, hóa chất, hoặc do thiên tai, hỏa hoạn.</li>
@@ -70,7 +70,7 @@ const WarrantyPolicy = () => {
                     {/* Section 3 */}
                     <div className="bg-white p-8 md:p-10 rounded-[2rem] shadow-[0_10px_40px_rgba(0,0,0,0.04)] border border-gray-100">
                         <h2 className="text-2xl font-black text-[#0a0a0a] mb-6 flex items-center gap-3">
-                            <span className="w-10 h-10 bg-red-50 text-[#E30019] rounded-xl flex items-center justify-center"><Battery size={20} /></span>
+                            <span className="w-10 h-10 bg-blue-50 text-[#0071E3] rounded-xl flex items-center justify-center"><Battery size={20} /></span>
                             Quy Định Bảo Hành Linh Kiện Đặc Biệt
                         </h2>
                         <ul className="space-y-6 text-gray-600">
@@ -91,7 +91,7 @@ const WarrantyPolicy = () => {
 
                     {/* Contact */}
                     <div className="bg-[#0a0a0a] p-10 rounded-[2rem] text-center relative overflow-hidden">
-                        <div className="absolute top-0 right-0 w-64 h-64 bg-[#E30019]/20 rounded-full blur-[80px] -translate-y-1/2 translate-x-1/3"></div>
+                        <div className="absolute top-0 right-0 w-64 h-64 bg-[#0071E3]/20 rounded-full blur-[80px] -translate-y-1/2 translate-x-1/3"></div>
                         <h2 className="text-2xl font-black text-white mb-4 relative z-10">Cần hỗ trợ về bảo hành?</h2>
                         <p className="text-gray-400 mb-8 relative z-10">Đừng ngần ngại liên hệ với chúng tôi để được giải đáp và hỗ trợ nhanh nhất.</p>
                         <div className="flex flex-col sm:flex-row justify-center gap-4 relative z-10">

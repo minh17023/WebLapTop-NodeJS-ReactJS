@@ -82,7 +82,7 @@ const PaymentQR = () => {
                             <p className="text-gray-500 mb-8 text-center">Mở ứng dụng ngân hàng và quét mã QR bên dưới.</p>
                             
                             <div className="border border-gray-100 rounded-3xl p-6 shadow-lg relative bg-white group">
-                                <div className="absolute inset-0 border-2 border-transparent group-hover:border-[#E30019]/20 rounded-3xl transition-colors"></div>
+                                <div className="absolute inset-0 border-2 border-transparent group-hover:border-[#0071E3]/20 rounded-3xl transition-colors"></div>
                                 <img src={qrUrl} alt="VietQR Payment" className="w-64 h-auto md:w-72 rounded-2xl mx-auto mix-blend-multiply" />
                             </div>
                         </div>
@@ -104,13 +104,13 @@ const PaymentQR = () => {
                                 </div>
                                 <div className="flex justify-between items-center pt-2">
                                     <span className="text-gray-500 font-medium">Tổng thanh toán:</span>
-                                    <span className="font-black text-[#E30019] text-2xl tracking-tight">{formatPrice(amount)}</span>
+                                    <span className="font-black text-[#0071E3] text-2xl tracking-tight">{formatPrice(amount)}</span>
                                 </div>
                             </div>
 
                             <div className="flex flex-col w-full gap-4">
                                 <div className="flex items-center justify-center gap-3 text-[#0a0a0a] font-bold bg-gray-50 px-6 py-4 rounded-xl border border-gray-100">
-                                    <Loader className="animate-spin text-[#E30019]" size={20} />
+                                    <Loader className="animate-spin text-[#0071E3]" size={20} />
                                     Hệ thống đang quét giao dịch...
                                 </div>
                                 

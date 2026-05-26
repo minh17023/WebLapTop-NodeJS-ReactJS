@@ -95,7 +95,7 @@ const Chatbot = () => {
         <>
             <button
                 onClick={() => setIsOpen(true)}
-                className={`fixed bottom-6 right-6 p-4 bg-red-600 text-white rounded-full shadow-2xl hover:bg-red-700 transition-all duration-300 z-50 hover:scale-110 ${isOpen ? 'scale-0 opacity-0 pointer-events-none' : 'scale-100 opacity-100'}`}
+                className={`fixed bottom-6 right-6 p-4 bg-blue-600 text-white rounded-full shadow-2xl hover:bg-red-700 transition-all duration-300 z-50 hover:scale-110 ${isOpen ? 'scale-0 opacity-0 pointer-events-none' : 'scale-100 opacity-100'}`}
             >
                 <MessageCircle size={28} />
                 <span className="absolute top-0 right-0 w-3 h-3 bg-green-400 border-2 border-white rounded-full"></span>
@@ -103,10 +103,10 @@ const Chatbot = () => {
 
             <div className={`fixed bottom-6 right-6 w-[360px] h-[550px] bg-white rounded-2xl shadow-[0_5px_40px_rgba(0,0,0,0.16)] flex flex-col z-50 transition-all duration-300 transform origin-bottom-right overflow-hidden border border-gray-100 ${isOpen ? 'scale-100 opacity-100' : 'scale-0 opacity-0 pointer-events-none'}`}>
                 
-                <div className="bg-red-600 p-4 text-white flex justify-between items-center shadow-md z-10">
+                <div className="bg-blue-600 p-4 text-white flex justify-between items-center shadow-md z-10">
                     <div className="flex items-center gap-3">
                         <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-inner relative">
-                            <Bot size={24} className="text-red-600" />
+                            <Bot size={24} className="text-blue-600" />
                             <span className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 border-2 border-white rounded-full"></span>
                         </div>
                         <div>
@@ -114,7 +114,7 @@ const Chatbot = () => {
                             <p className="text-[11px] text-red-100 font-medium">Sẵn sàng tư vấn 24/7</p>
                         </div>
                     </div>
-                    <button onClick={() => setIsOpen(false)} className="text-white hover:bg-red-500 p-1.5 rounded-xl transition">
+                    <button onClick={() => setIsOpen(false)} className="text-white hover:bg-blue-500 p-1.5 rounded-xl transition">
                         <X size={20} />
                     </button>
                 </div>
@@ -125,7 +125,7 @@ const Chatbot = () => {
                             <Bot size={48} className="text-gray-300 mb-4" />
                             <p className="text-sm font-bold text-gray-600 mb-2">Chào bạn! Mình là AI của HNC Laptop.</p>
                             <p className="text-xs text-gray-500 mb-6">Vui lòng đăng nhập để mình có thể nhớ lịch sử trò chuyện và hỗ trợ bạn tốt nhất nhé!</p>
-                            <Link to="/login" className="bg-red-600 text-white font-bold py-2.5 px-6 rounded-xl text-sm shadow-lg hover:bg-red-700 transition">
+                            <Link to="/login" className="bg-blue-600 text-white font-bold py-2.5 px-6 rounded-xl text-sm shadow-lg hover:bg-red-700 transition">
                                 Đăng nhập ngay
                             </Link>
                         </div>
@@ -138,7 +138,7 @@ const Chatbot = () => {
                             {messages.map((msg, index) => (
                                 <div key={index} className={`flex gap-3 ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}>
                                     {msg.sender === 'model' && (
-                                        <div className="w-8 h-8 rounded-full bg-red-100 text-red-600 flex items-center justify-center flex-shrink-0">
+                                        <div className="w-8 h-8 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center flex-shrink-0">
                                             <Bot size={16} />
                                         </div>
                                     )}
@@ -162,7 +162,7 @@ const Chatbot = () => {
 
                             {isLoading && (
                                 <div className="flex gap-3 justify-start">
-                                    <div className="w-8 h-8 rounded-full bg-red-100 text-red-600 flex items-center justify-center flex-shrink-0">
+                                    <div className="w-8 h-8 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center flex-shrink-0">
                                         <Bot size={16} />
                                     </div>
                                     <div className="bg-white border border-gray-100 p-4 rounded-2xl rounded-bl-sm shadow-sm flex gap-1.5 items-center">

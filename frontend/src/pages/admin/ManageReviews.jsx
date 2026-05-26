@@ -192,7 +192,7 @@ const ManageReviews = () => {
                                             </p>
                                         </td>
                                         <td className="px-6 py-4 text-right">
-                                            <button onClick={() => handleDelete(review.review_id || review.id)} className="p-2 text-red-600 bg-red-50 hover:bg-red-100 rounded-xl transition inline-flex items-center gap-2 text-xs font-bold">
+                                            <button onClick={() => handleDelete(review.review_id || review.id)} className="p-2 text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-xl transition inline-flex items-center gap-2 text-xs font-bold">
                                                 <Trash2 size={16} /> Xóa
                                             </button>
                                         </td>

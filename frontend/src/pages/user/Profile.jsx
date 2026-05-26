@@ -109,7 +109,7 @@ const Profile = () => {
                     {/* Header Banner */}
                     <div className="h-40 bg-[#0a0a0a] relative overflow-hidden">
                         <div className="absolute inset-0 bg-gradient-to-r from-[#0a0a0a] to-gray-900"></div>
-                        <div className="absolute -bottom-24 -right-24 w-64 h-64 bg-[#E30019]/20 rounded-full blur-[50px]"></div>
+                        <div className="absolute -bottom-24 -right-24 w-64 h-64 bg-[#0071E3]/20 rounded-full blur-[50px]"></div>
                     </div>
 
                     <div className="p-8 sm:p-12 relative">

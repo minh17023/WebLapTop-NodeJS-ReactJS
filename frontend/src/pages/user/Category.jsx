@@ -75,7 +75,7 @@ const Category = () => {
     const formatPrice = (price) => new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(price);
 
     if (loading) return <div className="text-center mt-20 text-xl text-gray-600">Đang tải danh mục...</div>;
-    if (!categoryInfo) return <div className="text-center mt-20 text-2xl font-bold text-red-500">Danh mục không tồn tại</div>;
+    if (!categoryInfo) return <div className="text-center mt-20 text-2xl font-bold text-blue-500">Danh mục không tồn tại</div>;
 
     return (
         <div className="max-w-7xl mx-auto px-4 py-12">
@@ -102,7 +102,7 @@ const Category = () => {
                                         </Link>
                                         <div className="p-4 flex flex-col flex-grow">
                                             <Link to={`/product/${product.slug}`}>
-                                                <h3 className="font-bold text-gray-800 hover:text-red-600 line-clamp-2 h-12">{product.name}</h3>
+                                                <h3 className="font-bold text-gray-800 hover:text-blue-600 line-clamp-2 h-12">{product.name}</h3>
                                             </Link>
                                             <div className="text-xs text-gray-500 mt-2 space-y-1 bg-gray-50 p-2 rounded">
                                                 <p>CPU: {product.specifications?.cpu || 'Đang cập nhật'}</p>
@@ -111,18 +111,18 @@ const Category = () => {
                                                 <div className="flex flex-col">
                                                     {product.discount_price ? (
                                                         <>
-                                                            <span className="font-extrabold text-red-600 text-lg">{formatPrice(product.discount_price)}</span>
+                                                            <span className="font-extrabold text-blue-600 text-lg">{formatPrice(product.discount_price)}</span>
                                                             <span className="text-xs text-gray-400 line-through">{formatPrice(product.price)}</span>
                                                         </>
                                                     ) : (
-                                                        <span className="font-extrabold text-red-600 text-lg">{formatPrice(product.price)}</span>
+                                                        <span className="font-extrabold text-blue-600 text-lg">{formatPrice(product.price)}</span>
                                                     )}
                                                 </div>
 
                                                 {/* Nút thêm vào giỏ hàng THẬT ĐÃ HOẠT ĐỘNG */}
                                                 <button
                                                     onClick={() => addToCart(product)}
-                                                    className="bg-red-50 hover:bg-red-600 text-red-600 hover:text-white p-2 rounded-full transition"
+                                                    className="bg-blue-50 hover:bg-blue-600 text-blue-600 hover:text-white p-2 rounded-full transition"
                                                 >
                                                     <ShoppingCart size={20} />
                                                 </button>
@@ -141,11 +141,11 @@ const Category = () => {
                                             setCurrentPage(prev => prev - 1);
                                             window.scrollTo({ top: 0, behavior: 'smooth' });
                                         }}
-                                        className="px-4 py-2 text-sm font-semibold text-gray-700 bg-gray-50 hover:bg-red-600 hover:text-white border border-gray-200 rounded-lg transition disabled:opacity-40 disabled:hover:bg-gray-50 disabled:hover:text-gray-700 disabled:cursor-not-allowed cursor-pointer"
+                                        className="px-4 py-2 text-sm font-semibold text-gray-700 bg-gray-50 hover:bg-blue-600 hover:text-white border border-gray-200 rounded-lg transition disabled:opacity-40 disabled:hover:bg-gray-50 disabled:hover:text-gray-700 disabled:cursor-not-allowed cursor-pointer"
                                     >
                                         Trước
                                     </button>
-                                    <span className="text-sm font-semibold text-gray-600 bg-red-50 px-3 py-1.5 rounded-md border border-red-100">
+                                    <span className="text-sm font-semibold text-gray-600 bg-blue-50 px-3 py-1.5 rounded-md border border-blue-100">
                                         Trang {currentPage} / {totalPages}
                                     </span>
                                     <button 
@@ -154,7 +154,7 @@ const Category = () => {
                                             setCurrentPage(prev => prev + 1);
                                             window.scrollTo({ top: 0, behavior: 'smooth' });
                                         }}
-                                        className="px-4 py-2 text-sm font-semibold text-gray-700 bg-gray-50 hover:bg-red-600 hover:text-white border border-gray-200 rounded-lg transition disabled:opacity-40 disabled:hover:bg-gray-50 disabled:hover:text-gray-700 disabled:cursor-not-allowed cursor-pointer"
+                                        className="px-4 py-2 text-sm font-semibold text-gray-700 bg-gray-50 hover:bg-blue-600 hover:text-white border border-gray-200 rounded-lg transition disabled:opacity-40 disabled:hover:bg-gray-50 disabled:hover:text-gray-700 disabled:cursor-not-allowed cursor-pointer"
                                     >
                                         Sau
                                     </button>

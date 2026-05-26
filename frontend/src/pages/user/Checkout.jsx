@@ -275,10 +275,10 @@ const Checkout = () => {
                                         <span className="text-sm font-bold text-[#0a0a0a]">Thanh toán khi nhận hàng</span>
                                         {paymentMethod === 'COD' && <div className="absolute top-2 right-2"><ShieldCheck size={16} className="text-[#0a0a0a]"/></div>}
                                     </label>
-                                    <label className={`relative flex items-center p-4 border rounded-2xl cursor-pointer transition-all ${paymentMethod === 'BANKING' ? 'border-[#E30019] bg-red-50/30 shadow-sm' : 'border-gray-200 hover:border-gray-300'}`}>
-                                        <input type="radio" name="payment" value="BANKING" checked={paymentMethod === 'BANKING'} onChange={() => setPaymentMethod('BANKING')} className="w-4 h-4 text-[#E30019] focus:ring-[#E30019] border-gray-300 mr-3" />
+                                    <label className={`relative flex items-center p-4 border rounded-2xl cursor-pointer transition-all ${paymentMethod === 'BANKING' ? 'border-[#0071E3] bg-blue-50/30 shadow-sm' : 'border-gray-200 hover:border-gray-300'}`}>
+                                        <input type="radio" name="payment" value="BANKING" checked={paymentMethod === 'BANKING'} onChange={() => setPaymentMethod('BANKING')} className="w-4 h-4 text-[#0071E3] focus:ring-[#0071E3] border-gray-300 mr-3" />
                                         <span className="text-sm font-bold text-[#0a0a0a]">Chuyển khoản QR Code</span>
-                                        {paymentMethod === 'BANKING' && <div className="absolute top-2 right-2"><ShieldCheck size={16} className="text-[#E30019]"/></div>}
+                                        {paymentMethod === 'BANKING' && <div className="absolute top-2 right-2"><ShieldCheck size={16} className="text-[#0071E3]"/></div>}
                                     </label>
                                 </div>
                             </div>
@@ -287,21 +287,21 @@ const Checkout = () => {
 
                     {/* CỘT PHẢI: TÓM TẮT ĐƠN HÀNG */}
                     <div className="w-full lg:w-1/3">
-                        <div className="bg-[#0a0a0a] text-white p-8 rounded-3xl shadow-2xl sticky top-28">
-                            <h2 className="text-sm font-black uppercase tracking-widest text-gray-400 mb-6 flex items-center gap-2">
+                        <div className="bg-white border border-gray-100 text-[#0a0a0a] p-8 rounded-3xl shadow-[0_8px_40px_rgba(0,0,0,0.04)] sticky top-28">
+                            <h2 className="text-sm font-black uppercase tracking-widest text-gray-500 mb-6 flex items-center gap-2">
                                 <ShoppingBag size={16} /> Đơn Hàng ({selectedItems.length})
                             </h2>
                             
-                            <div className="divide-y divide-white/10 max-h-[300px] overflow-y-auto pr-2 custom-scrollbar mb-6">
+                            <div className="divide-y divide-gray-100 max-h-[300px] overflow-y-auto pr-2 custom-scrollbar mb-6">
                                 {selectedItems.map((item) => (
                                     <div key={item.product_id} className="flex gap-4 py-4 first:pt-0">
-                                        <div className="w-16 h-16 bg-white rounded-xl p-1 flex-shrink-0">
+                                        <div className="w-16 h-16 bg-gray-50 rounded-xl p-1 flex-shrink-0 border border-gray-100">
                                             <img src={item.main_image} alt="" className="w-full h-full object-contain mix-blend-multiply" />
                                         </div>
                                         <div className="flex-1 min-w-0">
-                                            <p className="text-xs font-bold truncate leading-relaxed">{item.name}</p>
+                                            <p className="text-xs font-bold text-[#0a0a0a] truncate leading-relaxed">{item.name}</p>
                                             <div className="flex justify-between items-center mt-2">
-                                                <span className="text-xs text-gray-400">SL: {item.quantity}</span>
+                                                <span className="text-xs text-gray-500">SL: {item.quantity}</span>
                                                 <span className="text-xs font-bold text-[#E30019]">{formatPrice(Number(item.discount_price || item.price) * item.quantity)}</span>
                                             </div>
                                         </div>
@@ -309,21 +309,21 @@ const Checkout = () => {
                                 ))}
                             </div>
 
-                            <div className="space-y-4 pt-6 border-t border-white/10 text-sm">
-                                <div className="flex justify-between text-gray-400">
+                            <div className="space-y-4 pt-6 border-t border-gray-100 text-sm">
+                                <div className="flex justify-between text-gray-500">
                                     <span>Tạm tính:</span>
-                                    <span className="text-white font-bold">{formatPrice(itemsTotal)}</span>
+                                    <span className="text-[#0a0a0a] font-bold">{formatPrice(itemsTotal)}</span>
                                 </div>
-                                <div className="flex justify-between items-center text-gray-400">
+                                <div className="flex justify-between items-center text-gray-500">
                                     <span className="flex items-center gap-2"><Truck size={14}/> Phí ship:</span>
                                     {isCalculatingFee ? (
                                         <Loader2 className="animate-spin" size={14} />
                                     ) : (
-                                        <span className="text-white font-bold">{shippingFee > 0 ? formatPrice(shippingFee) : 'Chưa xác định'}</span>
+                                        <span className="text-[#0a0a0a] font-bold">{shippingFee > 0 ? formatPrice(shippingFee) : 'Chưa xác định'}</span>
                                     )}
                                 </div>
-                                <div className="flex justify-between items-end pt-4 border-t border-white/10">
-                                    <span className="font-black text-gray-400 uppercase tracking-widest">Tổng cộng:</span>
+                                <div className="flex justify-between items-end pt-4 border-t border-gray-100">
+                                    <span className="font-black text-gray-500 uppercase tracking-widest">Tổng cộng:</span>
                                     <span className="text-3xl font-black text-[#E30019] tracking-tight">{formatPrice(finalTotal)}</span>
                                 </div>
                             </div>
@@ -331,7 +331,7 @@ const Checkout = () => {
                             <button
                                 type="submit" form="checkoutForm"
                                 disabled={isSubmitting || isCalculatingFee}
-                                className="w-full mt-8 bg-white text-[#0a0a0a] font-black py-4 rounded-xl uppercase tracking-widest text-sm shadow-[0_10px_20px_rgba(255,255,255,0.1)] hover:shadow-[0_15px_30px_rgba(255,255,255,0.2)] hover:-translate-y-1 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                                className="w-full mt-8 bg-[#0071E3] text-white font-black py-4 rounded-xl uppercase tracking-widest text-sm shadow-[0_10px_20px_rgba(0,113,227,0.2)] hover:shadow-[0_15px_30px_rgba(0,113,227,0.3)] hover:-translate-y-1 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                             >
                                 {isSubmitting ? <><Loader2 size={18} className="animate-spin"/> Xử lý...</> : 'Xác Nhận Mua'}
                             </button>

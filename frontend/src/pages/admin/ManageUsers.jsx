@@ -197,7 +197,7 @@ const ManageUsers = () => {
                                     <tr key={u.user_id || u.id} className="hover:bg-gray-50/50 transition">
                                         <td className="px-6 py-4">
                                             <div className="flex items-center gap-4">
-                                                <div className={`w-12 h-12 rounded-full flex items-center justify-center font-bold text-lg ${u.role === 'admin' ? 'bg-red-100 text-red-600' : 'bg-blue-50 text-blue-600'}`}>
+                                                <div className={`w-12 h-12 rounded-full flex items-center justify-center font-bold text-lg ${u.role === 'admin' ? 'bg-blue-100 text-blue-600' : 'bg-blue-50 text-blue-600'}`}>
                                                     {u.full_name ? u.full_name.charAt(0).toUpperCase() : 'U'}
                                                 </div>
                                                 <div>
@@ -212,7 +212,7 @@ const ManageUsers = () => {
                                         </td>
                                         <td className="px-6 py-4">
                                             {u.role === 'admin' ? (
-                                                <span className="flex items-center gap-1.5 w-max bg-red-50 text-red-600 px-3 py-1 rounded-lg text-xs font-bold border border-red-100">
+                                                <span className="flex items-center gap-1.5 w-max bg-blue-50 text-blue-600 px-3 py-1 rounded-lg text-xs font-bold border border-blue-100">
                                                     <ShieldAlert size={14} /> Quản trị viên
                                                 </span>
                                             ) : (
@@ -228,7 +228,7 @@ const ManageUsers = () => {
                                                 </button>
                                                 {/* Không hiển thị nút xóa cho tài khoản admin */}
                                                 {u.role !== 'admin' && (
-                                                    <button onClick={() => handleDelete(u.user_id || u.id, u.full_name || u.fullName, u.role)} className="p-2 text-red-600 bg-red-50 hover:bg-red-100 rounded-xl transition">
+                                                    <button onClick={() => handleDelete(u.user_id || u.id, u.full_name || u.fullName, u.role)} className="p-2 text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-xl transition">
                                                         <Trash2 size={16} />
                                                     </button>
                                                 )}
@@ -268,24 +268,24 @@ const ManageUsers = () => {
                             <h2 className="text-lg font-black text-gray-800 uppercase tracking-tight">
                                 {editingId ? 'Cập nhật Tài khoản' : 'Thêm Tài khoản mới'}
                             </h2>
-                            <button onClick={closeModal} className="text-gray-400 hover:text-red-600 bg-white p-2 rounded-full shadow-sm transition"><X size={20} /></button>
+                            <button onClick={closeModal} className="text-gray-400 hover:text-blue-600 bg-white p-2 rounded-full shadow-sm transition"><X size={20} /></button>
                         </div>
 
                         <div className="p-6 overflow-y-auto custom-scrollbar">
                             <form id="userForm" onSubmit={handleSubmit} className="space-y-5">
                                 <div>
-                                    <label className="block text-[11px] font-bold text-gray-500 uppercase mb-2">Họ và tên <span className="text-red-500">*</span></label>
+                                    <label className="block text-[11px] font-bold text-gray-500 uppercase mb-2">Họ và tên <span className="text-blue-500">*</span></label>
                                     <input type="text" name="full_name" required value={formData.full_name} onChange={handleInputChange} className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none text-sm font-medium transition" />
                                 </div>
                                 
                                 <div>
-                                    <label className="block text-[11px] font-bold text-gray-500 uppercase mb-2">Địa chỉ Email <span className="text-red-500">*</span></label>
+                                    <label className="block text-[11px] font-bold text-gray-500 uppercase mb-2">Địa chỉ Email <span className="text-blue-500">*</span></label>
                                     <input type="email" name="email" required value={formData.email} onChange={handleInputChange} disabled={editingId !== null} className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none text-sm font-medium transition disabled:opacity-60 disabled:cursor-not-allowed" />
                                 </div>
 
                                 <div>
                                     <label className="block text-[11px] font-bold text-gray-500 uppercase mb-2">
-                                        Mật khẩu {editingId ? <span className="text-gray-400 normal-case font-normal">(Bỏ trống nếu không muốn đổi)</span> : <span className="text-red-500">*</span>}
+                                        Mật khẩu {editingId ? <span className="text-gray-400 normal-case font-normal">(Bỏ trống nếu không muốn đổi)</span> : <span className="text-blue-500">*</span>}
                                     </label>
                                     <input type="password" name="password" required={!editingId} minLength="6" value={formData.password} onChange={handleInputChange} className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none text-sm font-medium transition" />
                                 </div>
@@ -296,7 +296,7 @@ const ManageUsers = () => {
                                 </div>
 
                                 <div>
-                                    <label className="block text-[11px] font-bold text-gray-500 uppercase mb-2">Quyền hạn <span className="text-red-500">*</span></label>
+                                    <label className="block text-[11px] font-bold text-gray-500 uppercase mb-2">Quyền hạn <span className="text-blue-500">*</span></label>
                                     <select name="role" required value={formData.role} onChange={handleInputChange} className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none text-sm font-medium transition cursor-pointer">
                                         <option value="user">Khách hàng (User)</option>
                                         <option value="admin">Quản trị viên (Admin)</option>

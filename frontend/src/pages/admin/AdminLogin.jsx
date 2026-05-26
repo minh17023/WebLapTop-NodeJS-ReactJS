@@ -63,7 +63,7 @@ const AdminLogin = () => {
         <div className="min-h-screen w-screen flex items-center justify-center bg-gray-900 px-4">
             <div className="max-w-md w-full bg-slate-800 rounded-3xl p-8 shadow-2xl border border-slate-700 space-y-6 animate-fadeIn">
                 <div className="text-center space-y-2">
-                    <div className="inline-flex p-3 bg-red-500/10 rounded-2xl text-red-500 mb-2 shadow-inner">
+                    <div className="inline-flex p-3 bg-blue-500/10 rounded-2xl text-blue-500 mb-2 shadow-inner">
                         <ShieldCheck size={32} />
                     </div>
                     <h1 className="text-xl font-black text-white tracking-wider uppercase">HNC LAPTOP - CONTROL PANEL</h1>
@@ -78,7 +78,7 @@ const AdminLogin = () => {
                         <input 
                             type="email" required
                             placeholder="admin@hnclaptop.com"
-                            className="w-full px-4 py-3 bg-slate-900 border border-slate-700 rounded-xl outline-none focus:ring-2 focus:ring-red-500 text-sm font-medium text-white transition placeholder-slate-600"
+                            className="w-full px-4 py-3 bg-slate-900 border border-slate-700 rounded-xl outline-none focus:ring-2 focus:ring-blue-500 text-sm font-medium text-white transition placeholder-slate-600"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
                         />
@@ -91,7 +91,7 @@ const AdminLogin = () => {
                         <input 
                             type="password" required
                             placeholder="••••••••"
-                            className="w-full px-4 py-3 bg-slate-900 border border-slate-700 rounded-xl outline-none focus:ring-2 focus:ring-red-500 text-sm font-medium text-white transition placeholder-slate-600"
+                            className="w-full px-4 py-3 bg-slate-900 border border-slate-700 rounded-xl outline-none focus:ring-2 focus:ring-blue-500 text-sm font-medium text-white transition placeholder-slate-600"
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
                         />
@@ -100,7 +100,7 @@ const AdminLogin = () => {
                     <div className="pt-4">
                         <button 
                             type="submit" disabled={loading}
-                            className="w-full bg-red-600 hover:bg-red-700 text-white font-black py-3.5 px-6 rounded-xl transition uppercase tracking-wider text-xs flex items-center justify-center gap-2 shadow-lg shadow-red-600/20 disabled:bg-slate-700 disabled:text-slate-500 disabled:cursor-not-allowed"
+                            className="w-full bg-blue-600 hover:bg-red-700 text-white font-black py-3.5 px-6 rounded-xl transition uppercase tracking-wider text-xs flex items-center justify-center gap-2 shadow-lg shadow-red-600/20 disabled:bg-slate-700 disabled:text-slate-500 disabled:cursor-not-allowed"
                         >
                             <LogIn size={16} /> {loading ? 'Đang xác minh...' : 'Đăng nhập hệ thống'}
                         </button>

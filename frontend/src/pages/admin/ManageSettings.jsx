@@ -96,7 +96,7 @@ const ManageSettings = () => {
                 <button 
                     onClick={handleSubmit}
                     disabled={isSubmitting}
-                    className="bg-red-600 text-white font-bold text-xs uppercase tracking-wider px-6 py-3 rounded-xl hover:bg-red-700 transition flex items-center gap-2 shadow-lg shadow-red-200 whitespace-nowrap disabled:bg-gray-400"
+                    className="bg-blue-600 text-white font-bold text-xs uppercase tracking-wider px-6 py-3 rounded-xl hover:bg-red-700 transition flex items-center gap-2 shadow-lg shadow-red-200 whitespace-nowrap disabled:bg-gray-400"
                 >
                     <Save size={16} /> {isSubmitting ? 'Đang lưu...' : 'Lưu Thay Đổi'}
                 </button>
@@ -110,30 +110,30 @@ const ManageSettings = () => {
                         {/* Khối 1: Cửa hàng */}
                         <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
                             <h2 className="text-sm font-black text-gray-800 uppercase mb-5 flex items-center gap-2 border-b border-gray-50 pb-3">
-                                <Store size={18} className="text-red-500" /> Thông tin cửa hàng
+                                <Store size={18} className="text-blue-500" /> Thông tin cửa hàng
                             </h2>
                             <div className="space-y-5">
                                 <div>
                                     <label className="block text-[11px] font-bold text-gray-500 uppercase mb-2">Tên Website / Cửa hàng</label>
-                                    <input type="text" name="store_name" value={formData.store_name} onChange={handleInputChange} className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-red-500 outline-none text-sm font-medium transition" />
+                                    <input type="text" name="store_name" value={formData.store_name} onChange={handleInputChange} className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none text-sm font-medium transition" />
                                 </div>
                                 
                                 <div>
                                     <label className="block text-[11px] font-bold text-gray-500 uppercase mb-2">Logo Website</label>
                                     <div className="flex items-center gap-4">
-                                        <label className="cursor-pointer flex flex-col items-center justify-center w-24 h-24 bg-gray-50 border-2 border-dashed border-gray-300 rounded-2xl hover:border-red-500 hover:bg-red-50 transition group overflow-hidden">
+                                        <label className="cursor-pointer flex flex-col items-center justify-center w-24 h-24 bg-gray-50 border-2 border-dashed border-gray-300 rounded-2xl hover:border-blue-500 hover:bg-blue-50 transition group overflow-hidden">
                                             {formData.logo_url ? (
                                                 <img src={formData.logo_url} alt="Logo" className="w-full h-full object-contain p-2" />
                                             ) : (
                                                 <>
-                                                    <Upload size={20} className="text-gray-400 group-hover:text-red-500 mb-1" />
-                                                    <span className="text-[10px] font-bold text-gray-400 group-hover:text-red-500 uppercase text-center px-1">Tải Logo</span>
+                                                    <Upload size={20} className="text-gray-400 group-hover:text-blue-500 mb-1" />
+                                                    <span className="text-[10px] font-bold text-gray-400 group-hover:text-blue-500 uppercase text-center px-1">Tải Logo</span>
                                                 </>
                                             )}
                                             <input type="file" accept="image/*" onChange={handleImageUpload} className="hidden" />
                                         </label>
                                         <div className="flex-1">
-                                            <input type="text" name="logo_url" placeholder="Hoặc dán Link ảnh Logo..." value={formData.logo_url} onChange={handleInputChange} className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-red-500 outline-none text-sm font-medium transition" />
+                                            <input type="text" name="logo_url" placeholder="Hoặc dán Link ảnh Logo..." value={formData.logo_url} onChange={handleInputChange} className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none text-sm font-medium transition" />
                                             <p className="text-[11px] text-gray-400 mt-2">Định dạng khuyên dùng: PNG nền trong suốt, tỉ lệ 3:1.</p>
                                         </div>
                                     </div>
@@ -141,7 +141,7 @@ const ManageSettings = () => {
 
                                 <div>
                                     <label className="block text-[11px] font-bold text-gray-500 uppercase mb-2">Mô tả ngắn (SEO Description)</label>
-                                    <textarea name="seo_description" rows="3" value={formData.seo_description} onChange={handleInputChange} className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-red-500 outline-none text-sm font-medium transition resize-none custom-scrollbar"></textarea>
+                                    <textarea name="seo_description" rows="3" value={formData.seo_description} onChange={handleInputChange} className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none text-sm font-medium transition resize-none custom-scrollbar"></textarea>
                                 </div>
                             </div>
                         </div>

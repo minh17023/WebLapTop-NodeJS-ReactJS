@@ -147,9 +147,9 @@ const ManageCategories = () => {
                 <div className="flex items-center gap-3 w-full sm:w-auto">
                     <div className="relative flex-1 sm:w-64">
                         <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={16} />
-                        <input type="text" placeholder="Tìm kiếm danh mục..." value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} className="w-full pl-9 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-red-500 outline-none transition" />
+                        <input type="text" placeholder="Tìm kiếm danh mục..." value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} className="w-full pl-9 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-blue-500 outline-none transition" />
                     </div>
-                    <button onClick={openAddModal} className="bg-red-600 text-white font-bold text-xs uppercase tracking-wider px-4 py-3 rounded-xl hover:bg-red-700 transition flex items-center gap-2 shadow-lg shadow-red-200 whitespace-nowrap">
+                    <button onClick={openAddModal} className="bg-blue-600 text-white font-bold text-xs uppercase tracking-wider px-4 py-3 rounded-xl hover:bg-red-700 transition flex items-center gap-2 shadow-lg shadow-red-200 whitespace-nowrap">
                         <Plus size={16} /> Thêm Danh Mục
                     </button>
                 </div>
@@ -204,7 +204,7 @@ const ManageCategories = () => {
                                                 <button onClick={() => openEditModal(category)} className="p-2 text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-xl transition">
                                                     <Edit size={16} />
                                                 </button>
-                                                <button onClick={() => handleDelete(category.category_id || category.id, category.name)} className="p-2 text-red-600 bg-red-50 hover:bg-red-100 rounded-xl transition">
+                                                <button onClick={() => handleDelete(category.category_id || category.id, category.name)} className="p-2 text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-xl transition">
                                                     <Trash2 size={16} />
                                                 </button>
                                             </div>
@@ -223,13 +223,13 @@ const ManageCategories = () => {
                             Hiển thị <span className="font-bold text-gray-800">{indexOfFirstCat + 1}</span> - <span className="font-bold text-gray-800">{Math.min(indexOfLastCat, categories.length)}</span> / <span className="font-bold text-gray-800">{categories.length}</span>
                         </p>
                         <div className="flex items-center gap-1">
-                            <button onClick={() => paginate(currentPage - 1)} disabled={currentPage === 1} className="p-2 rounded-lg border border-gray-200 text-gray-500 hover:bg-white hover:text-red-600 disabled:opacity-50 transition bg-transparent"><ChevronLeft size={16} /></button>
+                            <button onClick={() => paginate(currentPage - 1)} disabled={currentPage === 1} className="p-2 rounded-lg border border-gray-200 text-gray-500 hover:bg-white hover:text-blue-600 disabled:opacity-50 transition bg-transparent"><ChevronLeft size={16} /></button>
                             {[...Array(totalPages)].map((_, index) => (
-                                <button key={index + 1} onClick={() => paginate(index + 1)} className={`w-8 h-8 rounded-lg text-xs font-bold transition border ${currentPage === index + 1 ? 'bg-red-600 text-white border-red-600 shadow-md shadow-red-200' : 'bg-transparent text-gray-600 border-gray-200 hover:bg-white hover:text-red-600'}`}>
+                                <button key={index + 1} onClick={() => paginate(index + 1)} className={`w-8 h-8 rounded-lg text-xs font-bold transition border ${currentPage === index + 1 ? 'bg-blue-600 text-white border-red-600 shadow-md shadow-red-200' : 'bg-transparent text-gray-600 border-gray-200 hover:bg-white hover:text-blue-600'}`}>
                                     {index + 1}
                                 </button>
                             ))}
-                            <button onClick={() => paginate(currentPage + 1)} disabled={currentPage === totalPages} className="p-2 rounded-lg border border-gray-200 text-gray-500 hover:bg-white hover:text-red-600 disabled:opacity-50 transition bg-transparent"><ChevronRight size={16} /></button>
+                            <button onClick={() => paginate(currentPage + 1)} disabled={currentPage === totalPages} className="p-2 rounded-lg border border-gray-200 text-gray-500 hover:bg-white hover:text-blue-600 disabled:opacity-50 transition bg-transparent"><ChevronRight size={16} /></button>
                         </div>
                     </div>
                 )}
@@ -244,46 +244,46 @@ const ManageCategories = () => {
                             <h2 className="text-lg font-black text-gray-800 uppercase tracking-tight">
                                 {editingId ? 'Cập nhật Danh Mục' : 'Thêm Danh Mục Mới'}
                             </h2>
-                            <button onClick={closeModal} className="text-gray-400 hover:text-red-600 bg-white p-2 rounded-full shadow-sm transition"><X size={20} /></button>
+                            <button onClick={closeModal} className="text-gray-400 hover:text-blue-600 bg-white p-2 rounded-full shadow-sm transition"><X size={20} /></button>
                         </div>
 
                         <div className="p-6 overflow-y-auto custom-scrollbar">
                             <form id="categoryForm" onSubmit={handleSubmit} className="space-y-6">
                                 <div>
-                                    <label className="block text-[11px] font-bold text-gray-500 uppercase mb-2">Tên danh mục <span className="text-red-500">*</span></label>
-                                    <input type="text" name="name" required placeholder="VD: Laptop Văn Phòng..." value={formData.name} onChange={handleInputChange} className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-red-500 outline-none text-sm font-medium transition" />
+                                    <label className="block text-[11px] font-bold text-gray-500 uppercase mb-2">Tên danh mục <span className="text-blue-500">*</span></label>
+                                    <input type="text" name="name" required placeholder="VD: Laptop Văn Phòng..." value={formData.name} onChange={handleInputChange} className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none text-sm font-medium transition" />
                                 </div>
 
                                 <div>
                                     <label className="block text-[11px] font-bold text-gray-500 uppercase mb-2">Hình ảnh danh mục</label>
                                     <div className="flex items-center gap-4">
-                                        <label className="cursor-pointer flex flex-col items-center justify-center w-32 h-32 bg-gray-50 border-2 border-dashed border-gray-300 rounded-2xl hover:border-red-500 hover:bg-red-50 transition group overflow-hidden">
+                                        <label className="cursor-pointer flex flex-col items-center justify-center w-32 h-32 bg-gray-50 border-2 border-dashed border-gray-300 rounded-2xl hover:border-blue-500 hover:bg-blue-50 transition group overflow-hidden">
                                             {formData.image_url ? (
                                                 <img src={formData.image_url} alt="Preview" className="w-full h-full object-contain p-2 mix-blend-multiply" />
                                             ) : (
                                                 <>
-                                                    <Upload size={24} className="text-gray-400 group-hover:text-red-500 mb-2" />
-                                                    <span className="text-[10px] font-bold text-gray-400 group-hover:text-red-500 uppercase text-center px-2">Chọn file ảnh</span>
+                                                    <Upload size={24} className="text-gray-400 group-hover:text-blue-500 mb-2" />
+                                                    <span className="text-[10px] font-bold text-gray-400 group-hover:text-blue-500 uppercase text-center px-2">Chọn file ảnh</span>
                                                 </>
                                             )}
                                             <input type="file" accept="image/*" onChange={handleImageUpload} className="hidden" />
                                         </label>
                                         <div className="flex-1">
-                                            <input type="text" name="image_url" placeholder="Nhập Link ảnh hoặc tải lên từ máy..." value={formData.image_url} onChange={handleInputChange} className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-red-500 outline-none text-sm font-medium transition" />
+                                            <input type="text" name="image_url" placeholder="Nhập Link ảnh hoặc tải lên từ máy..." value={formData.image_url} onChange={handleInputChange} className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none text-sm font-medium transition" />
                                         </div>
                                     </div>
                                 </div>
 
                                 <div>
                                     <label className="block text-[11px] font-bold text-gray-500 uppercase mb-2">Mô tả danh mục</label>
-                                    <textarea name="description" rows="3" placeholder="Ghi chú ngắn về danh mục này..." value={formData.description} onChange={handleInputChange} className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-red-500 outline-none text-sm font-medium transition resize-none custom-scrollbar"></textarea>
+                                    <textarea name="description" rows="3" placeholder="Ghi chú ngắn về danh mục này..." value={formData.description} onChange={handleInputChange} className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none text-sm font-medium transition resize-none custom-scrollbar"></textarea>
                                 </div>
                             </form>
                         </div>
 
                         <div className="p-5 border-t border-gray-100 flex justify-end gap-3 bg-gray-50/50">
                             <button type="button" onClick={closeModal} className="px-6 py-3 text-sm font-bold text-gray-500 bg-white border border-gray-200 hover:bg-gray-50 rounded-xl transition shadow-sm">Hủy bỏ</button>
-                            <button type="submit" form="categoryForm" disabled={isSubmitting} className="px-8 py-3 text-sm font-bold text-white bg-red-600 hover:bg-red-700 rounded-xl transition shadow-lg shadow-red-200 flex items-center gap-2 disabled:bg-gray-400">
+                            <button type="submit" form="categoryForm" disabled={isSubmitting} className="px-8 py-3 text-sm font-bold text-white bg-blue-600 hover:bg-red-700 rounded-xl transition shadow-lg shadow-red-200 flex items-center gap-2 disabled:bg-gray-400">
                                 {isSubmitting ? 'Đang lưu...' : (editingId ? 'Cập nhật' : 'Thêm mới')}
                             </button>
                         </div>

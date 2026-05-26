@@ -176,7 +176,7 @@ const ManagePosts = () => {
                         <select 
                             value={filterStatus}
                             onChange={(e) => { setFilterStatus(e.target.value); setCurrentPage(1); }}
-                            className="w-full sm:w-44 pl-9 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm font-medium focus:ring-2 focus:ring-red-500 outline-none transition cursor-pointer appearance-none"
+                            className="w-full sm:w-44 pl-9 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm font-medium focus:ring-2 focus:ring-blue-500 outline-none transition cursor-pointer appearance-none"
                         >
                             <option value="all">Tất cả bài viết</option>
                             <option value="published">Đã xuất bản</option>
@@ -187,10 +187,10 @@ const ManagePosts = () => {
                     {/* Ô tìm kiếm */}
                     <div className="relative flex-1 w-full sm:w-64">
                         <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={16} />
-                        <input type="text" placeholder="Tìm tiêu đề bài viết..." value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} className="w-full pl-9 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-red-500 outline-none transition" />
+                        <input type="text" placeholder="Tìm tiêu đề bài viết..." value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} className="w-full pl-9 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-blue-500 outline-none transition" />
                     </div>
                     
-                    <button onClick={openAddModal} className="w-full sm:w-auto bg-red-600 text-white font-bold text-xs uppercase tracking-wider px-4 py-3 rounded-xl hover:bg-red-700 transition flex items-center justify-center gap-2 shadow-lg shadow-red-200 whitespace-nowrap">
+                    <button onClick={openAddModal} className="w-full sm:w-auto bg-blue-600 text-white font-bold text-xs uppercase tracking-wider px-4 py-3 rounded-xl hover:bg-red-700 transition flex items-center justify-center gap-2 shadow-lg shadow-red-200 whitespace-nowrap">
                         <Plus size={16} /> Viết Bài Mới
                     </button>
                 </div>
@@ -250,7 +250,7 @@ const ManagePosts = () => {
                                                 <button onClick={() => openEditModal(post)} className="p-2 text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-xl transition">
                                                     <Edit size={16} />
                                                 </button>
-                                                <button onClick={() => handleDelete(post.post_id || post.id, post.title)} className="p-2 text-red-600 bg-red-50 hover:bg-red-100 rounded-xl transition">
+                                                <button onClick={() => handleDelete(post.post_id || post.id, post.title)} className="p-2 text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-xl transition">
                                                     <Trash2 size={16} />
                                                 </button>
                                             </div>
@@ -269,13 +269,13 @@ const ManagePosts = () => {
                             Hiển thị <span className="font-bold text-gray-800">{indexOfFirstPost + 1}</span> - <span className="font-bold text-gray-800">{Math.min(indexOfLastPost, processedPosts.length)}</span> / <span className="font-bold text-gray-800">{processedPosts.length}</span>
                         </p>
                         <div className="flex items-center gap-1">
-                            <button onClick={() => paginate(currentPage - 1)} disabled={currentPage === 1} className="p-2 rounded-lg border border-gray-200 text-gray-500 hover:bg-white hover:text-red-600 disabled:opacity-50 transition bg-transparent"><ChevronLeft size={16} /></button>
+                            <button onClick={() => paginate(currentPage - 1)} disabled={currentPage === 1} className="p-2 rounded-lg border border-gray-200 text-gray-500 hover:bg-white hover:text-blue-600 disabled:opacity-50 transition bg-transparent"><ChevronLeft size={16} /></button>
                             {[...Array(totalPages)].map((_, index) => (
-                                <button key={index + 1} onClick={() => paginate(index + 1)} className={`w-8 h-8 rounded-lg text-xs font-bold transition border ${currentPage === index + 1 ? 'bg-red-600 text-white border-red-600 shadow-md shadow-red-200' : 'bg-transparent text-gray-600 border-gray-200 hover:bg-white hover:text-red-600'}`}>
+                                <button key={index + 1} onClick={() => paginate(index + 1)} className={`w-8 h-8 rounded-lg text-xs font-bold transition border ${currentPage === index + 1 ? 'bg-blue-600 text-white border-red-600 shadow-md shadow-red-200' : 'bg-transparent text-gray-600 border-gray-200 hover:bg-white hover:text-blue-600'}`}>
                                     {index + 1}
                                 </button>
                             ))}
-                            <button onClick={() => paginate(currentPage + 1)} disabled={currentPage === totalPages} className="p-2 rounded-lg border border-gray-200 text-gray-500 hover:bg-white hover:text-red-600 disabled:opacity-50 transition bg-transparent"><ChevronRight size={16} /></button>
+                            <button onClick={() => paginate(currentPage + 1)} disabled={currentPage === totalPages} className="p-2 rounded-lg border border-gray-200 text-gray-500 hover:bg-white hover:text-blue-600 disabled:opacity-50 transition bg-transparent"><ChevronRight size={16} /></button>
                         </div>
                     </div>
                 )}
@@ -289,19 +289,19 @@ const ManagePosts = () => {
                             <h2 className="text-lg font-black text-gray-800 uppercase tracking-tight">
                                 {editingId ? 'Cập nhật Bài viết' : 'Viết Bài Mới'}
                             </h2>
-                            <button onClick={closeModal} className="text-gray-400 hover:text-red-600 bg-white p-2 rounded-full shadow-sm transition"><X size={20} /></button>
+                            <button onClick={closeModal} className="text-gray-400 hover:text-blue-600 bg-white p-2 rounded-full shadow-sm transition"><X size={20} /></button>
                         </div>
 
                         <div className="p-6 overflow-y-auto custom-scrollbar flex-1">
                             <form id="postForm" onSubmit={handleSubmit} className="space-y-6">
                                 <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
                                     <div className="md:col-span-2">
-                                        <label className="block text-[11px] font-bold text-gray-500 uppercase mb-2">Tiêu đề bài viết <span className="text-red-500">*</span></label>
-                                        <input type="text" name="title" required value={formData.title} onChange={handleInputChange} className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-red-500 outline-none text-sm font-medium transition" />
+                                        <label className="block text-[11px] font-bold text-gray-500 uppercase mb-2">Tiêu đề bài viết <span className="text-blue-500">*</span></label>
+                                        <input type="text" name="title" required value={formData.title} onChange={handleInputChange} className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none text-sm font-medium transition" />
                                     </div>
                                     <div>
-                                        <label className="block text-[11px] font-bold text-gray-500 uppercase mb-2">Trạng thái <span className="text-red-500">*</span></label>
-                                        <select name="is_published" value={formData.is_published} onChange={handleInputChange} className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-red-500 outline-none text-sm font-medium transition cursor-pointer">
+                                        <label className="block text-[11px] font-bold text-gray-500 uppercase mb-2">Trạng thái <span className="text-blue-500">*</span></label>
+                                        <select name="is_published" value={formData.is_published} onChange={handleInputChange} className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none text-sm font-medium transition cursor-pointer">
                                             <option value={true}>Đã xuất bản</option>
                                             <option value={false}>Lưu nháp</option>
                                         </select>
@@ -312,44 +312,44 @@ const ManagePosts = () => {
                                     <label className="block text-[11px] font-bold text-gray-500 uppercase mb-2">
                                         Đường dẫn (Slug) <span className="text-gray-400 normal-case font-normal">- Để trống Backend sẽ tự động tạo từ tiêu đề</span>
                                     </label>
-                                    <input type="text" name="slug" placeholder="vd: danh-gia-macbook-pro-m2" value={formData.slug} onChange={handleInputChange} className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-red-500 outline-none text-sm font-medium transition" />
+                                    <input type="text" name="slug" placeholder="vd: danh-gia-macbook-pro-m2" value={formData.slug} onChange={handleInputChange} className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none text-sm font-medium transition" />
                                 </div>
 
                                 <div>
                                     <label className="block text-[11px] font-bold text-gray-500 uppercase mb-2">Ảnh bìa (Thumbnail)</label>
                                     <div className="flex items-center gap-4">
-                                        <label className="cursor-pointer flex flex-col items-center justify-center w-40 h-24 bg-gray-50 border-2 border-dashed border-gray-300 rounded-2xl hover:border-red-500 hover:bg-red-50 transition group overflow-hidden">
+                                        <label className="cursor-pointer flex flex-col items-center justify-center w-40 h-24 bg-gray-50 border-2 border-dashed border-gray-300 rounded-2xl hover:border-blue-500 hover:bg-blue-50 transition group overflow-hidden">
                                             {formData.thumbnail_url ? (
                                                 <img src={formData.thumbnail_url} alt="Preview" className="w-full h-full object-cover" />
                                             ) : (
                                                 <>
-                                                    <Upload size={24} className="text-gray-400 group-hover:text-red-500 mb-2" />
-                                                    <span className="text-[10px] font-bold text-gray-400 group-hover:text-red-500 uppercase text-center px-2">Chọn file ảnh</span>
+                                                    <Upload size={24} className="text-gray-400 group-hover:text-blue-500 mb-2" />
+                                                    <span className="text-[10px] font-bold text-gray-400 group-hover:text-blue-500 uppercase text-center px-2">Chọn file ảnh</span>
                                                 </>
                                             )}
                                             <input type="file" accept="image/*" onChange={handleImageUpload} className="hidden" />
                                         </label>
                                         <div className="flex-1">
-                                            <input type="text" name="thumbnail_url" placeholder="Hoặc nhập Link ảnh trực tiếp..." value={formData.thumbnail_url} onChange={handleInputChange} className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-red-500 outline-none text-sm font-medium transition" />
+                                            <input type="text" name="thumbnail_url" placeholder="Hoặc nhập Link ảnh trực tiếp..." value={formData.thumbnail_url} onChange={handleInputChange} className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none text-sm font-medium transition" />
                                         </div>
                                     </div>
                                 </div>
 
                                 <div>
                                     <label className="block text-[11px] font-bold text-gray-500 uppercase mb-2">Đoạn tóm tắt (Summary)</label>
-                                    <textarea name="summary" rows="2" placeholder="Nhập một đoạn ngắn tóm tắt nội dung bài viết..." value={formData.summary} onChange={handleInputChange} className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-red-500 outline-none text-sm font-medium transition resize-y custom-scrollbar"></textarea>
+                                    <textarea name="summary" rows="2" placeholder="Nhập một đoạn ngắn tóm tắt nội dung bài viết..." value={formData.summary} onChange={handleInputChange} className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none text-sm font-medium transition resize-y custom-scrollbar"></textarea>
                                 </div>
 
                                 <div>
-                                    <label className="block text-[11px] font-bold text-gray-500 uppercase mb-2">Nội dung bài viết <span className="text-red-500">*</span></label>
-                                    <textarea name="content" required rows="10" placeholder="Viết nội dung tại đây (Hỗ trợ text hoặc thẻ HTML cơ bản)..." value={formData.content} onChange={handleInputChange} className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-red-500 outline-none text-sm font-medium transition resize-y custom-scrollbar"></textarea>
+                                    <label className="block text-[11px] font-bold text-gray-500 uppercase mb-2">Nội dung bài viết <span className="text-blue-500">*</span></label>
+                                    <textarea name="content" required rows="10" placeholder="Viết nội dung tại đây (Hỗ trợ text hoặc thẻ HTML cơ bản)..." value={formData.content} onChange={handleInputChange} className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none text-sm font-medium transition resize-y custom-scrollbar"></textarea>
                                 </div>
                             </form>
                         </div>
 
                         <div className="p-5 border-t border-gray-100 flex justify-end gap-3 bg-gray-50/50">
                             <button type="button" onClick={closeModal} className="px-6 py-3 text-sm font-bold text-gray-500 bg-white border border-gray-200 hover:bg-gray-50 rounded-xl transition shadow-sm">Hủy bỏ</button>
-                            <button type="submit" form="postForm" disabled={isSubmitting} className="px-8 py-3 text-sm font-bold text-white bg-red-600 hover:bg-red-700 rounded-xl transition shadow-lg shadow-red-200 flex items-center gap-2 disabled:bg-gray-400">
+                            <button type="submit" form="postForm" disabled={isSubmitting} className="px-8 py-3 text-sm font-bold text-white bg-blue-600 hover:bg-red-700 rounded-xl transition shadow-lg shadow-red-200 flex items-center gap-2 disabled:bg-gray-400">
                                 {isSubmitting ? 'Đang lưu...' : (editingId ? 'Cập nhật' : 'Đăng bài')}
                             </button>
                         </div>

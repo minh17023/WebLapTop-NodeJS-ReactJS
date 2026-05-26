@@ -74,19 +74,19 @@ const ReviewSection = ({ productId }) => {
                     <textarea
                         rows="3"
                         placeholder="Chia sẻ trải nghiệm của bạn về sản phẩm này..."
-                        className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-red-500 mb-3"
+                        className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 mb-3"
                         value={newReview.comment}
                         onChange={(e) => setNewReview({ ...newReview, comment: e.target.value })}
                     />
                     <button
                         type="submit" disabled={isSubmitting}
-                        className="bg-red-600 text-white font-bold py-2 px-6 rounded-lg hover:bg-red-700 transition disabled:opacity-50"
+                        className="bg-blue-600 text-white font-bold py-2 px-6 rounded-lg hover:bg-red-700 transition disabled:opacity-50"
                     >
                         {isSubmitting ? 'Đang gửi...' : 'Gửi Đánh Giá'}
                     </button>
                 </form>
             ) : (
-                <div className="mb-10 p-4 bg-red-50 text-red-600 rounded-lg text-center font-medium border border-red-100">
+                <div className="mb-10 p-4 bg-blue-50 text-blue-600 rounded-lg text-center font-medium border border-blue-100">
                     Vui lòng <a href="/login" className="underline font-bold">đăng nhập</a> để gửi đánh giá.
                 </div>
             )}

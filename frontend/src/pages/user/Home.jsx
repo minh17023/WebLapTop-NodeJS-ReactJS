@@ -89,10 +89,10 @@ const Home = () => {
     return (
         <div className="bg-white min-h-screen pb-20 animate-fade-in">
             {/* ================= MASSIVE HERO BANNER (SLIDER) ================= */}
-            <div className="relative bg-[#0a0a0a] min-h-[600px] flex items-center overflow-hidden">
+            <div className="relative bg-[#EAF4FC] min-h-[600px] flex items-center overflow-hidden">
                 {/* Decorative background elements */}
-                <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-[#E30019]/20 rounded-full blur-[120px] -translate-y-1/2 translate-x-1/3 opacity-50 pointer-events-none"></div>
-                <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-white/5 rounded-full blur-[100px] translate-y-1/3 -translate-x-1/3 pointer-events-none"></div>
+                <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-white/40 rounded-full blur-[120px] -translate-y-1/2 translate-x-1/3 pointer-events-none"></div>
+                <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-[#0071E3]/5 rounded-full blur-[100px] translate-y-1/3 -translate-x-1/3 pointer-events-none"></div>
 
                 {slides.map((slide, index) => (
                     <div 
@@ -102,24 +102,24 @@ const Home = () => {
                         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative w-full py-20">
                             <div className="flex flex-col lg:flex-row items-center justify-between gap-16">
                                 <div className={`lg:w-1/2 space-y-8 text-center lg:text-left transition-all duration-1000 transform ${index === currentSlide ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0'}`}>
-                                    <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 border border-white/20 backdrop-blur-md">
-                                        <Sparkles size={16} className="text-[#E30019]" />
-                                        <span className="text-white text-xs font-bold tracking-widest uppercase">{slide.badge}</span>
+                                    <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/50 border border-white/60 backdrop-blur-md shadow-sm">
+                                        <Sparkles size={16} className="text-[#0071E3]" />
+                                        <span className="text-[#00509E] text-xs font-bold tracking-widest uppercase">{slide.badge}</span>
                                     </div>
                                     
-                                    <h1 className="text-5xl md:text-7xl font-black text-white leading-[1.1] tracking-tight">
+                                    <h1 className="text-5xl md:text-7xl font-black text-[#003366] leading-[1.1] tracking-tight">
                                         {slide.titlePart1} <br />
-                                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#E30019] to-red-400">{slide.titleHighlight}</span>
+                                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#00509E] to-[#0071E3]">{slide.titleHighlight}</span>
                                     </h1>
                                     
-                                    <p className="text-gray-400 text-lg md:text-xl max-w-xl mx-auto lg:mx-0 leading-relaxed font-light">
+                                    <p className="text-[#1D1D1F] text-lg md:text-xl max-w-xl mx-auto lg:mx-0 leading-relaxed font-medium">
                                         {slide.description}
                                     </p>
                                     
                                     <div className="flex flex-col sm:flex-row items-center gap-4 justify-center lg:justify-start pt-4">
                                         <Link 
                                             to={slide.link} 
-                                            className="group relative px-8 py-4 bg-[#E30019] text-white font-bold rounded-full overflow-hidden shadow-[0_0_40px_rgba(227,0,25,0.4)] transition-all hover:shadow-[0_0_60px_rgba(227,0,25,0.6)] hover:-translate-y-1"
+                                            className="group relative px-8 py-4 bg-[#0071E3] text-white font-bold rounded-full overflow-hidden shadow-[0_10px_20px_rgba(0,113,227,0.2)] transition-all hover:shadow-[0_15px_30px_rgba(0,113,227,0.3)] hover:-translate-y-1"
                                         >
                                             <span className="relative z-10 flex items-center gap-2">
                                                 {slide.buttonText} <ArrowRight size={20} className="group-hover:translate-x-1 transition-transform" />
@@ -127,7 +127,7 @@ const Home = () => {
                                         </Link>
                                         <Link 
                                             to={slide.secondaryLink} 
-                                            className="px-8 py-4 bg-transparent text-white font-bold rounded-full border border-white/20 hover:bg-white/10 transition-colors"
+                                            className="px-8 py-4 bg-white text-[#0071E3] font-bold rounded-full border border-blue-100 hover:bg-gray-50 transition-colors shadow-sm"
                                         >
                                             {slide.secondaryText}
                                         </Link>
@@ -135,7 +135,7 @@ const Home = () => {
                                 </div>
                                 
                                 <div className={`lg:w-1/2 relative w-full max-w-2xl transition-all duration-1000 transform ${index === currentSlide ? 'translate-x-0 opacity-100' : 'translate-x-10 opacity-0'}`}>
-                                    <div className="absolute inset-0 bg-gradient-to-tr from-[#E30019]/20 to-transparent rounded-full blur-3xl"></div>
+                                    <div className="absolute inset-0 bg-gradient-to-tr from-[#0071E3]/20 to-transparent rounded-full blur-3xl"></div>
                                     <img 
                                         src={slide.image} 
                                         alt={slide.titleHighlight} 
@@ -153,7 +153,7 @@ const Home = () => {
                         <button
                             key={index}
                             onClick={() => setCurrentSlide(index)}
-                            className={`w-12 h-1.5 rounded-full transition-all duration-300 ${index === currentSlide ? 'bg-[#E30019]' : 'bg-white/30 hover:bg-white/50'}`}
+                            className={`w-12 h-1.5 rounded-full transition-all duration-300 ${index === currentSlide ? 'bg-[#0071E3]' : 'bg-[#0071E3]/20 hover:bg-[#0071E3]/40'}`}
                             aria-label={`Go to slide ${index + 1}`}
                         />
                     ))}
@@ -164,28 +164,28 @@ const Home = () => {
                 {/* ================= FEATURES ================= */}
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-8 relative z-20">
                     <div className="bg-white p-6 rounded-2xl shadow-xl shadow-black/5 border border-gray-100 flex flex-col items-center text-center group hover:-translate-y-2 transition-transform duration-300">
-                        <div className="w-12 h-12 bg-gray-50 rounded-full flex items-center justify-center mb-4 group-hover:bg-[#E30019] group-hover:text-white transition-colors duration-300">
+                        <div className="w-12 h-12 bg-gray-50 rounded-full flex items-center justify-center mb-4 group-hover:bg-[#0071E3] group-hover:text-white transition-colors duration-300">
                             <Truck size={24} strokeWidth={1.5} />
                         </div>
                         <h4 className="font-bold text-[#0a0a0a]">Giao hàng hỏa tốc</h4>
                         <p className="text-xs text-gray-500 mt-2">Miễn phí toàn quốc</p>
                     </div>
                     <div className="bg-white p-6 rounded-2xl shadow-xl shadow-black/5 border border-gray-100 flex flex-col items-center text-center group hover:-translate-y-2 transition-transform duration-300">
-                        <div className="w-12 h-12 bg-gray-50 rounded-full flex items-center justify-center mb-4 group-hover:bg-[#E30019] group-hover:text-white transition-colors duration-300">
+                        <div className="w-12 h-12 bg-gray-50 rounded-full flex items-center justify-center mb-4 group-hover:bg-[#0071E3] group-hover:text-white transition-colors duration-300">
                             <ShieldCheck size={24} strokeWidth={1.5} />
                         </div>
                         <h4 className="font-bold text-[#0a0a0a]">Bảo hành VIP</h4>
                         <p className="text-xs text-gray-500 mt-2">1 đổi 1 trong 30 ngày</p>
                     </div>
                     <div className="bg-white p-6 rounded-2xl shadow-xl shadow-black/5 border border-gray-100 flex flex-col items-center text-center group hover:-translate-y-2 transition-transform duration-300">
-                        <div className="w-12 h-12 bg-gray-50 rounded-full flex items-center justify-center mb-4 group-hover:bg-[#E30019] group-hover:text-white transition-colors duration-300">
+                        <div className="w-12 h-12 bg-gray-50 rounded-full flex items-center justify-center mb-4 group-hover:bg-[#0071E3] group-hover:text-white transition-colors duration-300">
                             <CreditCard size={24} strokeWidth={1.5} />
                         </div>
                         <h4 className="font-bold text-[#0a0a0a]">Thanh toán dễ dàng</h4>
                         <p className="text-xs text-gray-500 mt-2">Trả góp 0% lãi suất</p>
                     </div>
                     <div className="bg-white p-6 rounded-2xl shadow-xl shadow-black/5 border border-gray-100 flex flex-col items-center text-center group hover:-translate-y-2 transition-transform duration-300">
-                        <div className="w-12 h-12 bg-gray-50 rounded-full flex items-center justify-center mb-4 group-hover:bg-[#E30019] group-hover:text-white transition-colors duration-300">
+                        <div className="w-12 h-12 bg-gray-50 rounded-full flex items-center justify-center mb-4 group-hover:bg-[#0071E3] group-hover:text-white transition-colors duration-300">
                             <Clock size={24} strokeWidth={1.5} />
                         </div>
                         <h4 className="font-bold text-[#0a0a0a]">Hỗ trợ 24/7</h4>
@@ -197,12 +197,12 @@ const Home = () => {
                 <div className="mt-24 space-y-10">
                     <div className="text-center space-y-4">
                         <h2 className="text-3xl md:text-4xl font-black text-[#0a0a0a] tracking-tight">Danh Mục Nổi Bật</h2>
-                        <div className="w-24 h-1 bg-[#E30019] mx-auto rounded-full"></div>
+                        <div className="w-24 h-1 bg-[#0071E3] mx-auto rounded-full"></div>
                     </div>
 
                     {fetchingCategories ? (
                         <div className="flex justify-center py-10">
-                            <div className="w-8 h-8 border-4 border-gray-200 border-t-[#E30019] rounded-full animate-spin"></div>
+                            <div className="w-8 h-8 border-4 border-gray-200 border-t-[#0071E3] rounded-full animate-spin"></div>
                         </div>
                     ) : (
                         <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
@@ -210,16 +210,16 @@ const Home = () => {
                                 <Link 
                                     key={category.category_id || category.id} 
                                     to={`/categories/${category.slug}`} 
-                                    className="group block relative overflow-hidden rounded-3xl bg-gray-50 border border-gray-100 aspect-square md:aspect-[4/3] flex flex-col items-center justify-center p-6 transition-all duration-500 hover:shadow-2xl hover:border-[#E30019]/30"
+                                    className="group block relative overflow-hidden rounded-3xl bg-gray-50 border border-gray-100 aspect-square md:aspect-[4/3] flex flex-col items-center justify-center p-6 transition-all duration-500 hover:shadow-2xl hover:border-[#0071E3]/30"
                                 >
                                     <div className="w-24 h-24 mb-6 flex items-center justify-center z-10 transition-transform duration-500 group-hover:scale-110">
                                         {category.image_url || category.image ? (
                                             <img src={category.image_url || category.image} alt={category.name} className="w-full h-full object-contain mix-blend-multiply drop-shadow-xl" />
                                         ) : (
-                                            <ImageIcon size={48} className="text-gray-300 group-hover:text-[#E30019] transition-colors" />
+                                            <ImageIcon size={48} className="text-gray-300 group-hover:text-[#0071E3] transition-colors" />
                                         )}
                                     </div>
-                                    <h3 className="text-lg font-bold text-[#0a0a0a] z-10 group-hover:text-[#E30019] transition-colors text-center">
+                                    <h3 className="text-lg font-bold text-[#0a0a0a] z-10 group-hover:text-[#0071E3] transition-colors text-center">
                                         {category.name}
                                     </h3>
                                     <div className="absolute inset-0 bg-gradient-to-t from-white/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
@@ -236,14 +236,14 @@ const Home = () => {
                             <h2 className="text-3xl md:text-4xl font-black text-[#0a0a0a] tracking-tight">Tuyệt Tác Công Nghệ</h2>
                             <p className="text-gray-500 font-medium">Những siêu phẩm được săn đón nhất hiện nay.</p>
                         </div>
-                        <Link to="/products" className="group flex items-center gap-2 text-sm font-bold text-[#0a0a0a] hover:text-[#E30019] transition-colors">
-                            Xem tất cả <span className="bg-gray-100 p-2 rounded-full group-hover:bg-red-50 transition-colors"><ChevronRight size={16} /></span>
+                        <Link to="/products" className="group flex items-center gap-2 text-sm font-bold text-[#0a0a0a] hover:text-[#0071E3] transition-colors">
+                            Xem tất cả <span className="bg-gray-100 p-2 rounded-full group-hover:bg-blue-50 transition-colors"><ChevronRight size={16} /></span>
                         </Link>
                     </div>
 
                     {fetchingProducts ? (
                         <div className="flex justify-center py-20">
-                            <div className="w-8 h-8 border-4 border-gray-200 border-t-[#E30019] rounded-full animate-spin"></div>
+                            <div className="w-8 h-8 border-4 border-gray-200 border-t-[#0071E3] rounded-full animate-spin"></div>
                         </div>
                     ) : products.length === 0 ? (
                         <div className="text-center py-20 text-gray-500 font-medium bg-gray-50 rounded-3xl">Chưa có sản phẩm nào.</div>
@@ -263,7 +263,7 @@ const Home = () => {
                                     >
                                         <div className="relative aspect-square mb-8 bg-gray-50 rounded-2xl p-4 overflow-hidden flex items-center justify-center group-hover:bg-gray-100/50 transition-colors">
                                             {discountPercent > 0 && (
-                                                <div className="absolute top-3 left-3 bg-[#E30019] text-white text-[11px] font-black px-3 py-1.5 rounded-full z-10 tracking-widest shadow-lg shadow-red-500/30">
+                                                <div className="absolute top-3 left-3 bg-[#0071E3] text-white text-[11px] font-black px-3 py-1.5 rounded-full z-10 tracking-widest shadow-lg shadow-blue-500/30">
                                                     -{discountPercent}%
                                                 </div>
                                             )}
@@ -279,7 +279,7 @@ const Home = () => {
                                         </div>
 
                                         <div className="flex flex-col flex-grow">
-                                            <h3 className="text-[15px] font-bold text-[#0a0a0a] group-hover:text-[#E30019] transition-colors line-clamp-2 leading-relaxed mb-4">
+                                            <h3 className="text-[15px] font-bold text-[#0a0a0a] group-hover:text-[#0071E3] transition-colors line-clamp-2 leading-relaxed mb-4">
                                                 {product.name}
                                             </h3>
                                             
@@ -294,7 +294,7 @@ const Home = () => {
                                                         </p>
                                                     )}
                                                 </div>
-                                                <div className="w-10 h-10 rounded-full bg-[#0a0a0a] text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transform translate-x-4 group-hover:translate-x-0 transition-all duration-300">
+                                                <div className="w-10 h-10 rounded-full bg-[#0071E3] text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transform translate-x-4 group-hover:translate-x-0 transition-all duration-300">
                                                     <ChevronRight size={20} />
                                                 </div>
                                             </div>

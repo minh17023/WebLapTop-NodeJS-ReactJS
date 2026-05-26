@@ -69,7 +69,7 @@ const Products = () => {
                     <div className="w-full lg:w-1/4">
                         <div className="sticky top-28 bg-white p-6 rounded-3xl border border-gray-100 shadow-[0_8px_30px_rgba(0,0,0,0.04)]">
                             <h3 className="font-bold text-[#0a0a0a] mb-6 uppercase tracking-wider text-sm flex items-center">
-                                <span className="w-2 h-2 bg-[#E30019] rounded-full mr-2"></span> Bộ Lọc Sản Phẩm
+                                <span className="w-2 h-2 bg-[#0071E3] rounded-full mr-2"></span> Bộ Lọc Sản Phẩm
                             </h3>
                             <ProductFilter onFilterChange={handleFilterChange} />
                         </div>
@@ -79,7 +79,7 @@ const Products = () => {
                     <div className="w-full lg:w-3/4">
                         {loading ? (
                             <div className="flex justify-center py-20">
-                                <div className="w-8 h-8 border-4 border-gray-200 border-t-[#E30019] rounded-full animate-spin"></div>
+                                <div className="w-8 h-8 border-4 border-gray-200 border-t-[#0071E3] rounded-full animate-spin"></div>
                             </div>
                         ) : filteredProducts.length > 0 ? (
                             <>
@@ -94,7 +94,7 @@ const Products = () => {
                                             <div key={product.product_id} className="group flex flex-col bg-white rounded-3xl p-5 transition-all duration-500 hover:shadow-[0_20px_40px_rgba(0,0,0,0.08)] border border-gray-100 hover:border-gray-200">
                                                 <Link to={`/product/${product.slug}`} className="relative aspect-square mb-6 bg-gray-50 rounded-2xl p-4 overflow-hidden flex items-center justify-center group-hover:bg-gray-100/50 transition-colors">
                                                     {discountPercent > 0 && (
-                                                        <div className="absolute top-3 left-3 bg-[#E30019] text-white text-[10px] font-black px-2 py-1 rounded-md z-10 tracking-widest shadow-sm">
+                                                        <div className="absolute top-3 left-3 bg-[#0071E3] text-white text-[10px] font-black px-2 py-1 rounded-md z-10 tracking-widest shadow-sm">
                                                             -{discountPercent}%
                                                         </div>
                                                     )}
@@ -107,7 +107,7 @@ const Products = () => {
                                                 
                                                 <div className="flex flex-col flex-grow">
                                                     <Link to={`/product/${product.slug}`}>
-                                                        <h3 className="text-sm font-bold text-[#0a0a0a] group-hover:text-[#E30019] transition-colors line-clamp-2 leading-relaxed mb-3">
+                                                        <h3 className="text-sm font-bold text-[#0a0a0a] group-hover:text-[#0071E3] transition-colors line-clamp-2 leading-relaxed mb-3">
                                                             {product.name}
                                                         </h3>
                                                     </Link>
@@ -127,7 +127,7 @@ const Products = () => {
                                                                 </p>
                                                             )}
                                                         </div>
-                                                        <button className="w-10 h-10 rounded-full bg-gray-50 text-[#0a0a0a] flex items-center justify-center hover:bg-[#E30019] hover:text-white transition-all duration-300 border border-gray-100 hover:border-[#E30019]">
+                                                        <button className="w-10 h-10 rounded-full bg-gray-50 text-[#0a0a0a] flex items-center justify-center hover:bg-[#0071E3] hover:text-white transition-all duration-300 border border-gray-100 hover:border-[#0071E3]">
                                                             <ShoppingCart size={18} />
                                                         </button>
                                                     </div>

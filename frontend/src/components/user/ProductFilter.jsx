@@ -34,10 +34,10 @@ const ProductFilter = ({ onFilterChange }) => {
         <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 sticky top-24">
             <div className="flex items-center justify-between mb-6 pb-4 border-b border-gray-100">
                 <h3 className="text-lg font-bold text-gray-800 flex items-center">
-                    <Filter size={20} className="mr-2 text-red-600" /> Bộ Lọc
+                    <Filter size={20} className="mr-2 text-blue-600" /> Bộ Lọc
                 </h3>
                 {(filters.brand || filters.price) && (
-                    <button onClick={clearFilters} className="text-xs text-red-600 hover:underline font-medium">
+                    <button onClick={clearFilters} className="text-xs text-blue-600 hover:underline font-medium">
                         Xóa lọc
                     </button>
                 )}
@@ -53,9 +53,9 @@ const ProductFilter = ({ onFilterChange }) => {
                                 type="checkbox" 
                                 checked={filters.brand === brand}
                                 onChange={() => handleBrandChange(brand)}
-                                className="w-4 h-4 text-red-600 bg-gray-100 border-gray-300 rounded focus:ring-red-500 focus:ring-2 cursor-pointer"
+                                className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2 cursor-pointer"
                             />
-                            <span className="ml-3 text-sm text-gray-600 group-hover:text-red-600 transition">{brand}</span>
+                            <span className="ml-3 text-sm text-gray-600 group-hover:text-blue-600 transition">{brand}</span>
                         </label>
                     ))}
                 </div>
@@ -72,9 +72,9 @@ const ProductFilter = ({ onFilterChange }) => {
                                 name="price"
                                 checked={filters.price === range.id}
                                 onChange={() => handlePriceChange(range.id)}
-                                className="w-4 h-4 text-red-600 bg-gray-100 border-gray-300 focus:ring-red-500 cursor-pointer"
+                                className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 cursor-pointer"
                             />
-                            <span className="ml-3 text-sm text-gray-600 group-hover:text-red-600 transition">{range.label}</span>
+                            <span className="ml-3 text-sm text-gray-600 group-hover:text-blue-600 transition">{range.label}</span>
                         </label>
                     ))}
                 </div>

@@ -18,7 +18,7 @@ const OrderSuccess = () => {
                 </h1>
                 
                 <p className="text-xl text-gray-500 font-medium mb-4">
-                    Cảm ơn bạn đã lựa chọn <span className="text-[#E30019] font-black tracking-tight">HNC LAPTOP</span>.
+                    Cảm ơn bạn đã lựa chọn <span className="text-[#0071E3] font-black tracking-tight">HNC LAPTOP</span>.
                 </p>
                 
                 <p className="text-base text-gray-500 max-w-lg mb-10 leading-relaxed font-light">

@@ -6,7 +6,7 @@ class CategoryService {
     // 1. Lấy tất cả danh mục
     async getAllCategories() {
         return await Category.findAll({
-            order: [['created_at', 'DESC']]
+            order: [['created_at', 'ASC']]
         });
     }
 

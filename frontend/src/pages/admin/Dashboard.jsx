@@ -74,7 +74,7 @@ const Dashboard = () => {
             case 'processing': return <span className="bg-blue-50 text-blue-600 border border-blue-200 px-2 py-1 rounded text-[10px] font-bold uppercase">Đang xử lý</span>;
             case 'shipped': return <span className="bg-purple-50 text-purple-600 border border-purple-200 px-2 py-1 rounded text-[10px] font-bold uppercase">Đang giao</span>;
             case 'delivered': return <span className="bg-green-50 text-green-600 border border-green-200 px-2 py-1 rounded text-[10px] font-bold uppercase">Đã giao</span>;
-            case 'cancelled': return <span className="bg-red-50 text-red-600 border border-red-200 px-2 py-1 rounded text-[10px] font-bold uppercase">Đã hủy</span>;
+            case 'cancelled': return <span className="bg-blue-50 text-blue-600 border border-blue-200 px-2 py-1 rounded text-[10px] font-bold uppercase">Đã hủy</span>;
             default: return null;
         }
     };
@@ -102,7 +102,7 @@ const Dashboard = () => {
                             value={startDate} 
                             onChange={(e) => setStartDate(e.target.value)} 
                             max={endDate}
-                            className="bg-white border border-gray-200 rounded-lg px-3 py-1.5 text-sm font-medium outline-none focus:ring-2 focus:ring-red-500 transition cursor-pointer text-gray-700"
+                            className="bg-white border border-gray-200 rounded-lg px-3 py-1.5 text-sm font-medium outline-none focus:ring-2 focus:ring-blue-500 transition cursor-pointer text-gray-700"
                         />
                     </div>
                     <div className="flex items-center gap-2 w-full sm:w-auto">
@@ -113,12 +113,12 @@ const Dashboard = () => {
                             onChange={(e) => setEndDate(e.target.value)} 
                             min={startDate}
                             max={new Date().toISOString().split('T')[0]}
-                            className="bg-white border border-gray-200 rounded-lg px-3 py-1.5 text-sm font-medium outline-none focus:ring-2 focus:ring-red-500 transition cursor-pointer text-gray-700"
+                            className="bg-white border border-gray-200 rounded-lg px-3 py-1.5 text-sm font-medium outline-none focus:ring-2 focus:ring-blue-500 transition cursor-pointer text-gray-700"
                         />
                     </div>
                     <button 
                         onClick={handleResetFilter}
-                        className="p-2 bg-white text-gray-500 border border-gray-200 rounded-lg hover:text-red-600 hover:border-red-200 transition shadow-sm w-full sm:w-auto flex items-center justify-center"
+                        className="p-2 bg-white text-gray-500 border border-gray-200 rounded-lg hover:text-blue-600 hover:border-blue-200 transition shadow-sm w-full sm:w-auto flex items-center justify-center"
                         title="Đặt lại bộ lọc (7 ngày gần nhất)"
                     >
                         <RefreshCcw size={16} />
@@ -162,9 +162,9 @@ const Dashboard = () => {
                 </div>
 
                 <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm relative overflow-hidden group">
-                    <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:scale-110 transition-transform duration-300"><Package size={64} className="text-red-600" /></div>
+                    <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:scale-110 transition-transform duration-300"><Package size={64} className="text-blue-600" /></div>
                     <div className="flex items-center gap-4 relative z-10">
-                        <div className="w-12 h-12 bg-red-50 text-red-600 rounded-xl flex items-center justify-center shadow-inner"><Package size={24} /></div>
+                        <div className="w-12 h-12 bg-blue-50 text-blue-600 rounded-xl flex items-center justify-center shadow-inner"><Package size={24} /></div>
                         <div>
                             <p className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Tổng Số Sản Phẩm</p>
                             <h3 className="text-2xl font-black text-gray-800">{stats.totalProducts}</h3>
@@ -179,7 +179,7 @@ const Dashboard = () => {
                 {/* Biểu đồ đường biến động doanh thu */}
                 <div className="lg:col-span-2 bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
                     <h2 className="text-sm font-black text-gray-800 uppercase mb-6 flex items-center gap-2">
-                        <TrendingUp size={18} className="text-red-500" /> Biến động doanh thu theo ngày
+                        <TrendingUp size={18} className="text-blue-500" /> Biến động doanh thu theo ngày
                     </h2>
                     <div className="h-72 w-full">
                         <ResponsiveContainer width="100%" height="100%">
@@ -254,7 +254,7 @@ const Dashboard = () => {
                                     <tr key={order.id} className="hover:bg-gray-50/50 transition">
                                         <td className="px-6 py-4 font-black text-gray-800">#{order.id}</td>
                                         <td className="px-6 py-4 font-bold text-gray-700">{order.customer}</td>
-                                        <td className="px-6 py-4 font-bold text-red-600">{formatPrice(order.total)}</td>
+                                        <td className="px-6 py-4 font-bold text-blue-600">{formatPrice(order.total)}</td>
                                         <td className="px-6 py-4">{getStatusBadge(order.status)}</td>
                                         <td className="px-6 py-4 text-right text-xs text-gray-400 font-medium">{order.date}</td>
                                     </tr>

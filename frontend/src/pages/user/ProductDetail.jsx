@@ -63,7 +63,7 @@ const ProductDetail = () => {
 
     if (loading) return (
         <div className="flex justify-center items-center min-h-[60vh]">
-            <div className="w-10 h-10 border-4 border-gray-200 border-t-[#E30019] rounded-full animate-spin"></div>
+            <div className="w-10 h-10 border-4 border-gray-200 border-t-[#0071E3] rounded-full animate-spin"></div>
         </div>
     );
     
@@ -96,7 +96,7 @@ const ProductDetail = () => {
                         <div className="lg:w-1/2 p-8 md:p-16 pt-12 md:pt-20 flex items-start justify-center bg-gray-50/50">
                             <div className="relative w-full aspect-square">
                                 {discountPercent > 0 && (
-                                    <div className="absolute top-0 left-0 bg-[#E30019] text-white text-sm font-black px-4 py-2 rounded-xl z-10 tracking-widest shadow-xl shadow-red-500/20">
+                                    <div className="absolute top-0 left-0 bg-[#0071E3] text-white text-sm font-black px-4 py-2 rounded-xl z-10 tracking-widest shadow-xl shadow-blue-500/20">
                                         -{discountPercent}%
                                     </div>
                                 )}
@@ -157,20 +157,20 @@ const ProductDetail = () => {
                             <div className="flex flex-col sm:flex-row gap-4 mb-8">
                                 <button
                                     onClick={handleBuyNow}
-                                    className="flex-1 group relative bg-[#0a0a0a] hover:bg-gray-900 text-white py-5 rounded-2xl transition-all shadow-[0_10px_20px_rgba(0,0,0,0.1)] hover:shadow-[0_15px_30px_rgba(0,0,0,0.2)] overflow-hidden"
+                                    className="flex-1 group relative bg-[#0071E3] hover:bg-blue-700 text-white py-5 rounded-2xl transition-all shadow-[0_10px_20px_rgba(0,113,227,0.2)] hover:shadow-[0_15px_30px_rgba(0,113,227,0.3)] overflow-hidden"
                                 >
                                     <div className="relative z-10 flex flex-col items-center justify-center">
                                         <span className="text-lg font-black tracking-widest flex items-center gap-2">
-                                            <Zap size={20} className="text-[#E30019]" /> MUA NGAY
+                                            <Zap size={20} className="text-white" /> MUA NGAY
                                         </span>
-                                        <span className="text-[10px] text-gray-400 font-medium mt-1 uppercase tracking-wide">Giao hàng miễn phí toàn quốc</span>
+                                        <span className="text-[10px] text-blue-100 font-medium mt-1 uppercase tracking-wide">Giao hàng miễn phí toàn quốc</span>
                                     </div>
-                                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent translate-x-[-100%] group-hover:animate-[shimmer_1.5s_infinite]"></div>
+                                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent translate-x-[-100%] group-hover:animate-[shimmer_1.5s_infinite]"></div>
                                 </button>
 
                                 <button
                                     onClick={() => addToCart(product)}
-                                    className="sm:w-20 h-[76px] flex items-center justify-center bg-white text-[#0a0a0a] rounded-2xl hover:bg-red-50 hover:text-[#E30019] transition-colors border border-gray-200 hover:border-red-200"
+                                    className="sm:w-20 h-[76px] flex items-center justify-center bg-white text-[#0a0a0a] rounded-2xl hover:bg-blue-50 hover:text-[#0071E3] transition-colors border border-gray-200 hover:border-blue-200"
                                     title="Thêm vào giỏ"
                                 >
                                     <ShoppingCart size={24} strokeWidth={2.5} />
@@ -206,7 +206,7 @@ const ProductDetail = () => {
                     <div className="mt-16">
                         <div className="flex items-center justify-between mb-8">
                             <h2 className="text-2xl font-black text-[#0a0a0a]">Có Thể Bạn Sẽ Thích</h2>
-                            <Link to="/products" className="text-sm font-bold text-gray-500 hover:text-[#E30019] flex items-center gap-1">
+                            <Link to="/products" className="text-sm font-bold text-gray-500 hover:text-[#0071E3] flex items-center gap-1">
                                 Xem thêm <ChevronRight size={16} />
                             </Link>
                         </div>
@@ -217,10 +217,10 @@ const ProductDetail = () => {
                                 return (
                                     <Link key={p.product_id || p.id} to={`/product/${p.slug}`} className="group flex flex-col bg-white rounded-3xl p-5 transition-all duration-300 hover:shadow-[0_15px_30px_rgba(0,0,0,0.06)] border border-gray-100">
                                         <div className="relative aspect-square mb-6 bg-gray-50 rounded-2xl p-4 flex items-center justify-center group-hover:bg-gray-100 transition-colors">
-                                            {discountP > 0 && <div className="absolute top-2 left-2 bg-[#E30019] text-white text-[10px] font-black px-2 py-1 rounded-full z-10 shadow-lg">-{discountP}%</div>}
+                                            {discountP > 0 && <div className="absolute top-2 left-2 bg-[#0071E3] text-white text-[10px] font-black px-2 py-1 rounded-full z-10 shadow-lg">-{discountP}%</div>}
                                             <img src={p.main_image} alt={p.name} className="w-full h-full object-contain mix-blend-multiply group-hover:scale-110 transition-transform duration-500" />
                                         </div>
-                                        <h3 className="text-sm font-bold text-[#0a0a0a] group-hover:text-[#E30019] line-clamp-2 mb-3 leading-relaxed">{p.name}</h3>
+                                        <h3 className="text-sm font-bold text-[#0a0a0a] group-hover:text-[#0071E3] line-clamp-2 mb-3 leading-relaxed">{p.name}</h3>
                                         <div className="mt-auto">
                                             <p className="text-[#E30019] font-black text-lg tracking-tight">{formatPrice(activeP)}</p>
                                             {p.discount_price && <p className="text-gray-400 text-xs font-semibold line-through mt-0.5">{formatPrice(p.price)}</p>}

@@ -143,7 +143,7 @@ const MyOrders = () => {
                                                     />
                                                 </div>
                                                 <div className="flex-1 min-w-0">
-                                                    <Link to={`/product/${item.product?.slug}`} className="font-bold text-[#0a0a0a] hover:text-[#E30019] transition-colors line-clamp-1 mb-1">
+                                                    <Link to={`/product/${item.product?.slug}`} className="font-bold text-[#0a0a0a] hover:text-[#0071E3] transition-colors line-clamp-1 mb-1">
                                                         {item.product?.name}
                                                     </Link>
                                                     <p className="text-xs text-gray-400 font-medium">SL: x{item.quantity}</p>
@@ -163,7 +163,7 @@ const MyOrders = () => {
 
                                         <div className="flex flex-wrap items-center gap-3 w-full sm:w-auto justify-end">
                                             {order.status === 'pending' && (
-                                                <button onClick={() => handleUpdateStatus(orderId, 'cancelled')} className="px-6 py-2.5 rounded-xl border border-gray-200 bg-white text-[#0a0a0a] font-bold text-sm hover:border-[#E30019] hover:text-[#E30019] transition-colors">
+                                                <button onClick={() => handleUpdateStatus(orderId, 'cancelled')} className="px-6 py-2.5 rounded-xl border border-gray-200 bg-white text-[#0a0a0a] font-bold text-sm hover:border-[#0071E3] hover:text-[#0071E3] transition-colors">
                                                     Hủy đơn hàng
                                                 </button>
                                             )}

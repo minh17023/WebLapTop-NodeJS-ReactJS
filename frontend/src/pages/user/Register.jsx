@@ -38,12 +38,12 @@ const Register = () => {
         <div className="flex min-h-screen bg-white animate-fade-in flex-row-reverse">
             {/* CỘT TRÁI - BRANDING */}
             <div className="hidden lg:flex lg:w-1/2 bg-[#0a0a0a] text-white flex-col justify-between p-16 relative overflow-hidden">
-                <div className="absolute top-0 left-0 w-[600px] h-[600px] bg-[#E30019]/20 rounded-full blur-[100px] -translate-y-1/2 -translate-x-1/3"></div>
+                <div className="absolute top-0 left-0 w-[600px] h-[600px] bg-[#0071E3]/20 rounded-full blur-[100px] -translate-y-1/2 -translate-x-1/3"></div>
                 <div className="absolute bottom-0 right-0 w-[400px] h-[400px] bg-white/5 rounded-full blur-[80px] translate-y-1/3 translate-x-1/3"></div>
                 
                 <div className="relative z-10 text-right">
                     <Link to="/" className="text-4xl font-black tracking-tighter">
-                        HNC<span className="text-[#E30019]">LAPTOP</span>
+                        HNC<span className="text-[#0071E3]">LAPTOP</span>
                     </Link>
                 </div>
                 
@@ -64,7 +64,7 @@ const Register = () => {
                 <div className="w-full max-w-md space-y-8">
                     <div className="text-center lg:text-left">
                         <Link to="/" className="lg:hidden text-3xl font-black tracking-tighter mb-8 block">
-                            HNC<span className="text-[#E30019]">LAPTOP</span>
+                            HNC<span className="text-[#0071E3]">LAPTOP</span>
                         </Link>
                         <h2 className="text-3xl font-black text-[#0a0a0a] tracking-tight">Đăng Ký</h2>
                         <p className="text-gray-500 mt-2">Điền thông tin bên dưới để tạo tài khoản mới.</p>
@@ -145,7 +145,7 @@ const Register = () => {
 
                     <p className="text-center text-sm font-medium text-gray-500 pt-6 border-t border-gray-100">
                         Đã có tài khoản?{' '}
-                        <Link to="/login" className="text-[#E30019] hover:text-red-700 font-bold hover:underline underline-offset-4 transition-all">
+                        <Link to="/login" className="text-[#0071E3] hover:text-red-700 font-bold hover:underline underline-offset-4 transition-all">
                             Đăng nhập ngay
                         </Link>
                     </p>
