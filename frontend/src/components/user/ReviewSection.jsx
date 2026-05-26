@@ -62,13 +62,11 @@ const ReviewSection = ({ productId }) => {
     };
 
     return (
-        <div className="mt-12 bg-white rounded-xl shadow-sm border border-gray-100 p-8">
-            <h3 className="text-2xl font-bold text-gray-800 border-b pb-4 mb-6">Đánh giá sản phẩm</h3>
-
+        <div className="mt-0">
             {/* Form viết đánh giá */}
             {user ? (
-                <form onSubmit={handleSubmit} className="mb-10 bg-gray-50 p-6 rounded-lg">
-                    <h4 className="font-semibold text-gray-700 mb-3">Gửi đánh giá của bạn</h4>
+                <form onSubmit={handleSubmit} className="mb-8 bg-gray-50/80 p-5 rounded-2xl border border-gray-100">
+                    <h4 className="font-bold text-[#0a0a0a] text-sm mb-3">Gửi đánh giá của bạn</h4>
                     <div className="flex items-center gap-1 mb-4">
                         <span className="text-sm text-gray-500 mr-2">Chất lượng:</span>
                         {renderStars(newReview.rating, true)}

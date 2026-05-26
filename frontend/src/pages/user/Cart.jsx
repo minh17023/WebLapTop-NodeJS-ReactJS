@@ -1,6 +1,6 @@
 import { useContext, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom'; 
-import { Trash2, Plus, Minus, ArrowLeft, ArrowRight, ShoppingBag } from 'lucide-react';
+import { Trash2, Plus, Minus, ArrowLeft, ArrowRight, ShoppingBag, Check } from 'lucide-react';
 import { CartContext } from '../../context/CartContext';
 import { AuthContext } from '../../context/AuthContext';
 import { toast } from 'react-toastify';
@@ -10,42 +10,33 @@ const Cart = () => {
     const { user } = useContext(AuthContext);
     const navigate = useNavigate();
 
-    // 🌟 STATE MỚI: Lưu danh sách product_id được tích chọn mua
     const [selectedIds, setSelectedIds] = useState([]);
 
-    // Hàm định dạng giá tiền VND nhanh của bạn
     const formatPrice = (price) => {
         return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(price);
     };
 
-    // Xử lý tích chọn / bỏ chọn từng sản phẩm
     const handleCheckItem = (productId) => {
         setSelectedIds(prev => 
             prev.includes(productId) ? prev.filter(id => id !== productId) : [...prev, productId]
         );
     };
 
-    // Xử lý tích chọn tất cả sản phẩm
     const handleCheckAll = () => {
         if (selectedIds.length === cartItems.length) {
-            setSelectedIds([]); // Bỏ chọn tất cả
+            setSelectedIds([]); 
         } else {
-            setSelectedIds(cartItems.map(item => item.product_id)); // Chọn tất cả
+            setSelectedIds(cartItems.map(item => item.product_id)); 
         }
     };
 
-    // Lọc ra danh sách sản phẩm thực sự được khách tích chọn mua
-    const activeSelectedItems = cartItems.filter(item => 
-        selectedIds.includes(item.product_id)
-    );
+    const activeSelectedItems = cartItems.filter(item => selectedIds.includes(item.product_id));
 
-    // Tính tổng tiền động chỉ dựa trên các sản phẩm được tích chọn
     const totalAmount = activeSelectedItems.reduce((sum, item) => {
         const activePrice = item.discount_price || item.price;
         return sum + (activePrice * item.quantity);
     }, 0);
 
-    // Xử lý khi bấm nút mua hàng để chuyển tiếp sang trang Checkout
     const handleGoToCheckout = () => {
         if (!user) {
             toast.warning("Vui lòng đăng nhập tài khoản để tiến hành đặt hàng!");
@@ -56,135 +47,127 @@ const Cart = () => {
             toast.error("Vui lòng tích chọn ít nhất một sản phẩm cần mua!");
             return;
         }
-        // Đóng gói danh sách món đã chọn và điều hướng sang trang Checkout qua state của router
         navigate('/checkout', { state: { selectedItems: activeSelectedItems } });
     };
 
-    // Giao diện khi giỏ hàng rỗng
     if (cartItems.length === 0) {
         return (
-            <div className="max-w-4xl mx-auto px-4 py-20 text-center animate-fadeIn">
-                <div className="text-gray-300 mb-6 flex justify-center">
-                    <div className="border-4 border-dashed border-gray-200 p-6 rounded-full">
-                        <ShoppingBag size={64} />
-                    </div>
+            <div className="min-h-[70vh] flex flex-col items-center justify-center px-4 bg-[#fcfcfc] animate-fade-in">
+                <div className="w-32 h-32 bg-gray-50 rounded-full flex items-center justify-center mb-8 border border-gray-100 shadow-inner">
+                    <ShoppingBag size={48} className="text-gray-300" strokeWidth={1.5} />
                 </div>
-                <h2 className="text-2xl font-bold text-gray-800 mb-2">Giỏ hàng trống!</h2>
-                <p className="text-gray-500 mb-8">Bạn chưa thêm bất kỳ chiếc laptop nào vào giỏ hàng mua sắm.</p>
-                <Link to="/" className="inline-flex items-center gap-2 bg-red-600 text-white font-bold py-3.5 px-8 rounded-xl hover:bg-red-700 transition shadow-lg shadow-red-500/10">
-                    <ArrowLeft size={18} /> Quay về trang chủ mua sắm
+                <h2 className="text-3xl font-black text-[#0a0a0a] mb-3">Giỏ hàng trống</h2>
+                <p className="text-gray-500 mb-8 max-w-md text-center">Bộ sưu tập công nghệ của bạn đang chờ được lấp đầy. Hãy khám phá những tuyệt tác mới nhất.</p>
+                <Link to="/products" className="group flex items-center gap-2 bg-[#0a0a0a] text-white font-bold py-4 px-8 rounded-full hover:bg-gray-900 transition-all shadow-[0_10px_20px_rgba(0,0,0,0.1)] hover:-translate-y-1">
+                    <ArrowLeft size={18} className="group-hover:-translate-x-1 transition-transform" /> Khám phá ngay
                 </Link>
             </div>
         );
     }
 
     return (
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 text-gray-800 animate-fadeIn">
-            <h1 className="text-xl font-black uppercase tracking-tight mb-8 border-l-4 border-red-600 pl-3">
-                Giỏ Hàng Của Tôi
-            </h1>
-
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
-                {/* CỘT TRÁI: DANH SÁCH SẢN PHẨM MUA */}
-                <div className="lg:col-span-2 space-y-4">
-                    
-                    {/* Thanh Chọn tất cả */}
-                    <div className="bg-white px-6 py-4 rounded-2xl border border-gray-100 shadow-sm flex items-center gap-3 text-sm font-bold text-gray-600">
-                        <input 
-                            type="checkbox" 
-                            checked={cartItems.length > 0 && selectedIds.length === cartItems.length}
-                            onChange={handleCheckAll}
-                            className="w-4 h-4 text-red-600 border-gray-300 rounded focus:ring-red-500 cursor-pointer accent-red-600"
-                        />
-                        <span>Chọn tất cả ({cartItems.length} sản phẩm)</span>
-                    </div>
-
-                    {/* Danh sách các sản phẩm */}
-                    <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 divide-y divide-gray-100">
-                        {cartItems.map((item) => {
-                            const activePrice = item.discount_price || item.price;
-                            const isChecked = selectedIds.includes(item.product_id);
-
-                            return (
-                                <div key={item.product_id} className="grid grid-cols-1 sm:grid-cols-12 items-center py-6 gap-4 first:pt-0 last:pb-0">
-                                    {/* Checkbox & Ảnh & Tên máy */}
-                                    <div className="col-span-1 sm:col-span-6 flex items-center gap-4">
-                                        <input 
-                                            type="checkbox" 
-                                            checked={isChecked}
-                                            onChange={() => handleCheckItem(item.product_id)}
-                                            className="w-4 h-4 text-red-600 border-gray-300 rounded focus:ring-red-500 cursor-pointer accent-red-600 flex-shrink-0"
-                                        />
-                                        <img src={item.main_image} alt="" className="w-20 h-20 object-contain border border-gray-100 rounded-xl p-2 bg-gray-50/50 flex-shrink-0" />
-                                        <div className="min-w-0">
-                                            <Link to={`/product/${item.slug}`} className="text-sm font-bold text-gray-800 hover:text-red-600 transition line-clamp-2">
-                                                {item.name}
-                                            </Link>
-                                        </div>
-                                    </div>
-
-                                    {/* Đơn giá */}
-                                    <div className="col-span-1 sm:col-span-2 text-left sm:text-center text-sm font-semibold text-gray-600">
-                                        <span className="sm:hidden text-gray-400 mr-1">Đơn giá:</span>
-                                        {formatPrice(activePrice)}
-                                    </div>
-
-                                    {/* Tăng giảm số lượng */}
-                                    <div className="col-span-1 sm:col-span-2 flex justify-start sm:justify-center">
-                                        <div className="flex items-center border border-gray-200 rounded-lg p-1 bg-gray-50">
-                                            <button type="button" onClick={() => updateQuantity(item.product_id, item.quantity - 1)} disabled={item.quantity <= 1} className="p-1 hover:text-red-600 transition disabled:opacity-30 bg-transparent border-none outline-none">
-                                                <Minus size={14} />
-                                            </button>
-                                            <span className="px-3 text-sm font-bold text-gray-800 w-8 text-center">{item.quantity}</span>
-                                            <button type="button" onClick={() => updateQuantity(item.product_id, item.quantity + 1)} className="p-1 hover:text-red-600 transition bg-transparent border-none outline-none">
-                                                <Plus size={14} />
-                                            </button>
-                                        </div>
-                                    </div>
-
-                                    {/* Thành tiền & Xóa */}
-                                    <div className="col-span-1 sm:col-span-2 flex items-center justify-between sm:justify-end gap-4">
-                                        <span className="sm:hidden text-gray-400 mr-1">Tạm tính:</span>
-                                        <span className="text-sm font-bold text-red-600">{formatPrice(activePrice * item.quantity)}</span>
-                                        <button type="button" onClick={() => removeFromCart(item.product_id)} className="text-gray-400 hover:text-red-600 transition p-1 bg-transparent border-none outline-none">
-                                            <Trash2 size={16} />
-                                        </button>
-                                    </div>
-                                </div>
-                            );
-                        })}
-                    </div>
-
-                    <div className="pt-2">
-                        <Link to="/" className="text-sm font-bold text-red-600 hover:text-red-700 flex items-center gap-2 transition">
-                            <ArrowLeft size={16} /> Tiếp tục chọn thêm sản phẩm
-                        </Link>
-                    </div>
+        <div className="bg-[#fcfcfc] min-h-screen py-12 animate-fade-in">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div className="flex items-center justify-between mb-10 pb-6 border-b border-gray-200">
+                    <h1 className="text-3xl font-black text-[#0a0a0a] tracking-tight">Giỏ Hàng Của Bạn</h1>
+                    <span className="text-sm font-bold text-gray-500 bg-gray-100 px-4 py-2 rounded-full">{cartItems.length} sản phẩm</span>
                 </div>
 
-                {/* CỘT PHẢI: KHỐI TẠM TÍNH TỔNG TIỀN */}
-                <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 sticky top-24">
-                    <h2 className="text-base font-extrabold text-gray-800 mb-4 uppercase tracking-wider text-xs text-gray-400">
-                        Tóm tắt đơn hàng
-                    </h2>
-                    <div className="space-y-3 text-sm border-b border-gray-100 pb-4">
-                        <div className="flex justify-between text-gray-500 font-medium">
-                            <span>Sản phẩm đã chọn:</span>
-                            <span className="font-bold text-gray-700">{selectedIds.length} mặt hàng</span>
+                <div className="flex flex-col lg:flex-row gap-10 items-start">
+                    {/* CỘT TRÁI */}
+                    <div className="w-full lg:w-2/3 space-y-6">
+                        {/* Thanh Chọn tất cả */}
+                        <div className="bg-white px-6 py-5 rounded-3xl border border-gray-100 shadow-sm flex items-center gap-4 cursor-pointer hover:border-gray-200 transition-colors" onClick={handleCheckAll}>
+                            <div className={`w-6 h-6 rounded border-2 flex items-center justify-center transition-colors ${selectedIds.length === cartItems.length && cartItems.length > 0 ? 'bg-[#0a0a0a] border-[#0a0a0a]' : 'border-gray-300 bg-white'}`}>
+                                {selectedIds.length === cartItems.length && cartItems.length > 0 && <Check size={14} className="text-white" strokeWidth={3} />}
+                            </div>
+                            <span className="text-sm font-bold text-[#0a0a0a] uppercase tracking-wider">Chọn tất cả sản phẩm</span>
                         </div>
-                        <div className="flex justify-between items-baseline pt-2">
-                            <span className="font-bold text-gray-800">Tạm tính tiền máy:</span>
-                            <span className="text-xl font-black text-red-600">{formatPrice(totalAmount)}</span>
+
+                        {/* Danh sách */}
+                        <div className="bg-white rounded-3xl border border-gray-100 shadow-[0_8px_30px_rgba(0,0,0,0.04)] p-6 space-y-6">
+                            {cartItems.map((item) => {
+                                const activePrice = item.discount_price || item.price;
+                                const isChecked = selectedIds.includes(item.product_id);
+
+                                return (
+                                    <div key={item.product_id} className="flex flex-col sm:flex-row items-start sm:items-center gap-6 py-6 border-b border-gray-50 last:border-0 last:pb-0 first:pt-0">
+                                        <div className="flex items-center gap-4">
+                                            <div 
+                                                className={`w-6 h-6 rounded border-2 flex items-center justify-center cursor-pointer transition-colors flex-shrink-0 ${isChecked ? 'bg-[#0a0a0a] border-[#0a0a0a]' : 'border-gray-300 bg-white'}`}
+                                                onClick={() => handleCheckItem(item.product_id)}
+                                            >
+                                                {isChecked && <Check size={14} className="text-white" strokeWidth={3} />}
+                                            </div>
+                                            <div className="w-24 h-24 bg-gray-50 rounded-2xl p-2 border border-gray-100 flex-shrink-0">
+                                                <img src={item.main_image} alt="" className="w-full h-full object-contain mix-blend-multiply" />
+                                            </div>
+                                        </div>
+
+                                        <div className="flex-1 min-w-0">
+                                            <Link to={`/product/${item.slug}`} className="text-base font-bold text-[#0a0a0a] hover:text-[#E30019] transition-colors line-clamp-2 leading-relaxed">
+                                                {item.name}
+                                            </Link>
+                                            <p className="text-sm font-black text-[#E30019] mt-2">{formatPrice(activePrice)}</p>
+                                        </div>
+
+                                        <div className="flex items-center gap-6 w-full sm:w-auto justify-between sm:justify-end">
+                                            <div className="flex items-center bg-gray-50 border border-gray-200 rounded-xl p-1">
+                                                <button type="button" onClick={() => updateQuantity(item.product_id, item.quantity - 1)} disabled={item.quantity <= 1} className="w-8 h-8 flex items-center justify-center hover:bg-white hover:text-[#E30019] rounded-lg transition-colors disabled:opacity-30">
+                                                    <Minus size={16} />
+                                                </button>
+                                                <span className="w-10 text-center text-sm font-bold text-[#0a0a0a]">{item.quantity}</span>
+                                                <button type="button" onClick={() => updateQuantity(item.product_id, item.quantity + 1)} className="w-8 h-8 flex items-center justify-center hover:bg-white hover:text-[#E30019] rounded-lg transition-colors">
+                                                    <Plus size={16} />
+                                                </button>
+                                            </div>
+                                            <div className="flex flex-col items-end gap-2">
+                                                <span className="text-sm font-black text-[#0a0a0a] hidden sm:block">{formatPrice(activePrice * item.quantity)}</span>
+                                                <button type="button" onClick={() => removeFromCart(item.product_id)} className="text-gray-400 hover:text-[#E30019] transition-colors p-2 bg-gray-50 rounded-full hover:bg-red-50">
+                                                    <Trash2 size={16} />
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                );
+                            })}
                         </div>
                     </div>
-                    
-                    <button 
-                        onClick={handleGoToCheckout}
-                        disabled={selectedIds.length === 0}
-                        className="w-full bg-red-600 hover:bg-red-700 text-white font-black py-4 px-6 rounded-xl transition uppercase tracking-wider text-sm shadow-lg shadow-red-500/10 flex items-center justify-center gap-2 disabled:bg-gray-300 disabled:shadow-none disabled:cursor-not-allowed"
-                    >
-                        Tiến hành đặt hàng ({selectedIds.length}) <ArrowRight size={16} />
-                    </button>
+
+                    {/* CỘT PHẢI: TẠM TÍNH */}
+                    <div className="w-full lg:w-1/3">
+                        <div className="bg-[#0a0a0a] text-white rounded-3xl shadow-2xl p-8 sticky top-28">
+                            <h2 className="text-sm font-black uppercase tracking-widest text-gray-400 mb-6 flex items-center gap-2">
+                                <ShoppingBag size={16} /> Tóm Tắt Đơn Hàng
+                            </h2>
+                            
+                            <div className="space-y-4 border-b border-white/10 pb-6 mb-6">
+                                <div className="flex justify-between items-center text-sm">
+                                    <span className="text-gray-400">Đã chọn:</span>
+                                    <span className="font-bold">{selectedIds.length} sản phẩm</span>
+                                </div>
+                                <div className="flex justify-between items-end">
+                                    <span className="text-sm text-gray-400">Tạm tính:</span>
+                                    <span className="text-3xl font-black text-[#E30019] tracking-tight">{formatPrice(totalAmount)}</span>
+                                </div>
+                            </div>
+                            
+                            <button 
+                                onClick={handleGoToCheckout}
+                                disabled={selectedIds.length === 0}
+                                className="w-full group relative bg-white text-[#0a0a0a] font-black py-5 rounded-2xl transition-all shadow-[0_10px_20px_rgba(255,255,255,0.1)] hover:shadow-[0_15px_30px_rgba(255,255,255,0.2)] flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed overflow-hidden"
+                            >
+                                <span className="relative z-10 flex items-center gap-2 tracking-widest uppercase text-sm">
+                                    Thanh Toán <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
+                                </span>
+                            </button>
+
+                            <div className="mt-6 flex flex-wrap gap-2 justify-center opacity-60">
+                                <div className="px-3 py-1 border border-white/20 rounded-md text-[10px] font-bold uppercase tracking-wider">Bảo mật SSL</div>
+                                <div className="px-3 py-1 border border-white/20 rounded-md text-[10px] font-bold uppercase tracking-wider">Hỗ trợ 24/7</div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

@@ -352,7 +352,7 @@ const ManageOrders = () => {
                                         </div>
                                         {selectedOrder.tracking_code && (
                                             <a 
-                                                href={`https://donhang.ghn.vn/?order_code=${selectedOrder.tracking_code}`} 
+                                                href={`https://tracking.ghn.dev/?order_code=${selectedOrder.tracking_code}`} 
                                                 target="_blank" 
                                                 rel="noopener noreferrer"
                                                 className="text-xs bg-blue-600 text-white px-4 py-2 rounded-lg font-bold hover:bg-blue-700 transition shadow-sm w-full sm:w-auto text-center"

@@ -10,7 +10,7 @@ class CartService {
                 as: 'product', // Khớp với alias trong models/index.js
                 attributes: ['product_id', 'name', 'main_image', 'price', 'discount_price', 'slug']
             }],
-            order: [['created_at', 'DESC']]
+            order: [['updated_at', 'DESC']]
         });
     }
 

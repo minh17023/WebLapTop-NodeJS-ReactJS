@@ -11,6 +11,7 @@ import Layout from './components/user/Layout';
 import Home from './pages/user/Home';
 import Login from './pages/user/Login';
 import Register from './pages/user/Register';
+import WarrantyPolicy from './pages/user/WarrantyPolicy';
 import Products from './pages/user/Products';
 import ProductDetail from './pages/user/ProductDetail';
 import Category from './pages/user/Category';
@@ -61,6 +62,7 @@ function App() {
           <Route path="/post/:slug" element={<ClientSection><Layout><PostDetail /></Layout></ClientSection>} />
           <Route path="/cart" element={<ClientSection><Layout><Cart /></Layout></ClientSection>} />
           <Route path="/order-success" element={<ClientSection><Layout><OrderSuccess /></Layout></ClientSection>} />
+          <Route path="/chinh-sach-bao-hanh" element={<ClientSection><Layout><WarrantyPolicy /></Layout></ClientSection>} />
           <Route path="/profile" element={<ClientSection><Layout><Profile /></Layout></ClientSection>} />
           <Route path="/my-orders" element={<ClientSection><Layout><MyOrders /></Layout></ClientSection>} />
           <Route path="/checkout" element={<ClientSection><Layout><Checkout /></Layout></ClientSection>} />
