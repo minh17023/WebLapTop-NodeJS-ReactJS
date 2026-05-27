@@ -21,6 +21,7 @@ const ManageCategories = () => {
     // Form data cho Danh mục
     const initialFormState = {
         name: '', 
+        slug: '',
         description: '', 
         image_url: '' 
     };
@@ -79,9 +80,32 @@ const ManageCategories = () => {
     };
 
     // ================= XỬ LÝ FORM =================
+    const generateSlug = (text) => {
+        return text.toString().toLowerCase()
+            .replace(/á|à|ả|ạ|ã|ă|ắ|ằ|ẳ|ẵ|ặ|â|ấ|ầ|ẩ|ẫ|ậ/gi, 'a')
+            .replace(/é|è|ẻ|ẽ|ẹ|ê|ế|ề|ể|ễ|ệ/gi, 'e')
+            .replace(/i|í|ì|ỉ|ĩ|ị/gi, 'i')
+            .replace(/ó|ò|ỏ|õ|ọ|ô|ố|ồ|ổ|ỗ|ộ|ơ|ớ|ờ|ở|ỡ|ợ/gi, 'o')
+            .replace(/ú|ù|ủ|ũ|ụ|ư|ứ|ừ|ử|ữ|ự/gi, 'u')
+            .replace(/ý|ỳ|ỷ|ỹ|ỵ/gi, 'y')
+            .replace(/đ/gi, 'd')
+            .replace(/\s+/g, '-') 
+            .replace(/[^\w\-]+/g, '') 
+            .replace(/\-\-+/g, '-') 
+            .replace(/^-+/, '') 
+            .replace(/-+$/, '');
+    };
+
     const handleInputChange = (e) => {
         const { name, value } = e.target;
-        setFormData(prev => ({ ...prev, [name]: value }));
+        setFormData(prev => {
+            const newData = { ...prev, [name]: value };
+            // Tự động tạo slug khi đang thêm mới (chưa có editingId) và người dùng gõ tên
+            if (name === 'name' && !editingId) {
+                newData.slug = generateSlug(value);
+            }
+            return newData;
+        });
     };
 
     const openAddModal = () => {
@@ -94,6 +118,7 @@ const ManageCategories = () => {
         setEditingId(category.category_id || category.id);
         setFormData({
             name: category.name || '',
+            slug: category.slug || '',
             description: category.description || '',
             image_url: category.image_url || category.image || ''
         });
@@ -249,9 +274,15 @@ const ManageCategories = () => {
 
                         <div className="p-6 overflow-y-auto custom-scrollbar">
                             <form id="categoryForm" onSubmit={handleSubmit} className="space-y-6">
-                                <div>
-                                    <label className="block text-[11px] font-bold text-gray-500 uppercase mb-2">Tên danh mục <span className="text-blue-500">*</span></label>
-                                    <input type="text" name="name" required placeholder="VD: Laptop Văn Phòng..." value={formData.name} onChange={handleInputChange} className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none text-sm font-medium transition" />
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    <div>
+                                        <label className="block text-[11px] font-bold text-gray-500 uppercase mb-2">Tên danh mục <span className="text-blue-500">*</span></label>
+                                        <input type="text" name="name" required placeholder="VD: Laptop Văn Phòng..." value={formData.name} onChange={handleInputChange} className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none text-sm font-medium transition" />
+                                    </div>
+                                    <div>
+                                        <label className="block text-[11px] font-bold text-gray-500 uppercase mb-2">Đường dẫn (Slug) <span className="text-blue-500">*</span></label>
+                                        <input type="text" name="slug" required placeholder="VD: laptop-van-phong..." value={formData.slug} onChange={handleInputChange} className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none text-sm font-medium transition" />
+                                    </div>
                                 </div>
 
                                 <div>
