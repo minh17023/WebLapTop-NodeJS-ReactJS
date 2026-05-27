@@ -20,6 +20,10 @@ const Register = () => {
             return toast.error('Mật khẩu xác nhận không khớp!');
         }
 
+        if (!formData.email.endsWith('@gmail.com')) {
+            return toast.error('Email phải có định dạng @gmail.com!');
+        }
+
         setIsLoading(true);
         try {
             const res = await authService.register(formData.full_name, formData.email, formData.password);
@@ -35,26 +39,26 @@ const Register = () => {
     };
 
     return (
-        <div className="flex min-h-screen bg-white animate-fade-in flex-row-reverse">
+        <div className="flex min-h-screen bg-white animate-fade-in">
             {/* CỘT TRÁI - BRANDING */}
             <div className="hidden lg:flex lg:w-1/2 bg-[#0a0a0a] text-white flex-col justify-between p-16 relative overflow-hidden">
-                <div className="absolute top-0 left-0 w-[600px] h-[600px] bg-[#0071E3]/20 rounded-full blur-[100px] -translate-y-1/2 -translate-x-1/3"></div>
-                <div className="absolute bottom-0 right-0 w-[400px] h-[400px] bg-white/5 rounded-full blur-[80px] translate-y-1/3 translate-x-1/3"></div>
+                <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-[#0071E3]/20 rounded-full blur-[100px] -translate-y-1/2 translate-x-1/3"></div>
+                <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-white/5 rounded-full blur-[80px] translate-y-1/3 -translate-x-1/3"></div>
                 
-                <div className="relative z-10 text-right">
+                <div className="relative z-10">
                     <Link to="/" className="text-4xl font-black tracking-tighter">
                         HNC<span className="text-[#0071E3]">LAPTOP</span>
                     </Link>
                 </div>
                 
-                <div className="relative z-10 max-w-lg ml-auto text-right space-y-6">
+                <div className="relative z-10 max-w-lg space-y-6">
                     <h1 className="text-5xl font-black leading-tight">Bắt Đầu <br/>Hành Trình Mới.</h1>
                     <p className="text-lg text-gray-400 font-light leading-relaxed">
                         Tạo tài khoản ngay hôm nay để nhận các đặc quyền ưu đãi, quản lý đơn hàng dễ dàng và tham gia cộng đồng công nghệ của chúng tôi.
                     </p>
                 </div>
                 
-                <div className="relative z-10 text-sm text-gray-500 font-medium tracking-wide text-right">
+                <div className="relative z-10 text-sm text-gray-500 font-medium tracking-wide">
                     &copy; 2026 HNC LAPTOP. All rights reserved.
                 </div>
             </div>

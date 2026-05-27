@@ -18,6 +18,9 @@ const Login = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        if (!formData.email.endsWith('@gmail.com')) {
+            return toast.error('Email phải có định dạng @gmail.com!');
+        }
         setIsLoading(true);
         try {
             const res = await authService.login(formData.email, formData.password);

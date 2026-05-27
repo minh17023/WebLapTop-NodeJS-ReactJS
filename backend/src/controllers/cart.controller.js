@@ -8,7 +8,7 @@ class CartController {
         } catch (error) { next(error); }
     }
 
-    async add(req, res, next) {
+    async creat(req, res, next) {
         try {
             const { productId, quantity } = req.body;
             await cartService.addToCart(req.user.id, productId, quantity);
@@ -31,9 +31,9 @@ class CartController {
         } catch (error) { next(error); }
     }
 
-    async clear(req, res, next) {
+    async delete(req, res, next) {
         try {
-            await cartService.clearCart(req.user.id);
+            await cartService.deleteCart(req.user.id);
             res.status(200).json({ success: true });
         } catch (error) { next(error); }
     }

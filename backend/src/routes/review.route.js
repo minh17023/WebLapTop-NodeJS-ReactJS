@@ -7,7 +7,6 @@ const { verifyToken, isAdmin } = require('../middlewares/auth.middleware');
 router.get('/product/:productId', reviewController.getByProduct);
 
 // Private API (Dành cho Admin)
-// 🌟 THÊM MỚI: Route gốc lấy tất cả
 router.get('/', verifyToken, isAdmin, reviewController.getAll);
 router.get('/search', verifyToken, isAdmin, reviewController.search);
 router.delete('/:id', verifyToken, isAdmin, reviewController.delete);

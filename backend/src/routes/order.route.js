@@ -23,12 +23,9 @@ router.put('/:id/status', verifyToken, isAdmin, orderController.updateStatus);
 
 router.put('/:id/payment-status', verifyToken, isAdmin, orderController.updatePaymentStatus);
 
-// 🌟 BỔ SUNG: Route Xuất hóa đơn PDF
+//  Route Xuất hóa đơn PDF
 router.get('/:id/invoice', verifyToken, orderController.exportInvoice);
 
-// ===============================================
-// ROUTE DÀNH CHO USER BÌNH THƯỜNG
-// ===============================================
 router.post('/', verifyToken, orderController.create);
 router.get('/my-orders', verifyToken, orderController.getMyOrders);
 router.get('/:id', verifyToken, orderController.getById);

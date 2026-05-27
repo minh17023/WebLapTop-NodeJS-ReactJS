@@ -42,7 +42,7 @@ class CartService {
     }
 
     // 5. Xóa sạch giỏ (Dùng sau khi đặt hàng thành công)
-    async clearCart(userId) {
+    async deleteCart(userId) {
         return await CartItem.destroy({ where: { user_id: userId } });
     }
 }

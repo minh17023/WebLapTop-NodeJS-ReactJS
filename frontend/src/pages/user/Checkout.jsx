@@ -149,7 +149,7 @@ const Checkout = () => {
 
         const phoneRegex = /^0[0-9]{9}$/;
         if (!phoneRegex.test(phone)) {
-            toast.error("Số điện thoại không hợp lệ!");
+            toast.error("Số điện thoại phải bắt đầu bằng số 0 và có đúng 10 chữ số!");
             return;
         }
 

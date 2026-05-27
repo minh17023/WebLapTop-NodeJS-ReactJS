@@ -66,7 +66,7 @@ const Profile = () => {
 
         const phoneRegex = /^0[0-9]{9}$/;
         if (formData.phone && !phoneRegex.test(formData.phone)) {
-            toast.error("Số điện thoại không hợp lệ!");
+            toast.error("Số điện thoại phải bắt đầu bằng số 0 và có đúng 10 chữ số!");
             return;
         }
 

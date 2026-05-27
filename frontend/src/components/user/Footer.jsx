@@ -35,10 +35,10 @@ const Footer = () => {
                     <div>
                         <h4 className="text-[#0a0a0a] font-bold mb-6 uppercase tracking-widest text-xs">Chính Sách</h4>
                         <ul className="space-y-4 text-sm">
-                            <li><Link to="#" className="group flex items-center hover:text-[#0071E3] transition-colors"><ChevronRight size={14} className="mr-2 text-gray-400 group-hover:text-[#0071E3] transition-colors" /> Chính sách bảo hành</Link></li>
-                            <li><Link to="#" className="group flex items-center hover:text-[#0071E3] transition-colors"><ChevronRight size={14} className="mr-2 text-gray-400 group-hover:text-[#0071E3] transition-colors" /> Chính sách đổi trả</Link></li>
-                            <li><Link to="#" className="group flex items-center hover:text-[#0071E3] transition-colors"><ChevronRight size={14} className="mr-2 text-gray-400 group-hover:text-[#0071E3] transition-colors" /> Giao hàng & Lắp đặt</Link></li>
-                            <li><Link to="#" className="group flex items-center hover:text-[#0071E3] transition-colors"><ChevronRight size={14} className="mr-2 text-gray-400 group-hover:text-[#0071E3] transition-colors" /> Bảo mật thông tin</Link></li>
+                            <li><Link to="/chinh-sach-bao-hanh" className="group flex items-center hover:text-[#0071E3] transition-colors"><ChevronRight size={14} className="mr-2 text-gray-400 group-hover:text-[#0071E3] transition-colors" /> Chính sách bảo hành</Link></li>
+                            <li><Link to="/chinh-sach-bao-hanh" className="group flex items-center hover:text-[#0071E3] transition-colors"><ChevronRight size={14} className="mr-2 text-gray-400 group-hover:text-[#0071E3] transition-colors" /> Chính sách đổi trả</Link></li>
+                            <li><Link to="/chinh-sach-bao-hanh" className="group flex items-center hover:text-[#0071E3] transition-colors"><ChevronRight size={14} className="mr-2 text-gray-400 group-hover:text-[#0071E3] transition-colors" /> Giao hàng & Lắp đặt</Link></li>
+                            <li><Link to="/chinh-sach-bao-hanh" className="group flex items-center hover:text-[#0071E3] transition-colors"><ChevronRight size={14} className="mr-2 text-gray-400 group-hover:text-[#0071E3] transition-colors" /> Bảo mật thông tin</Link></li>
                         </ul>
                     </div>
 
