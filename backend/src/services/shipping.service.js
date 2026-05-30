@@ -101,7 +101,9 @@ class GHNService {
             return response.data.data.order_code; 
         } catch (error) {
             console.error("Lỗi tạo vận đơn GHN:", error.response?.data || error.message);
-            throw new Error(error.response?.data?.message || "Không thể đẩy đơn sang Giao Hàng Nhanh");
+            const err = new Error(error.response?.data?.message || "Không thể đẩy đơn sang Giao Hàng Nhanh");
+            err.statusCode = 400;
+            throw err;
         }
     }
 }

@@ -285,7 +285,7 @@ class OrderService {
                 length: maxLength,
                 width: maxWidth,
                 height: totalHeight,
-                insurance_value: totalAmountInt // Luôn bảo hiểm 100% giá trị đơn hàng!
+                insurance_value: Math.min(totalAmountInt, 5000000) // Luôn bảo hiểm 100% giá trị đơn hàng, tối đa 5tr cho môi trường dev!
             });
 
             // 3. Cập nhật mã vận đơn vừa lấy được vào Database
