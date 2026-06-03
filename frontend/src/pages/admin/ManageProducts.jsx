@@ -24,11 +24,12 @@ const ManageProducts = () => {
     const [editingId, setEditingId] = useState(null);
 
     // 🌟 ĐÃ THÊM: Các trường thông số kỹ thuật vào State mặc định
+    // 🌟 ĐÃ THÊM: Các trường thông số kỹ thuật vào State mặc định
     const initialFormState = {
-        name: '', price: '', discount_price: '', stock_quantity: '',
-        category_id: '', brand: '', main_image: '', description: '',
+        name: '', category_id: '', brand: '', main_image: '', description: '',
         spec_cpu: '', spec_ram: '', spec_gpu: '', spec_screen: '', spec_storage: '',
-        spec_weight: '', spec_length: '', spec_width: '', spec_height: ''
+        spec_weight: '', spec_length: '', spec_width: '', spec_height: '',
+        variants: []
     };
     const [formData, setFormData] = useState(initialFormState);
 
@@ -137,13 +138,11 @@ const ManageProducts = () => {
 
         setFormData({
             name: product.name,
-            price: product.price,
-            discount_price: product.discount_price || '',
-            stock_quantity: product.stock_quantity ?? product.stock ?? product.quantity ?? '',
             category_id: product.category_id,
             brand: product.brand || '',
             main_image: product.main_image || '',
             description: product.description || '',
+            variants: product.variants || [],
             // Đổ dữ liệu Specs vào
             spec_cpu: specs.cpu || '',
             spec_ram: specs.ram || '',
@@ -167,16 +166,25 @@ const ManageProducts = () => {
         e.preventDefault();
         setIsSubmitting(true);
         try {
+            if (formData.variants.length === 0) {
+                toast.error("Vui lòng thêm ít nhất một biến thể (Cấu hình)!");
+                setIsSubmitting(false);
+                return;
+            }
+
             // 🌟 Đóng gói lại cục JSON specifications trước khi gửi xuống Backend
             const payload = {
                 name: formData.name,
                 brand: formData.brand,
                 main_image: formData.main_image,
                 description: formData.description,
-                price: Number(formData.price),
-                discount_price: formData.discount_price ? Number(formData.discount_price) : null,
-                stock_quantity: Number(formData.stock_quantity),
                 category_id: Number(formData.category_id),
+                variants: formData.variants.map(v => ({
+                    ...v,
+                    price: Number(v.price),
+                    discount_price: v.discount_price ? Number(v.discount_price) : null,
+                    stock_quantity: Number(v.stock_quantity)
+                })),
                 specifications: {
                     cpu: formData.spec_cpu,
                     ram: formData.spec_ram,
@@ -215,6 +223,29 @@ const ManageProducts = () => {
         } catch (error) {
             toast.error("Không thể xóa sản phẩm này!");
         }
+    };
+
+    const handleAddVariant = () => {
+        setFormData(prev => ({
+            ...prev,
+            variants: [...prev.variants, { variant_id: null, sku: '', ram: '', ssd: '', price: '', discount_price: '', stock_quantity: '' }]
+        }));
+    };
+
+    const handleRemoveVariant = (index) => {
+        setFormData(prev => {
+            const newVariants = [...prev.variants];
+            newVariants.splice(index, 1);
+            return { ...prev, variants: newVariants };
+        });
+    };
+
+    const handleVariantChange = (index, field, value) => {
+        setFormData(prev => {
+            const newVariants = [...prev.variants];
+            newVariants[index][field] = value;
+            return { ...prev, variants: newVariants };
+        });
     };
 
     return (
@@ -279,13 +310,16 @@ const ManageProducts = () => {
                                         <td className="px-6 py-4">
                                             <div className="flex flex-col">
                                                 <span className="font-bold text-blue-600">
-                                                    {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(product.discount_price || product.price)}
+                                                    {product.variants && product.variants.length > 0 
+                                                        ? new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(product.variants[0].discount_price || product.variants[0].price)
+                                                        : 'N/A'
+                                                    }
                                                 </span>
                                             </div>
                                         </td>
                                         <td className="px-6 py-4 text-center">
-                                            <span className={`font-black text-lg ${product.stock_quantity > 0 ? 'text-green-500' : 'text-blue-500'}`}>
-                                                {product.stock_quantity ?? product.stock ?? product.quantity ?? 0}
+                                            <span className={`font-black text-lg ${(product.variants && product.variants.reduce((sum, v) => sum + v.stock_quantity, 0) > 0) ? 'text-green-500' : 'text-blue-500'}`}>
+                                                {product.variants ? product.variants.reduce((sum, v) => sum + v.stock_quantity, 0) : 0}
                                             </span>
                                         </td>
                                         <td className="px-6 py-4 text-right">
@@ -362,21 +396,55 @@ const ManageProducts = () => {
                                                 <input type="text" name="brand" placeholder="Dell, HP, Asus..." value={formData.brand} onChange={handleInputChange} className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none text-sm font-medium transition" />
                                             </div>
                                         </div>
+                                    </div>
+                                </div>
 
-                                        <div className="grid grid-cols-3 gap-5">
-                                            <div>
-                                                <label className="block text-[11px] font-bold text-gray-500 uppercase mb-2">Giá gốc <span className="text-blue-500">*</span></label>
-                                                <input type="number" name="price" required min="0" value={formData.price} onChange={handleInputChange} className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none text-sm font-medium transition" />
-                                            </div>
-                                            <div>
-                                                <label className="block text-[11px] font-bold text-gray-500 uppercase mb-2">Giá KM</label>
-                                                <input type="number" name="discount_price" min="0" value={formData.discount_price} onChange={handleInputChange} className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none text-sm font-medium transition" />
-                                            </div>
-                                            <div>
-                                                <label className="block text-[11px] font-bold text-gray-500 uppercase mb-2">Tồn kho <span className="text-blue-500">*</span></label>
-                                                <input type="number" name="stock_quantity" required min="0" value={formData.stock_quantity} onChange={handleInputChange} className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none text-sm font-medium transition" />
-                                            </div>
-                                        </div>
+                                {/* KHỐI BIẾN THỂ (VARIANTS) */}
+                                <div>
+                                    <div className="flex justify-between items-center mb-4 border-b border-gray-100 pb-2">
+                                        <h3 className="text-[11px] font-black text-blue-600 uppercase tracking-wider">Cấu hình (RAM/SSD)</h3>
+                                        <button type="button" onClick={handleAddVariant} className="text-[10px] font-bold text-white bg-blue-600 px-3 py-1.5 rounded hover:bg-blue-700 transition">
+                                            + Thêm cấu hình
+                                        </button>
+                                    </div>
+                                    <div className="space-y-4">
+                                        {formData.variants.length === 0 ? (
+                                            <p className="text-sm text-gray-500 italic text-center py-4 bg-gray-50 rounded-xl">Chưa có cấu hình nào. Hãy thêm cấu hình!</p>
+                                        ) : (
+                                            formData.variants.map((variant, index) => (
+                                                <div key={index} className="grid grid-cols-12 gap-3 items-end bg-gray-50 p-4 rounded-xl border border-gray-200">
+                                                    <div className="col-span-12 sm:col-span-2">
+                                                        <label className="block text-[10px] font-bold text-gray-500 uppercase mb-1">Mã SKU</label>
+                                                        <input type="text" placeholder="VD: SKU123" value={variant.sku || ''} onChange={(e) => handleVariantChange(index, 'sku', e.target.value)} className="w-full px-3 py-2 border rounded-lg text-sm" />
+                                                    </div>
+                                                    <div className="col-span-12 sm:col-span-2">
+                                                        <label className="block text-[10px] font-bold text-gray-500 uppercase mb-1">RAM <span className="text-red-500">*</span></label>
+                                                        <input type="text" required placeholder="VD: 8GB" value={variant.ram} onChange={(e) => handleVariantChange(index, 'ram', e.target.value)} className="w-full px-3 py-2 border rounded-lg text-sm" />
+                                                    </div>
+                                                    <div className="col-span-12 sm:col-span-2">
+                                                        <label className="block text-[10px] font-bold text-gray-500 uppercase mb-1">SSD <span className="text-red-500">*</span></label>
+                                                        <input type="text" required placeholder="VD: 256GB" value={variant.ssd} onChange={(e) => handleVariantChange(index, 'ssd', e.target.value)} className="w-full px-3 py-2 border rounded-lg text-sm" />
+                                                    </div>
+                                                    <div className="col-span-12 sm:col-span-2">
+                                                        <label className="block text-[10px] font-bold text-gray-500 uppercase mb-1">Giá gốc <span className="text-red-500">*</span></label>
+                                                        <input type="number" required min="0" value={variant.price} onChange={(e) => handleVariantChange(index, 'price', e.target.value)} className="w-full px-3 py-2 border rounded-lg text-sm" />
+                                                    </div>
+                                                    <div className="col-span-12 sm:col-span-2">
+                                                        <label className="block text-[10px] font-bold text-gray-500 uppercase mb-1">Giá KM</label>
+                                                        <input type="number" min="0" value={variant.discount_price} onChange={(e) => handleVariantChange(index, 'discount_price', e.target.value)} className="w-full px-3 py-2 border rounded-lg text-sm" />
+                                                    </div>
+                                                    <div className="col-span-12 sm:col-span-1">
+                                                        <label className="block text-[10px] font-bold text-gray-500 uppercase mb-1">Tồn kho</label>
+                                                        <input type="number" required min="0" value={variant.stock_quantity} onChange={(e) => handleVariantChange(index, 'stock_quantity', e.target.value)} className="w-full px-3 py-2 border rounded-lg text-sm" />
+                                                    </div>
+                                                    <div className="col-span-12 sm:col-span-1 flex justify-end pb-1">
+                                                        <button type="button" onClick={() => handleRemoveVariant(index)} className="p-2 text-red-500 hover:bg-red-50 rounded-lg transition" title="Xóa cấu hình này">
+                                                            <Trash2 size={18} />
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            ))
+                                        )}
                                     </div>
                                 </div>
 

@@ -10,6 +10,7 @@ const ProductDetail = () => {
     const { slug } = useParams();
     const navigate = useNavigate();
     const [product, setProduct] = useState(null);
+    const [selectedVariant, setSelectedVariant] = useState(null);
     const [loading, setLoading] = useState(true);
     const [relatedProducts, setRelatedProducts] = useState([]);
 
@@ -21,6 +22,9 @@ const ProductDetail = () => {
                 const res = await productService.getBySlug(slug);
                 if (res.success) {
                     setProduct(res.data);
+                    if (res.data.variants && res.data.variants.length > 0) {
+                        setSelectedVariant(res.data.variants[0]);
+                    }
                     
                     // Fetch related products
                     let categorySlug = res.data.Category?.slug;
@@ -47,12 +51,18 @@ const ProductDetail = () => {
     }, [slug]);
 
     const handleBuyNow = () => {
-        if (!product) return;
+        if (!product || !selectedVariant) {
+            toast.error('Vui lòng chọn cấu hình sản phẩm!');
+            return;
+        }
         const directItem = {
             product_id: product.product_id,
             name: product.name,
-            price: product.price,
-            discount_price: product.discount_price,
+            variant_id: selectedVariant.variant_id,
+            price: selectedVariant.price,
+            discount_price: selectedVariant.discount_price,
+            ram: selectedVariant.ram,
+            ssd: selectedVariant.ssd,
             main_image: product.main_image,
             quantity: 1 
         };
@@ -75,8 +85,9 @@ const ProductDetail = () => {
         </div>
     );
 
-    const activePrice = product.discount_price || product.price;
-    const discountPercent = product.discount_price ? Math.round(((product.price - product.discount_price) / product.price) * 100) : 0;
+    const activePrice = selectedVariant?.discount_price || selectedVariant?.price || 0;
+    const originalPrice = selectedVariant?.price || 0;
+    const discountPercent = selectedVariant?.discount_price ? Math.round(((originalPrice - selectedVariant.discount_price) / originalPrice) * 100) : 0;
 
     return (
         <div className="bg-[#fcfcfc] min-h-screen py-8 animate-fade-in">
@@ -119,24 +130,55 @@ const ProductDetail = () => {
                             </h1>
 
                             <div className="flex flex-col mb-8">
-                                {product.discount_price ? (
+                                {selectedVariant?.discount_price ? (
                                     <div className="flex items-baseline flex-wrap gap-4">
-                                        <span className="text-4xl md:text-5xl font-black text-[#E30019] tracking-tight">{formatPrice(product.discount_price)}</span>
-                                        <span className="text-xl text-gray-400 line-through font-medium">{formatPrice(product.price)}</span>
+                                        <span className="text-4xl md:text-5xl font-black text-[#E30019] tracking-tight">{formatPrice(selectedVariant.discount_price)}</span>
+                                        <span className="text-xl text-gray-400 line-through font-medium">{formatPrice(selectedVariant.price)}</span>
                                     </div>
                                 ) : (
-                                    <span className="text-4xl md:text-5xl font-black text-[#E30019] tracking-tight">{formatPrice(product.price)}</span>
+                                    <span className="text-4xl md:text-5xl font-black text-[#E30019] tracking-tight">{formatPrice(originalPrice)}</span>
                                 )}
                                 
                                 <div className="mt-4 flex items-center gap-3">
-                                    <span className="px-3 py-1 bg-green-50 text-green-600 rounded-full text-xs font-bold flex items-center gap-1.5 border border-green-100">
-                                        <Check size={14} strokeWidth={3} /> Còn hàng
-                                    </span>
-                                    <span className="text-sm text-gray-500 font-medium">
-                                        (Kho: <span className="font-bold text-[#0a0a0a]">{product.stock_quantity || 'Sẵn'}</span> sản phẩm)
-                                    </span>
+                                    {selectedVariant?.stock_quantity > 0 ? (
+                                        <>
+                                            <span className="px-3 py-1 bg-green-50 text-green-600 rounded-full text-xs font-bold flex items-center gap-1.5 border border-green-100">
+                                                <Check size={14} strokeWidth={3} /> Còn hàng
+                                            </span>
+                                            <span className="text-sm text-gray-500 font-medium">
+                                                (Kho: <span className="font-bold text-[#0a0a0a]">{selectedVariant.stock_quantity}</span> sản phẩm)
+                                            </span>
+                                        </>
+                                    ) : (
+                                        <span className="px-3 py-1 bg-red-50 text-red-600 rounded-full text-xs font-bold flex items-center gap-1.5 border border-red-100">
+                                            Hết hàng
+                                        </span>
+                                    )}
                                 </div>
                             </div>
+
+                            {/* Lựa chọn biến thể */}
+                            {product.variants && product.variants.length > 0 && (
+                                <div className="mb-8">
+                                    <h3 className="text-sm font-bold text-[#0a0a0a] uppercase tracking-wider mb-4">Chọn Cấu Hình</h3>
+                                    <div className="flex flex-wrap gap-3">
+                                        {product.variants.map((variant) => (
+                                            <button
+                                                key={variant.variant_id}
+                                                onClick={() => setSelectedVariant(variant)}
+                                                className={`px-4 py-3 rounded-xl border-2 text-left transition-all ${
+                                                    selectedVariant?.variant_id === variant.variant_id
+                                                        ? 'border-[#0071E3] bg-blue-50/50 text-[#0071E3]'
+                                                        : 'border-gray-200 hover:border-gray-300 text-gray-700'
+                                                }`}
+                                            >
+                                                <div className="font-bold text-sm">{variant.ram} - {variant.ssd}</div>
+                                                <div className="text-xs mt-1 font-medium">{formatPrice(variant.discount_price || variant.price)}</div>
+                                            </button>
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
 
                             {/* Cấu hình kỹ thuật */}
                             <div className="mb-10">
@@ -169,9 +211,10 @@ const ProductDetail = () => {
                                 </button>
 
                                 <button
-                                    onClick={() => addToCart(product)}
+                                    onClick={() => addToCart(product, selectedVariant)}
                                     className="sm:w-20 h-[76px] flex items-center justify-center bg-white text-[#0a0a0a] rounded-2xl hover:bg-blue-50 hover:text-[#0071E3] transition-colors border border-gray-200 hover:border-blue-200"
                                     title="Thêm vào giỏ"
+                                    disabled={!selectedVariant || selectedVariant.stock_quantity <= 0}
                                 >
                                     <ShoppingCart size={24} strokeWidth={2.5} />
                                 </button>
@@ -212,8 +255,10 @@ const ProductDetail = () => {
                         </div>
                         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                             {relatedProducts.map(p => {
-                                const activeP = p.discount_price || p.price;
-                                const discountP = p.discount_price ? Math.round(((p.price - p.discount_price) / p.price) * 100) : 0;
+                                const defaultV = p.variants && p.variants[0];
+                                const activeP = defaultV?.discount_price || defaultV?.price || 0;
+                                const originalP = defaultV?.price || 0;
+                                const discountP = defaultV?.discount_price ? Math.round(((originalP - defaultV.discount_price) / originalP) * 100) : 0;
                                 return (
                                     <Link key={p.product_id || p.id} to={`/product/${p.slug}`} className="group flex flex-col bg-white rounded-3xl p-5 transition-all duration-300 hover:shadow-[0_15px_30px_rgba(0,0,0,0.06)] border border-gray-100">
                                         <div className="relative aspect-square mb-6 bg-gray-50 rounded-2xl p-4 flex items-center justify-center group-hover:bg-gray-100 transition-colors">
@@ -223,7 +268,7 @@ const ProductDetail = () => {
                                         <h3 className="text-sm font-bold text-[#0a0a0a] group-hover:text-[#0071E3] line-clamp-2 mb-3 leading-relaxed">{p.name}</h3>
                                         <div className="mt-auto">
                                             <p className="text-[#E30019] font-black text-lg tracking-tight">{formatPrice(activeP)}</p>
-                                            {p.discount_price && <p className="text-gray-400 text-xs font-semibold line-through mt-0.5">{formatPrice(p.price)}</p>}
+                                            {defaultV?.discount_price && <p className="text-gray-400 text-xs font-semibold line-through mt-0.5">{formatPrice(originalP)}</p>}
                                         </div>
                                     </Link>
                                 )

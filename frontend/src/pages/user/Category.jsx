@@ -95,8 +95,13 @@ const Category = () => {
                     {filteredProducts.length > 0 ? (
                         <>
                             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                                {filteredProducts.map((product) => (
-                                    <div key={product.product_id} className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-lg transition flex flex-col">
+                                {filteredProducts.map((product) => {
+                                    const defaultV = product.variants && product.variants.length > 0 ? product.variants[0] : {};
+                                    const originalPrice = defaultV.price || 0;
+                                    const activePrice = defaultV.discount_price || originalPrice;
+
+                                    return (
+                                        <div key={product.product_id} className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-lg transition flex flex-col">
                                         <Link to={`/product/${product.slug}`}>
                                             <img src={product.main_image || "https://via.placeholder.com/400x300"} alt={product.name} className="w-full h-48 object-cover p-4 hover:scale-105 transition duration-300" />
                                         </Link>
@@ -109,19 +114,19 @@ const Category = () => {
                                             </div>
                                             <div className="mt-auto pt-4 flex items-center justify-between">
                                                 <div className="flex flex-col">
-                                                    {product.discount_price ? (
+                                                    {defaultV.discount_price ? (
                                                         <>
-                                                            <span className="font-extrabold text-blue-600 text-lg">{formatPrice(product.discount_price)}</span>
-                                                            <span className="text-xs text-gray-400 line-through">{formatPrice(product.price)}</span>
+                                                            <span className="font-extrabold text-blue-600 text-lg">{formatPrice(activePrice)}</span>
+                                                            <span className="text-xs text-gray-400 line-through">{formatPrice(originalPrice)}</span>
                                                         </>
                                                     ) : (
-                                                        <span className="font-extrabold text-blue-600 text-lg">{formatPrice(product.price)}</span>
+                                                        <span className="font-extrabold text-blue-600 text-lg">{formatPrice(originalPrice)}</span>
                                                     )}
                                                 </div>
 
                                                 {/* Nút thêm vào giỏ hàng THẬT ĐÃ HOẠT ĐỘNG */}
                                                 <button
-                                                    onClick={() => addToCart(product)}
+                                                    onClick={(e) => { e.preventDefault(); addToCart(product, product.variants?.[0]); }}
                                                     className="bg-blue-50 hover:bg-blue-600 text-blue-600 hover:text-white p-2 rounded-full transition"
                                                 >
                                                     <ShoppingCart size={20} />
@@ -129,7 +134,8 @@ const Category = () => {
                                             </div>
                                         </div>
                                     </div>
-                                ))}
+                                    );
+                                })}
                             </div>
 
                             {/* THANH PHÂN TRANG */}

@@ -146,6 +146,9 @@ const MyOrders = () => {
                                                     <Link to={`/product/${item.product?.slug}`} className="font-bold text-[#0a0a0a] hover:text-[#0071E3] transition-colors line-clamp-1 mb-1">
                                                         {item.product?.name}
                                                     </Link>
+                                                    {item.variant && (
+                                                        <p className="text-[10px] text-gray-500 mb-1">Cấu hình: {item.variant.ram} - {item.variant.ssd}</p>
+                                                    )}
                                                     <p className="text-xs text-gray-400 font-medium">SL: x{item.quantity}</p>
                                                 </div>
                                                 <div className="text-right">

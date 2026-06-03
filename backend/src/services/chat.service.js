@@ -1,26 +1,38 @@
 const { GoogleGenerativeAI } = require('@google/generative-ai');
-const { Product, ChatMessage } = require('../models');
+const { Product, ProductVariant, ChatMessage } = require('../models');
 
 class ChatService {
     // Xử lý gửi tin nhắn AI và lưu DB
     async handleChat(userId, message) {
         try {
-            // 1. LẤY TOÀN BỘ SẢN PHẨM VÀ ĐẦY ĐỦ THUỘC TÍNH
+            // 1. LẤY TOÀN BỘ SẢN PHẨM KÈM BIẾN THỂ
             const products = await Product.findAll({
-                where: { status: 'active' } // Chỉ lấy máy đang bán
+                where: { status: 'active' },
+                include: [{ model: ProductVariant, as: 'variants' }]
             });
 
             // Format lại khối text đưa cho Bot cực kỳ chi tiết
             const productListText = products.map((p, index) => {
-                const currentPrice = p.discount_price ? `${p.discount_price} VNĐ (Gốc: ${p.price} VNĐ)` : `${p.price} VNĐ`;
-                const stock = p.stock_quantity > 0 ? `Còn hàng (${p.stock_quantity} chiếc)` : 'Đã hết hàng';
+                const variants = p.variants || [];
+                const defaultVariant = variants[0];
+                let currentPrice = 'Đang cập nhật';
+                let stock = 'Đã hết hàng';
+                
+                if (defaultVariant) {
+                    // Lấy giá của cấu hình mặc định làm giá tham khảo
+                    currentPrice = defaultVariant.discount_price ? `${defaultVariant.discount_price} VNĐ (Gốc: ${defaultVariant.price} VNĐ)` : `${defaultVariant.price} VNĐ`;
+                    // Tính tổng tồn kho của tất cả cấu hình
+                    const totalStock = variants.reduce((sum, v) => sum + v.stock_quantity, 0);
+                    stock = totalStock > 0 ? `Còn hàng (${totalStock} chiếc)` : 'Đã hết hàng';
+                }
+
                 const specText = p.specifications ? JSON.stringify(p.specifications) : 'Đang cập nhật';
                 const desc = p.description ? p.description.substring(0, 200) + '...' : 'Không có mô tả';
 
                 return `${index + 1}. [Mã SP: ${p.product_id}] ${p.name}
    - Hãng: ${p.brand || 'Chưa rõ'}
    - Kho: ${stock}
-   - Giá: ${currentPrice}
+   - Giá tham khảo: ${currentPrice}
    - Cấu hình: ${specText}
    - Ưu điểm nổi bật: ${desc}`;
             }).join('\n\n');

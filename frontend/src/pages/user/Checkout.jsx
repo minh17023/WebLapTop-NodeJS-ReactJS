@@ -167,6 +167,7 @@ const Checkout = () => {
                 payment_method: paymentMethod,
                 items: selectedItems.map(item => ({
                     product_id: item.product_id,
+                    variant_id: item.variant_id,
                     quantity: item.quantity,
                     price: Number(item.discount_price || item.price || 0)
                 }))
@@ -300,6 +301,7 @@ const Checkout = () => {
                                         </div>
                                         <div className="flex-1 min-w-0">
                                             <p className="text-xs font-bold text-[#0a0a0a] truncate leading-relaxed">{item.name}</p>
+                                            <p className="text-[10px] text-gray-500 mt-0.5">Cấu hình: {item.ram || 'N/A'} - {item.ssd || 'N/A'}</p>
                                             <div className="flex justify-between items-center mt-2">
                                                 <span className="text-xs text-gray-500">SL: {item.quantity}</span>
                                                 <span className="text-xs font-bold text-[#E30019]">{formatPrice(Number(item.discount_price || item.price) * item.quantity)}</span>

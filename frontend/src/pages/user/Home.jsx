@@ -250,9 +250,11 @@ const Home = () => {
                     ) : (
                         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
                             {products.slice(0, 8).map((product) => {
-                                const activePrice = product.discount_price || product.price;
-                                const discountPercent = product.discount_price 
-                                    ? Math.round(((product.price - product.discount_price) / product.price) * 100) 
+                                const defaultV = product.variants && product.variants.length > 0 ? product.variants[0] : {};
+                                const originalPrice = defaultV.price || 0;
+                                const activePrice = defaultV.discount_price || originalPrice;
+                                const discountPercent = defaultV.discount_price 
+                                    ? Math.round(((originalPrice - defaultV.discount_price) / originalPrice) * 100) 
                                     : 0;
 
                                 return (
@@ -288,9 +290,9 @@ const Home = () => {
                                                     <p className="text-[#E30019] font-black text-xl tracking-tight">
                                                         {formatPrice(activePrice)}
                                                     </p>
-                                                    {product.discount_price && (
+                                                    {defaultV.discount_price && (
                                                         <p className="text-gray-400 text-sm font-semibold line-through mt-1">
-                                                            {formatPrice(product.price)}
+                                                            {formatPrice(originalPrice)}
                                                         </p>
                                                     )}
                                                 </div>

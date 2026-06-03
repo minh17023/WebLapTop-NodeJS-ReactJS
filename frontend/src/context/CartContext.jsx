@@ -21,7 +21,7 @@ export const CartProvider = ({ children }) => {
                     const guestItems = JSON.parse(savedGuestCart);
                     if (guestItems.length > 0) {
                         for (const item of guestItems) {
-                            await cartService.addToCart(item.product_id, item.quantity);
+                            await cartService.addToCart(item.product_id, item.variant_id, item.quantity);
                         }
                         localStorage.removeItem('cart_guest');
                     }
@@ -29,9 +29,15 @@ export const CartProvider = ({ children }) => {
 
                 const res = await cartService.getCart();
                 if (res.success) {
-                    // Dữ liệu sản phẩm được làm phẳng ở đây
+                    // Dữ liệu sản phẩm được làm phẳng và trộn cấu hình
                     const mappedItems = res.data.map(item => ({
                         ...item.product,
+                        variant_id: item.variant_id,
+                        price: item.variant?.price || item.product?.price,
+                        discount_price: item.variant?.discount_price || item.product?.discount_price,
+                        ram: item.variant?.ram,
+                        ssd: item.variant?.ssd,
+                        stock_quantity: item.variant?.stock_quantity,
                         quantity: item.quantity
                     }));
                     setCartItems(mappedItems);
@@ -52,34 +58,48 @@ export const CartProvider = ({ children }) => {
         fetchCart();
     }, [user]);
 
-    const addToCart = async (product) => {
-        const existingItem = cartItems.find(item => item.product_id === product.product_id);
+    const addToCart = async (product, selectedVariant) => {
+        if (!selectedVariant || !selectedVariant.variant_id) {
+             toast.error('Vui lòng chọn cấu hình sản phẩm!');
+             return;
+        }
+
+        const cartItemToSave = {
+             ...product,
+             variant_id: selectedVariant.variant_id,
+             price: selectedVariant.price,
+             discount_price: selectedVariant.discount_price,
+             ram: selectedVariant.ram,
+             ssd: selectedVariant.ssd,
+             stock_quantity: selectedVariant.stock_quantity
+        };
+
+        const existingItemIndex = cartItems.findIndex(item => item.product_id === product.product_id && item.variant_id === selectedVariant.variant_id);
+        const existingItem = existingItemIndex >= 0;
 
         if (user) {
             try {
-                const res = await cartService.addToCart(product.product_id, 1);
+                const res = await cartService.addToCart(product.product_id, selectedVariant.variant_id, 1);
                 if (res.success) {
                     toast.success(existingItem ? `Đã tăng số lượng ${product.name}` : `Đã thêm ${product.name} vào giỏ hàng`);
                     setCartItems(prev => {
-                        const itemExists = prev.find(item => item.product_id === product.product_id);
-                        if (itemExists) {
-                            return prev.map(item => item.product_id === product.product_id ? { ...item, quantity: item.quantity + 1 } : item);
+                        if (existingItem) {
+                            return prev.map((item, idx) => idx === existingItemIndex ? { ...item, quantity: item.quantity + 1 } : item);
                         }
-                        return [...prev, { ...product, quantity: 1 }];
+                        return [...prev, { ...cartItemToSave, quantity: 1 }];
                     });
                 }
             } catch (error) {
-                toast.error("Lỗi không thể kết nối tới giỏ hàng hệ thống");
+                toast.error(error.response?.data?.message || "Lỗi không thể kết nối tới giỏ hàng hệ thống");
             }
         } else {
             toast.success(existingItem ? `Đã tăng số lượng ${product.name}` : `Đã thêm ${product.name} vào giỏ hàng khách`);
             setCartItems(prev => {
                 let newCart;
-                const itemExists = prev.find(item => item.product_id === product.product_id);
-                if (itemExists) {
-                    newCart = prev.map(item => item.product_id === product.product_id ? { ...item, quantity: item.quantity + 1 } : item);
+                if (existingItem) {
+                    newCart = prev.map((item, idx) => idx === existingItemIndex ? { ...item, quantity: item.quantity + 1 } : item);
                 } else {
-                    newCart = [...prev, { ...product, quantity: 1 }];
+                    newCart = [...prev, { ...cartItemToSave, quantity: 1 }];
                 }
                 localStorage.setItem('cart_guest', JSON.stringify(newCart));
                 return newCart;
@@ -87,17 +107,17 @@ export const CartProvider = ({ children }) => {
         }
     };
 
-    const removeFromCart = async (productId) => {
+    const removeFromCart = async (productId, variantId) => {
         if (user) {
             try {
-                await cartService.removeFromCart(productId);
+                await cartService.removeFromCart(productId, variantId);
             } catch (e) {
                 console.error("Lỗi xóa sản phẩm DB:", e);
             }
         }
 
         setCartItems(prev => {
-            const newCart = prev.filter(item => item.product_id !== productId);
+            const newCart = prev.filter(item => !(item.product_id === productId && item.variant_id === variantId));
             if (!user) {
                 localStorage.setItem('cart_guest', JSON.stringify(newCart));
             }
@@ -106,19 +126,19 @@ export const CartProvider = ({ children }) => {
         toast.info("Đã xóa sản phẩm khỏi giỏ hàng");
     };
 
-    const updateQuantity = async (productId, quantity) => {
+    const updateQuantity = async (productId, variantId, quantity) => {
         if (quantity < 1) return;
 
         if (user) {
             try {
-                await cartService.updateQuantity(productId, quantity);
+                await cartService.updateQuantity(productId, variantId, quantity);
             } catch (e) {
                 console.error("Lỗi cập nhật số lượng DB:", e);
             }
         }
 
         setCartItems(prev => {
-            const newCart = prev.map(item => item.product_id === productId ? { ...item, quantity } : item);
+            const newCart = prev.map(item => (item.product_id === productId && item.variant_id === variantId) ? { ...item, quantity } : item);
             if (!user) {
                 localStorage.setItem('cart_guest', JSON.stringify(newCart));
             }
@@ -146,7 +166,6 @@ export const CartProvider = ({ children }) => {
     };
 
     return (
-        // 🌟 ĐÃ SỬA: Đưa fetchCart vào đây để trang Checkout sử dụng công khai
         <CartContext.Provider value={{ cartItems, addToCart, removeFromCart, updateQuantity, clearCart, getCartTotal, fetchCart, loading }}>
             {children}
         </CartContext.Provider>

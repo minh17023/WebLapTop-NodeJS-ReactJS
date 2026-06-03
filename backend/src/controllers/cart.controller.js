@@ -10,23 +10,24 @@ class CartController {
 
     async creat(req, res, next) {
         try {
-            const { productId, quantity } = req.body;
-            await cartService.addToCart(req.user.id, productId, quantity);
+            const { productId, variantId, quantity } = req.body;
+            await cartService.addToCart(req.user.id, productId, variantId, quantity);
             res.status(200).json({ success: true, message: 'Đã thêm vào giỏ hàng hệ thống' });
         } catch (error) { next(error); }
     }
 
     async update(req, res, next) {
         try {
-            const { productId, quantity } = req.body;
-            await cartService.updateQuantity(req.user.id, productId, quantity);
+            const { productId, variantId, quantity } = req.body;
+            await cartService.updateQuantity(req.user.id, productId, variantId, quantity);
             res.status(200).json({ success: true });
         } catch (error) { next(error); }
     }
 
     async remove(req, res, next) {
         try {
-            await cartService.removeItem(req.user.id, req.params.productId);
+            const { variantId } = req.query; // Nhận variantId từ query string nếu gọi xóa
+            await cartService.removeItem(req.user.id, req.params.productId, variantId);
             res.status(200).json({ success: true, message: 'Đã xóa khỏi giỏ hàng' });
         } catch (error) { next(error); }
     }

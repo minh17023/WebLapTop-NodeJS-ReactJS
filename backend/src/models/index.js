@@ -2,6 +2,7 @@ const sequelize = require('../config/database');
 
 const Category = require('./category.model');
 const Product = require('./product.model');
+const ProductVariant = require('./product_variant.model');
 const User = require('./user.model');
 const Order = require('./order.model');
 const OrderItem = require('./order_item.model');
@@ -34,6 +35,18 @@ CartItem.belongsTo(User, { foreignKey: 'user_id' });
 Product.hasMany(CartItem, { foreignKey: 'product_id' });
 CartItem.belongsTo(Product, { foreignKey: 'product_id', as: 'product' });
 
+// 11. Product - ProductVariant (1 - N)
+Product.hasMany(ProductVariant, { foreignKey: 'product_id', as: 'variants' });
+ProductVariant.belongsTo(Product, { foreignKey: 'product_id' });
+
+// 12. ProductVariant - CartItem (1 - N)
+ProductVariant.hasMany(CartItem, { foreignKey: 'variant_id' });
+CartItem.belongsTo(ProductVariant, { foreignKey: 'variant_id', as: 'variant' });
+
+// 13. ProductVariant - OrderItem (1 - N)
+ProductVariant.hasMany(OrderItem, { foreignKey: 'variant_id' });
+OrderItem.belongsTo(ProductVariant, { foreignKey: 'variant_id', as: 'variant' });
+
 // 7. User - Post (1 - N)
 User.hasMany(Post, { foreignKey: 'author_id' });
 Post.belongsTo(User, { foreignKey: 'author_id', as: 'author' });
@@ -60,5 +73,6 @@ module.exports = {
     CartItem,
     Post,
     Review,
-    ChatMessage
+    ChatMessage,
+    ProductVariant
 };

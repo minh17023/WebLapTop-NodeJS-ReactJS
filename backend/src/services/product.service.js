@@ -1,4 +1,4 @@
-const { Product, Category } = require('../models');
+const { Product, Category, ProductVariant } = require('../models');
 const slugify = require('slugify');
 const { Op } = require('sequelize');
 
@@ -7,7 +7,10 @@ class ProductService {
     async getAllProducts(page = 1, limit = 12) {
         const offset = (page - 1) * limit;
         const { rows, count } = await Product.findAndCountAll({
-            include: [{ model: Category, attributes: ['name', 'slug'] }],
+            include: [
+                { model: Category, attributes: ['name', 'slug'] },
+                { model: ProductVariant, as: 'variants' }
+            ],
             limit: Number(limit),
             offset: Number(offset),
             order: [['created_at', 'DESC']]
@@ -26,7 +29,10 @@ class ProductService {
     async getProductBySlug(slug) {
         return await Product.findOne({
             where: { slug },
-            include: [{ model: Category, attributes: ['name', 'slug'] }]
+            include: [
+                { model: Category, attributes: ['name', 'slug'] },
+                { model: ProductVariant, as: 'variants' }
+            ]
         });
     }
 
@@ -34,11 +40,14 @@ class ProductService {
     async getProductsByCategorySlug(categorySlug, page = 1, limit = 12) {
         const offset = (page - 1) * limit;
         const { rows, count } = await Product.findAndCountAll({
-            include: [{ 
-                model: Category, 
-                where: { slug: categorySlug }, // Lọc theo danh mục
-                attributes: ['name', 'slug', 'description'] 
-            }],
+            include: [
+                { 
+                    model: Category, 
+                    where: { slug: categorySlug }, // Lọc theo danh mục
+                    attributes: ['name', 'slug', 'description'] 
+                },
+                { model: ProductVariant, as: 'variants' }
+            ],
             limit: Number(limit),
             offset: Number(offset),
             order: [['created_at', 'DESC']]
@@ -63,22 +72,43 @@ class ProductService {
                     { brand: { [Op.iLike]: `%${keyword}%` } }
                 ]
             },
-            include: [{ model: Category, attributes: ['name', 'slug'] }],
+            include: [
+                { model: Category, attributes: ['name', 'slug'] },
+                { model: ProductVariant, as: 'variants' }
+            ],
             limit: 5 // Chỉ lấy 5 sản phẩm để hiển thị gợi ý nhanh trên Header
         });
     }
 
     // 3. Thêm sản phẩm mới (Chỉ Admin)
     async createProduct(data) {
+        const { variants, ...productData } = data;
+        
         // Tự động tạo slug từ tên laptop
-        const slug = slugify(data.name, { lower: true, locale: 'vi', strict: true });
+        const slug = slugify(productData.name, { lower: true, locale: 'vi', strict: true });
         
         // Đảm bảo specifications là một object JSON (nếu frontend gửi lên dạng chuỗi thì parse ra)
-        if (typeof data.specifications === 'string') {
-            data.specifications = JSON.parse(data.specifications);
+        if (typeof productData.specifications === 'string') {
+            productData.specifications = JSON.parse(productData.specifications);
         }
 
-        return await Product.create({ ...data, slug });
+        const newProduct = await Product.create({ ...productData, slug });
+        
+        // Tạo biến thể nếu có
+        if (variants && Array.isArray(variants) && variants.length > 0) {
+            const variantsPayload = variants.map(v => ({
+                product_id: newProduct.product_id,
+                sku: v.sku || null,
+                ram: v.ram,
+                ssd: v.ssd,
+                price: v.price,
+                discount_price: v.discount_price || null,
+                stock_quantity: v.stock_quantity
+            }));
+            await ProductVariant.bulkCreate(variantsPayload);
+        }
+
+        return newProduct;
     }
 
     // 4. Cập nhật sản phẩm
@@ -86,14 +116,60 @@ class ProductService {
         const product = await Product.findByPk(id);
         if (!product) return null;
 
-        if (data.name) {
-            data.slug = slugify(data.name, { lower: true, locale: 'vi', strict: true });
+        const { variants, ...productData } = data;
+
+        if (productData.name) {
+            productData.slug = slugify(productData.name, { lower: true, locale: 'vi', strict: true });
         }
-        if (typeof data.specifications === 'string') {
-            data.specifications = JSON.parse(data.specifications);
+        if (typeof productData.specifications === 'string') {
+            productData.specifications = JSON.parse(productData.specifications);
         }
 
-        return await product.update(data);
+        await product.update(productData);
+
+        // Xử lý biến thể nếu có mảng variants truyền lên
+        if (variants && Array.isArray(variants)) {
+            const existingVariants = await ProductVariant.findAll({ where: { product_id: id } });
+            
+            // Xóa các biến thể cũ không còn trong danh sách gửi lên
+            const newVariantIds = variants.map(v => v.variant_id).filter(id => id);
+            for (const ev of existingVariants) {
+                if (!newVariantIds.includes(ev.variant_id)) {
+                    await ev.destroy();
+                }
+            }
+
+            // Thêm mới hoặc cập nhật
+            for (const v of variants) {
+                if (v.variant_id) {
+                    // Update
+                    const ev = existingVariants.find(e => e.variant_id === v.variant_id);
+                    if (ev) {
+                        await ev.update({
+                            sku: v.sku || null,
+                            ram: v.ram,
+                            ssd: v.ssd,
+                            price: v.price,
+                            discount_price: v.discount_price || null,
+                            stock_quantity: v.stock_quantity
+                        });
+                    }
+                } else {
+                    // Create
+                    await ProductVariant.create({
+                        product_id: id,
+                        sku: v.sku || null,
+                        ram: v.ram,
+                        ssd: v.ssd,
+                        price: v.price,
+                        discount_price: v.discount_price || null,
+                        stock_quantity: v.stock_quantity
+                    });
+                }
+            }
+        }
+
+        return product;
     }
 
     // 5. Xóa sản phẩm

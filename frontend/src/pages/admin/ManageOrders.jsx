@@ -380,6 +380,7 @@ const ManageOrders = () => {
                                                 <img src={item.product?.main_image || ''} alt="" className="w-16 h-16 object-contain bg-white rounded-lg border border-gray-100 p-1" />
                                                 <div>
                                                     <p className="font-bold text-gray-800 text-sm line-clamp-1">{item.product?.name || 'Sản phẩm không xác định'}</p>
+                                                    <p className="text-[10px] text-gray-500 mt-0.5">Cấu hình: {item.variant?.ram || 'N/A'} - {item.variant?.ssd || 'N/A'}</p>
                                                     <p className="text-xs text-gray-500 mt-1">Đơn giá: <span className="font-medium text-gray-700">{formatPrice(item.price_at_purchase)}</span></p>
                                                 </div>
                                             </div>

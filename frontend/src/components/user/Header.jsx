@@ -92,7 +92,7 @@ const Header = () => {
                                                 </div>
                                                 <div className="flex-1 min-w-0">
                                                     <p className="text-sm font-semibold text-[#0a0a0a] truncate group-hover:text-[#0071E3] transition-colors">{p.name}</p>
-                                                    <p className="text-sm font-bold text-[#0071E3] mt-0.5">{formatPrice(p.discount_price || p.price)}</p>
+                                                    <p className="text-sm font-bold text-[#0071E3] mt-0.5">{formatPrice(p.variants?.[0]?.discount_price || p.variants?.[0]?.price || 0)}</p>
                                                 </div>
                                             </Link>
                                         ))}

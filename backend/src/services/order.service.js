@@ -1,4 +1,4 @@
-const { Order, OrderItem, Product, User, CartItem, sequelize } = require('../models');
+const { Order, OrderItem, Product, ProductVariant, User, CartItem, sequelize } = require('../models');
 const ghnService = require('./shipping.service');
 const { Op } = require('sequelize');
 
@@ -44,22 +44,36 @@ class OrderService {
             const orderItemsPayload = orderData.items.map(item => ({
                 order_id: newOrder.order_id,
                 product_id: item.product_id,
+                variant_id: item.variant_id,
                 quantity: item.quantity,
                 price_at_purchase: item.price 
             }));
 
             await OrderItem.bulkCreate(orderItemsPayload, { transaction: t });
 
-            // Bước C: CHỈ XÓA NHỮNG MÓN ĐÃ ĐƯỢC CHỌN MUA KHỎI GIỎ HÀNG
-            const purchasedProductIds = orderData.items.map(item => item.product_id);
+            // Bước B2: TRỪ TỒN KHO TRONG BẢNG ProductVariant
+            for (const item of orderData.items) {
+                if (!item.variant_id) throw new Error('Đơn hàng có sản phẩm thiếu cấu hình (variant_id)');
+                const variant = await ProductVariant.findByPk(item.variant_id, { transaction: t });
+                if (!variant) throw new Error(`Không tìm thấy biến thể sản phẩm (ID: ${item.variant_id})`);
+                if (variant.stock_quantity < item.quantity) {
+                    throw new Error(`Sản phẩm không đủ hàng (Chỉ còn ${variant.stock_quantity} sản phẩm)`);
+                }
+                variant.stock_quantity -= item.quantity;
+                await variant.save({ transaction: t });
+            }
 
-            await CartItem.destroy({
-                where: { 
-                    user_id: userId,
-                    product_id: purchasedProductIds 
-                },
-                transaction: t
-            });
+            // Bước C: CHỈ XÓA NHỮNG MÓN ĐÃ ĐƯỢC CHỌN MUA KHỎI GIỎ HÀNG
+            for (const item of orderData.items) {
+                await CartItem.destroy({
+                    where: { 
+                        user_id: userId,
+                        product_id: item.product_id,
+                        variant_id: item.variant_id
+                    },
+                    transaction: t
+                });
+            }
 
             // Hoàn tất mọi tiến trình lưu trữ
             await t.commit();
@@ -79,11 +93,17 @@ class OrderService {
             include: [{
                 model: OrderItem,
                 as: 'items', 
-                include: [{
-                    model: Product,
-                    as: 'product',
-                    attributes: ['name', 'main_image', 'slug']
-                }]
+                include: [
+                    {
+                        model: Product,
+                        as: 'product',
+                        attributes: ['name', 'main_image', 'slug']
+                    },
+                    {
+                        model: ProductVariant,
+                        as: 'variant'
+                    }
+                ]
             }],
             limit: Number(limit),
             offset: Number(offset),
@@ -172,11 +192,17 @@ class OrderService {
             include: [{
                 model: OrderItem,
                 as: 'items',
-                include: [{
-                    model: Product,
-                    as: 'product',
-                    attributes: ['name', 'main_image']
-                }]
+                include: [
+                    {
+                        model: Product,
+                        as: 'product',
+                        attributes: ['name', 'main_image']
+                    },
+                    {
+                        model: ProductVariant,
+                        as: 'variant'
+                    }
+                ]
             }],
             limit: Number(limit),
             offset: Number(offset),
@@ -213,11 +239,17 @@ class OrderService {
             include: [{
                 model: OrderItem,
                 as: 'items',
-                include: [{
-                    model: Product,
-                    as: 'product',
-                    attributes: ['name', 'main_image']
-                }]
+                include: [
+                    {
+                        model: Product,
+                        as: 'product',
+                        attributes: ['name', 'main_image']
+                    },
+                    {
+                        model: ProductVariant,
+                        as: 'variant'
+                    }
+                ]
             }],
             order: [['created_at', 'DESC']]
         });
@@ -229,7 +261,10 @@ class OrderService {
             include: [{
                 model: OrderItem,
                 as: 'items',
-                include: [{ model: Product, as: 'product' }]
+                include: [
+                    { model: Product, as: 'product' },
+                    { model: ProductVariant, as: 'variant' }
+                ]
             }]
         });
         
@@ -305,11 +340,17 @@ class OrderService {
 
         const items = await OrderItem.findAll({
             where: { order_id: orderId },
-            include: [{
-                model: Product,
-                as: 'product',
-                attributes: ['name', 'main_image']
-            }]
+            include: [
+                {
+                    model: Product,
+                    as: 'product',
+                    attributes: ['name', 'main_image']
+                },
+                {
+                    model: ProductVariant,
+                    as: 'variant'
+                }
+            ]
         });
 
         return { order, items };

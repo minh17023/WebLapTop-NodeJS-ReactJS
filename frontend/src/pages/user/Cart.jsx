@@ -16,9 +16,12 @@ const Cart = () => {
         return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(price);
     };
 
-    const handleCheckItem = (productId) => {
+    const getItemId = (item) => `${item.product_id}-${item.variant_id}`;
+
+    const handleCheckItem = (item) => {
+        const id = getItemId(item);
         setSelectedIds(prev => 
-            prev.includes(productId) ? prev.filter(id => id !== productId) : [...prev, productId]
+            prev.includes(id) ? prev.filter(selectedId => selectedId !== id) : [...prev, id]
         );
     };
 
@@ -26,11 +29,11 @@ const Cart = () => {
         if (selectedIds.length === cartItems.length) {
             setSelectedIds([]); 
         } else {
-            setSelectedIds(cartItems.map(item => item.product_id)); 
+            setSelectedIds(cartItems.map(item => getItemId(item))); 
         }
     };
 
-    const activeSelectedItems = cartItems.filter(item => selectedIds.includes(item.product_id));
+    const activeSelectedItems = cartItems.filter(item => selectedIds.includes(getItemId(item)));
 
     const totalAmount = activeSelectedItems.reduce((sum, item) => {
         const activePrice = item.discount_price || item.price;
@@ -88,14 +91,14 @@ const Cart = () => {
                         <div className="bg-white rounded-3xl border border-gray-100 shadow-[0_8px_30px_rgba(0,0,0,0.04)] p-6 space-y-6">
                             {cartItems.map((item) => {
                                 const activePrice = item.discount_price || item.price;
-                                const isChecked = selectedIds.includes(item.product_id);
+                                const isChecked = selectedIds.includes(getItemId(item));
 
                                 return (
-                                    <div key={item.product_id} className="flex flex-col sm:flex-row items-start sm:items-center gap-6 py-6 border-b border-gray-50 last:border-0 last:pb-0 first:pt-0">
+                                    <div key={getItemId(item)} className="flex flex-col sm:flex-row items-start sm:items-center gap-6 py-6 border-b border-gray-50 last:border-0 last:pb-0 first:pt-0">
                                         <div className="flex items-center gap-4">
                                             <div 
                                                 className={`w-6 h-6 rounded border-2 flex items-center justify-center cursor-pointer transition-colors flex-shrink-0 ${isChecked ? 'bg-[#0a0a0a] border-[#0a0a0a]' : 'border-gray-300 bg-white'}`}
-                                                onClick={() => handleCheckItem(item.product_id)}
+                                                onClick={() => handleCheckItem(item)}
                                             >
                                                 {isChecked && <Check size={14} className="text-white" strokeWidth={3} />}
                                             </div>
@@ -108,22 +111,25 @@ const Cart = () => {
                                             <Link to={`/product/${item.slug}`} className="text-base font-bold text-[#0a0a0a] hover:text-[#0071E3] transition-colors line-clamp-2 leading-relaxed">
                                                 {item.name}
                                             </Link>
+                                            <p className="text-xs text-gray-500 mt-1 font-medium bg-gray-50 inline-block px-2 py-1 rounded-md">
+                                                Cấu hình: {item.ram || 'N/A'} - {item.ssd || 'N/A'}
+                                            </p>
                                             <p className="text-sm font-black text-[#E30019] mt-2">{formatPrice(activePrice)}</p>
                                         </div>
 
                                         <div className="flex items-center gap-6 w-full sm:w-auto justify-between sm:justify-end">
                                             <div className="flex items-center bg-gray-50 border border-gray-200 rounded-xl p-1">
-                                                <button type="button" onClick={() => updateQuantity(item.product_id, item.quantity - 1)} disabled={item.quantity <= 1} className="w-8 h-8 flex items-center justify-center hover:bg-white hover:text-[#0071E3] rounded-lg transition-colors disabled:opacity-30">
+                                                <button type="button" onClick={() => updateQuantity(item.product_id, item.variant_id, item.quantity - 1)} disabled={item.quantity <= 1} className="w-8 h-8 flex items-center justify-center hover:bg-white hover:text-[#0071E3] rounded-lg transition-colors disabled:opacity-30">
                                                     <Minus size={16} />
                                                 </button>
                                                 <span className="w-10 text-center text-sm font-bold text-[#0a0a0a]">{item.quantity}</span>
-                                                <button type="button" onClick={() => updateQuantity(item.product_id, item.quantity + 1)} className="w-8 h-8 flex items-center justify-center hover:bg-white hover:text-[#0071E3] rounded-lg transition-colors">
+                                                <button type="button" onClick={() => updateQuantity(item.product_id, item.variant_id, item.quantity + 1)} className="w-8 h-8 flex items-center justify-center hover:bg-white hover:text-[#0071E3] rounded-lg transition-colors">
                                                     <Plus size={16} />
                                                 </button>
                                             </div>
                                             <div className="flex flex-col items-end gap-2">
                                                 <span className="text-sm font-black text-[#0a0a0a] hidden sm:block">{formatPrice(activePrice * item.quantity)}</span>
-                                                <button type="button" onClick={() => removeFromCart(item.product_id)} className="text-gray-400 hover:text-[#0071E3] transition-colors p-2 bg-gray-50 rounded-full hover:bg-blue-50">
+                                                <button type="button" onClick={() => removeFromCart(item.product_id, item.variant_id)} className="text-gray-400 hover:text-[#0071E3] transition-colors p-2 bg-gray-50 rounded-full hover:bg-blue-50">
                                                     <Trash2 size={16} />
                                                 </button>
                                             </div>
