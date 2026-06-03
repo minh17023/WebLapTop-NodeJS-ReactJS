@@ -110,7 +110,9 @@ const Category = () => {
                                                 <h3 className="font-bold text-gray-800 hover:text-blue-600 line-clamp-2 h-12">{product.name}</h3>
                                             </Link>
                                             <div className="text-xs text-gray-500 mt-2 space-y-1 bg-gray-50 p-2 rounded">
-                                                <p>CPU: {product.specifications?.cpu || 'Đang cập nhật'}</p>
+                                                {product.specifications?.cpu && <p className="truncate" title={product.specifications.cpu}>CPU: {product.specifications.cpu}</p>}
+                                                {product.specifications?.gpu && <p className="truncate" title={product.specifications.gpu}>GPU: {product.specifications.gpu}</p>}
+                                                {product.specifications?.screen && <p className="truncate" title={product.specifications.screen}>Màn hình: {product.specifications.screen}</p>}
                                             </div>
                                             <div className="mt-auto pt-4 flex items-center justify-between">
                                                 <div className="flex flex-col">

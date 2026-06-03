@@ -27,7 +27,7 @@ const ManageProducts = () => {
     // 🌟 ĐÃ THÊM: Các trường thông số kỹ thuật vào State mặc định
     const initialFormState = {
         name: '', category_id: '', brand: '', main_image: '', description: '',
-        spec_cpu: '', spec_ram: '', spec_gpu: '', spec_screen: '', spec_storage: '',
+        spec_cpu: '', spec_gpu: '', spec_screen: '',
         spec_weight: '', spec_length: '', spec_width: '', spec_height: '',
         variants: []
     };
@@ -145,10 +145,8 @@ const ManageProducts = () => {
             variants: product.variants || [],
             // Đổ dữ liệu Specs vào
             spec_cpu: specs.cpu || '',
-            spec_ram: specs.ram || '',
             spec_gpu: specs.gpu || '',
             spec_screen: specs.screen || '',
-            spec_storage: specs.storage || '',
             spec_weight: specs.weight || '',
             spec_length: specs.length || '',
             spec_width: specs.width || '',
@@ -187,10 +185,8 @@ const ManageProducts = () => {
                 })),
                 specifications: {
                     cpu: formData.spec_cpu,
-                    ram: formData.spec_ram,
                     gpu: formData.spec_gpu,
                     screen: formData.spec_screen,
-                    storage: formData.spec_storage,
                     weight: formData.spec_weight ? Number(formData.spec_weight) : 2000,
                     length: formData.spec_length ? Number(formData.spec_length) : 35,
                     width: formData.spec_width ? Number(formData.spec_width) : 25,
@@ -456,10 +452,7 @@ const ManageProducts = () => {
                                             <label className="block text-[11px] font-bold text-gray-500 uppercase mb-2">CPU</label>
                                             <input type="text" name="spec_cpu" placeholder="VD: Intel Core i5-12500H..." value={formData.spec_cpu} onChange={handleInputChange} className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none text-sm font-medium transition" />
                                         </div>
-                                        <div>
-                                            <label className="block text-[11px] font-bold text-gray-500 uppercase mb-2">RAM</label>
-                                            <input type="text" name="spec_ram" placeholder="VD: 8GB DDR4 3200MHz..." value={formData.spec_ram} onChange={handleInputChange} className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none text-sm font-medium transition" />
-                                        </div>
+
                                         <div>
                                             <label className="block text-[11px] font-bold text-gray-500 uppercase mb-2">Card Đồ Họa (GPU)</label>
                                             <input type="text" name="spec_gpu" placeholder="VD: NVIDIA GeForce RTX 3050Ti..." value={formData.spec_gpu} onChange={handleInputChange} className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none text-sm font-medium transition" />
@@ -468,10 +461,7 @@ const ManageProducts = () => {
                                             <label className="block text-[11px] font-bold text-gray-500 uppercase mb-2">Màn hình (Screen)</label>
                                             <input type="text" name="spec_screen" placeholder="VD: 15.6 inch FHD 144Hz IPS..." value={formData.spec_screen} onChange={handleInputChange} className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none text-sm font-medium transition" />
                                         </div>
-                                        <div className="md:col-span-2">
-                                            <label className="block text-[11px] font-bold text-gray-500 uppercase mb-2">Ổ cứng (Storage)</label>
-                                            <input type="text" name="spec_storage" placeholder="VD: 512GB SSD NVMe..." value={formData.spec_storage} onChange={handleInputChange} className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none text-sm font-medium transition" />
-                                        </div>
+
                                     </div>
                                 </div>
 

@@ -186,7 +186,9 @@ const ProductDetail = () => {
                                     <span className="w-2 h-2 bg-[#0a0a0a] rounded-full mr-3"></span> Thông số chính
                                 </h3>
                                 <div className="grid grid-cols-2 gap-3">
-                                    {Object.entries(product.specifications || {}).map(([key, value]) => (
+                                    {Object.entries(product.specifications || {})
+                                        .filter(([key]) => !['weight', 'length', 'width', 'height'].includes(key))
+                                        .map(([key, value]) => (
                                         <div key={key} className="bg-gray-50 p-4 rounded-2xl border border-gray-100">
                                             <p className="text-xs text-gray-500 uppercase tracking-wider mb-1">{key}</p>
                                             <p className="text-sm font-bold text-[#0a0a0a] truncate" title={value}>{value}</p>

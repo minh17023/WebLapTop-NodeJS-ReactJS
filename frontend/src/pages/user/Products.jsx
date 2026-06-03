@@ -114,8 +114,9 @@ const Products = () => {
                                                         </h3>
                                                     </Link>
                                                     <div className="flex flex-wrap gap-2 mb-4">
-                                                        <span className="text-[10px] font-medium bg-gray-100 text-gray-600 px-2 py-1 rounded-md">{product.specifications?.cpu || 'CPU'}</span>
-                                                        <span className="text-[10px] font-medium bg-gray-100 text-gray-600 px-2 py-1 rounded-md">{product.specifications?.ram || 'RAM'}</span>
+                                                        {product.specifications?.cpu && <span className="text-[10px] font-medium bg-gray-100 text-gray-600 px-2 py-1 rounded-md max-w-[100px] truncate" title={product.specifications.cpu}>{product.specifications.cpu}</span>}
+                                                        {product.specifications?.gpu && <span className="text-[10px] font-medium bg-gray-100 text-gray-600 px-2 py-1 rounded-md max-w-[100px] truncate" title={product.specifications.gpu}>{product.specifications.gpu}</span>}
+                                                        {product.specifications?.screen && <span className="text-[10px] font-medium bg-gray-100 text-gray-600 px-2 py-1 rounded-md max-w-[100px] truncate" title={product.specifications.screen}>{product.specifications.screen}</span>}
                                                     </div>
                                                     
                                                     <div className="mt-auto flex items-end justify-between">
