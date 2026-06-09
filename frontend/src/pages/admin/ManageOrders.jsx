@@ -296,24 +296,49 @@ const ManageOrders = () => {
                 {/* Phân trang */}
                 {!loading && totalPages > 1 && (
                     <div className="p-4 border-t border-gray-100 flex items-center justify-between bg-gray-50/50 rounded-b-2xl">
-                        <p className="text-xs text-gray-500 font-semibold">
-                            Trang <span className="font-extrabold text-blue-600">{currentPage}</span> / <span className="font-bold text-gray-800">{totalPages}</span> (Tổng số {totalItems} đơn hàng)
+                        <p className="text-xs text-gray-500 font-medium">
+                            Hiển thị <span className="font-bold text-gray-800">{totalItems > 0 ? (currentPage - 1) * 10 + 1 : 0}</span> - <span className="font-bold text-gray-800">{Math.min(currentPage * 10, totalItems)}</span> / <span className="font-bold text-gray-800">{totalItems}</span>
                         </p>
-                        <div className="flex items-center gap-1.5">
-                            <button 
-                                onClick={() => setCurrentPage(prev => prev - 1)} 
-                                disabled={currentPage === 1} 
-                                className="px-3 py-1.5 rounded-lg border border-gray-200 text-xs font-semibold text-gray-500 hover:bg-white hover:text-blue-600 disabled:opacity-40 transition bg-transparent cursor-pointer disabled:cursor-not-allowed"
-                            >
-                                Trước
-                            </button>
-                            <button 
-                                onClick={() => setCurrentPage(prev => prev + 1)} 
-                                disabled={currentPage === totalPages} 
-                                className="px-3 py-1.5 rounded-lg border border-gray-200 text-xs font-semibold text-gray-500 hover:bg-white hover:text-blue-600 disabled:opacity-40 transition bg-transparent cursor-pointer disabled:cursor-not-allowed"
-                            >
-                                Sau
-                            </button>
+                        <div className="flex items-center gap-1 flex-wrap justify-end">
+                            <button onClick={() => setCurrentPage(prev => prev - 1)} disabled={currentPage === 1} className="p-2 rounded-lg border border-gray-200 text-gray-500 hover:bg-white hover:text-blue-600 disabled:opacity-50 transition bg-transparent"><ChevronLeft size={16} /></button>
+                            {(() => {
+                                const pages = [];
+                                const maxVisiblePages = 5;
+                                let startPage = Math.max(1, currentPage - Math.floor(maxVisiblePages / 2));
+                                let endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
+                                
+                                if (endPage - startPage + 1 < maxVisiblePages) {
+                                    startPage = Math.max(1, endPage - maxVisiblePages + 1);
+                                }
+
+                                if (startPage > 1) {
+                                    pages.push(
+                                        <button key={1} onClick={() => setCurrentPage(1)} className={`w-8 h-8 rounded-lg text-xs font-bold transition border bg-transparent text-gray-600 border-gray-200 hover:bg-white hover:text-blue-600`}>1</button>
+                                    );
+                                    if (startPage > 2) {
+                                        pages.push(<span key="dots1" className="px-1 text-gray-400">...</span>);
+                                    }
+                                }
+
+                                for (let i = startPage; i <= endPage; i++) {
+                                    pages.push(
+                                        <button key={i} onClick={() => setCurrentPage(i)} className={`w-8 h-8 rounded-lg text-xs font-bold transition border ${currentPage === i ? 'bg-blue-600 text-white border-blue-600 shadow-md shadow-blue-200' : 'bg-transparent text-gray-600 border-gray-200 hover:bg-white hover:text-blue-600'}`}>
+                                            {i}
+                                        </button>
+                                    );
+                                }
+
+                                if (endPage < totalPages) {
+                                    if (endPage < totalPages - 1) {
+                                        pages.push(<span key="dots2" className="px-1 text-gray-400">...</span>);
+                                    }
+                                    pages.push(
+                                        <button key={totalPages} onClick={() => setCurrentPage(totalPages)} className={`w-8 h-8 rounded-lg text-xs font-bold transition border bg-transparent text-gray-600 border-gray-200 hover:bg-white hover:text-blue-600`}>{totalPages}</button>
+                                    );
+                                }
+                                return pages;
+                            })()}
+                            <button onClick={() => setCurrentPage(prev => prev + 1)} disabled={currentPage === totalPages} className="p-2 rounded-lg border border-gray-200 text-gray-500 hover:bg-white hover:text-blue-600 disabled:opacity-50 transition bg-transparent"><ChevronRight size={16} /></button>
                         </div>
                     </div>
                 )}

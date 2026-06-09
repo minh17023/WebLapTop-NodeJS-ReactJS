@@ -250,7 +250,7 @@ const ManageProducts = () => {
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center bg-white p-6 rounded-2xl border border-gray-100 shadow-sm gap-4">
                 <div>
                     <h1 className="text-xl font-black text-gray-800 uppercase tracking-tight">Quản Lý Sản Phẩm</h1>
-                    <p className="text-xs text-gray-400 mt-1">Hỗ trợ upload ảnh từ máy tính & Phân trang.</p>
+                    <p className="text-xs text-gray-400 mt-1">Quản lý các sản phẩm máy tính.</p>
                 </div>
                 <div className="flex items-center gap-3 w-full sm:w-auto">
                     <div className="relative flex-1 sm:w-64">
@@ -291,7 +291,7 @@ const ManageProducts = () => {
                                         <td className="px-6 py-4">
                                             <div className="flex items-center gap-4">
                                                 {product.main_image ? (
-                                                    <img src={product.main_image} alt="" className="w-24 h-24 rounded-xl object-contain bg-white border border-gray-100 p-2 shadow-sm flex-shrink-0" />
+                                                    <img src={product.main_image} onError={(e) => { e.target.onerror = null; e.target.src = "https://via.placeholder.com/400x300"; }} alt="" className="w-24 h-24 rounded-xl object-contain bg-white border border-gray-100 p-2 shadow-sm flex-shrink-0" />
                                                 ) : (
                                                     <div className="w-24 h-24 rounded-xl bg-gray-50 flex items-center justify-center text-gray-300 border border-gray-200 shadow-sm flex-shrink-0">
                                                         <ImageIcon size={28} />
@@ -341,13 +341,45 @@ const ManageProducts = () => {
                         <p className="text-xs text-gray-500 font-medium">
                             Hiển thị <span className="font-bold text-gray-800">{totalItems > 0 ? indexOfFirstProduct + 1 : 0}</span> - <span className="font-bold text-gray-800">{Math.min(indexOfLastProduct, totalItems)}</span> / <span className="font-bold text-gray-800">{totalItems}</span>
                         </p>
-                        <div className="flex items-center gap-1">
+                        <div className="flex items-center gap-1 flex-wrap justify-end">
                             <button onClick={() => paginate(currentPage - 1)} disabled={currentPage === 1} className="p-2 rounded-lg border border-gray-200 text-gray-500 hover:bg-white hover:text-blue-600 disabled:opacity-50 transition bg-transparent"><ChevronLeft size={16} /></button>
-                            {[...Array(totalPages)].map((_, index) => (
-                                <button key={index + 1} onClick={() => paginate(index + 1)} className={`w-8 h-8 rounded-lg text-xs font-bold transition border ${currentPage === index + 1 ? 'bg-blue-600 text-white border-red-600 shadow-md shadow-red-200' : 'bg-transparent text-gray-600 border-gray-200 hover:bg-white hover:text-blue-600'}`}>
-                                    {index + 1}
-                                </button>
-                            ))}
+                            {(() => {
+                                const pages = [];
+                                const maxVisiblePages = 5;
+                                let startPage = Math.max(1, currentPage - Math.floor(maxVisiblePages / 2));
+                                let endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
+                                
+                                if (endPage - startPage + 1 < maxVisiblePages) {
+                                    startPage = Math.max(1, endPage - maxVisiblePages + 1);
+                                }
+
+                                if (startPage > 1) {
+                                    pages.push(
+                                        <button key={1} onClick={() => paginate(1)} className={`w-8 h-8 rounded-lg text-xs font-bold transition border bg-transparent text-gray-600 border-gray-200 hover:bg-white hover:text-blue-600`}>1</button>
+                                    );
+                                    if (startPage > 2) {
+                                        pages.push(<span key="dots1" className="px-1 text-gray-400">...</span>);
+                                    }
+                                }
+
+                                for (let i = startPage; i <= endPage; i++) {
+                                    pages.push(
+                                        <button key={i} onClick={() => paginate(i)} className={`w-8 h-8 rounded-lg text-xs font-bold transition border ${currentPage === i ? 'bg-blue-600 text-white border-blue-600 shadow-md shadow-blue-200' : 'bg-transparent text-gray-600 border-gray-200 hover:bg-white hover:text-blue-600'}`}>
+                                            {i}
+                                        </button>
+                                    );
+                                }
+
+                                if (endPage < totalPages) {
+                                    if (endPage < totalPages - 1) {
+                                        pages.push(<span key="dots2" className="px-1 text-gray-400">...</span>);
+                                    }
+                                    pages.push(
+                                        <button key={totalPages} onClick={() => paginate(totalPages)} className={`w-8 h-8 rounded-lg text-xs font-bold transition border bg-transparent text-gray-600 border-gray-200 hover:bg-white hover:text-blue-600`}>{totalPages}</button>
+                                    );
+                                }
+                                return pages;
+                            })()}
                             <button onClick={() => paginate(currentPage + 1)} disabled={currentPage === totalPages} className="p-2 rounded-lg border border-gray-200 text-gray-500 hover:bg-white hover:text-blue-600 disabled:opacity-50 transition bg-transparent"><ChevronRight size={16} /></button>
                         </div>
                     </div>

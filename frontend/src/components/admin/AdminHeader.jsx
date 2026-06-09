@@ -31,7 +31,7 @@ const AdminHeader = () => {
             {/* Lời chào góc trái */}
             <div>
                 <p className="text-xs text-gray-400 font-bold uppercase tracking-wider">Hệ thống quản trị</p>
-                <h2 className="text-sm font-bold text-gray-700">Xin chào, <span className="text-blue-600">{user?.full_name || user?.fullName || 'Quản trị viên'}</span> 👋</h2>
+                <h2 className="text-sm font-bold text-gray-700">Xin chào, <span className="text-blue-600">{user?.full_name || user?.fullName || 'Quản trị viên'}</span> </h2>
             </div>
 
             {/* Các nút thao tác góc phải */}
