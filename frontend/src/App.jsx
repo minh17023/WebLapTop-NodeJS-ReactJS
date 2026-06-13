@@ -36,8 +36,6 @@ import ManagePosts from './pages/admin/ManagePosts';
 import ManageReviews from './pages/admin/ManageReviews';
 import ManageSettings from './pages/admin/ManageSettings';
 
-// 🌟 Component bọc trung gian để kẹp CartProvider riêng cho Client, 
-// giúp code gọn gàng không cần copy-paste thẻ <CartProvider> lặp đi lặp lại
 const ClientSection = ({ children }) => {
   return <CartProvider>{children}</CartProvider>;
 };

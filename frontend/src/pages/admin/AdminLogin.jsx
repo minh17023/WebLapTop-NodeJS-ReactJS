@@ -1,5 +1,4 @@
 import { useState } from 'react';
-// Bỏ useNavigate vì chúng ta sẽ dùng Hard Redirect
 import { authService } from '../../services/auth.service'; 
 import { toast } from 'react-toastify';
 import { ShieldCheck, Lock, Mail, LogIn } from 'lucide-react';
@@ -19,21 +18,16 @@ const AdminLogin = () => {
 
         setLoading(true);
         try {
-            // 🌟 CHÚ Ý: Truyền email, password tùy theo cách bạn viết trong authService.js
-            // Nếu file auth.service.js của bạn nhận (email, password) thì dùng dòng này:
             const res = await authService.login(email, password); 
             
-            // Nếu file auth.service.js nhận data object thì đổi thành: authService.login({ email, password })
 
             if (res && res.success) {
-                // Bóc tách dữ liệu chuẩn xác từ cục response
                 const userData = res.data?.user || res.data || res.user;
                 const userRole = userData?.role;
                 
                 if (userRole === 'admin') {
                     const token = res.data?.token || res.token;
                     
-                    // 1. Tự tay lưu Token và thông tin User vào LocalStorage
                     if (token) {
                         localStorage.setItem('token', token);
                         localStorage.setItem('user', JSON.stringify(userData));
@@ -41,11 +35,9 @@ const AdminLogin = () => {
                     
                     toast.success("Xác thực quản trị viên thành công!");
                     
-                    // 2. HARD REDIRECT: Ép trình duyệt tải lại thẳng vào trang admin
-                    // Việc này giúp AuthContext khởi tạo lại từ đầu, đọc Token mới lưu và cấp quyền chuẩn xác 100%
                     setTimeout(() => {
                         window.location.href = '/admin';
-                    }, 500); // Trễ 0.5s để hiện xong thông báo toast màu xanh
+                    }, 500);
                     
                 } else {
                     toast.error("Tài khoản của bạn không có quyền truy cập vùng Quản trị!");

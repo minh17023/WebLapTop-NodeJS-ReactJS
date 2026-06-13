@@ -1,7 +1,6 @@
 const ghnService = require('../services/shipping.service');
 
 class ShippingController {
-    // API: GET /api/shipping/provinces
     async getProvinces(req, res) {
         try {
             const provinces = await ghnService.getProvinces();
@@ -11,7 +10,6 @@ class ShippingController {
         }
     }
 
-    // API: GET /api/shipping/districts/:provinceId
     async getDistricts(req, res) {
         try {
             const { provinceId } = req.params;
@@ -22,7 +20,6 @@ class ShippingController {
         }
     }
 
-    // API: GET /api/shipping/wards/:districtId
     async getWards(req, res) {
         try {
             const { districtId } = req.params;
@@ -33,7 +30,6 @@ class ShippingController {
         }
     }
 
-    // API: POST /api/shipping/fee
     async calculateFee(req, res) {
         try {
             const { districtId, wardCode } = req.body;

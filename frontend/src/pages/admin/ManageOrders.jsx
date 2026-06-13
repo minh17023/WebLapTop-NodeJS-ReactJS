@@ -47,7 +47,6 @@ const ManageOrders = () => {
         }
     };
 
-    // Debounce tìm kiếm
     useEffect(() => {
         const handler = setTimeout(() => {
             setDebouncedSearch(searchTerm);
@@ -55,12 +54,10 @@ const ManageOrders = () => {
         return () => clearTimeout(handler);
     }, [searchTerm]);
 
-    // Khi từ khóa đã debounce thay đổi, reset về trang 1
     useEffect(() => {
         setCurrentPage(1);
     }, [debouncedSearch]);
 
-    // Một useEffect duy nhất chịu trách nhiệm fetch dữ liệu khi trang hoặc từ khóa debounce thay đổi
     useEffect(() => {
         fetchOrdersAPI(debouncedSearch, currentPage);
     }, [currentPage, debouncedSearch]);
@@ -71,7 +68,7 @@ const ManageOrders = () => {
         return order.status === filterStatus;
     });
 
-    const currentOrders = processedOrders; // Sử dụng danh sách đã được phân trang từ backend
+    const currentOrders = processedOrders;
 
     // ================= LOGIC CHUYỂN TRẠNG THÁI GIAO HÀNG =================
     const handleStatusChange = async (orderId, newStatus) => {
@@ -84,7 +81,7 @@ const ManageOrders = () => {
         try {
             await orderService.updateStatus(orderId, newStatus);
             toast.success(`${actionName} thành công!`);
-            fetchOrdersAPI(searchTerm); // 🌟 Gọi lại API để lấy dữ liệu mới nhất (bao gồm cả tracking_code nếu có)
+            fetchOrdersAPI(searchTerm);
         } catch (error) {
             toast.error("Lỗi cập nhật trạng thái!");
         }
@@ -101,7 +98,6 @@ const ManageOrders = () => {
             await orderService.updatePaymentStatus(orderId, newStatus);
             toast.success('Cập nhật trạng thái thanh toán thành công!');
         } catch (error) {
-            // Nếu API lỗi thì trả lại dữ liệu cũ
             setOrders(originalOrders);
             toast.error("Lỗi cập nhật thanh toán!");
         }
@@ -113,7 +109,6 @@ const ManageOrders = () => {
             toast.info("Đang khởi tạo hóa đơn...");
             const blob = await orderService.exportInvoice(orderId);
             
-            // Tạo URL ảo để tự động tải về file PDF
             const url = window.URL.createObjectURL(new Blob([blob]));
             const link = document.createElement('a');
             link.href = url;
@@ -139,7 +134,6 @@ const ManageOrders = () => {
         }
     };
 
-    // Render các nút hành động logic theo tiến trình
     const renderActionButtons = (orderId, status) => {
         switch (status) {
             case 'pending':

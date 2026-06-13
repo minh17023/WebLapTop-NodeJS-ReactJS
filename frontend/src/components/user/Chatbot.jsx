@@ -77,16 +77,11 @@ const Chatbot = () => {
         }
     };
 
-    // 🌟 HÀM MỚI: Xử lý ký tự ** thành chữ in đậm
     const formatMessage = (text) => {
-        // Tách các đoạn text được bọc bởi dấu **
         return text.split(/(\*\*.*?\*\*)/g).map((part, index) => {
-            // Nếu đoạn đó có 2 dấu sao ở đầu và cuối
             if (part.startsWith('**') && part.endsWith('**')) {
-                // Cắt bỏ 2 dấu sao đi và bọc vào thẻ <strong> để in đậm
                 return <strong key={index} className="text-gray-900 font-black">{part.slice(2, -2)}</strong>;
             }
-            // Các đoạn chữ bình thường
             return <span key={index}>{part}</span>;
         });
     };

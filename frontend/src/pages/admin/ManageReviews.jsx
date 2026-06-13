@@ -10,7 +10,6 @@ const ManageReviews = () => {
     const [searchTerm, setSearchTerm] = useState('');
     const [debouncedSearch, setDebouncedSearch] = useState('');
     
-    // Bộ lọc theo số sao
     const [filterRating, setFilterRating] = useState('all'); 
     
     const [currentPage, setCurrentPage] = useState(1);
@@ -52,7 +51,6 @@ const ManageReviews = () => {
         }
     };
 
-    // Debounce tìm kiếm nội dung đánh giá
     useEffect(() => {
         const handler = setTimeout(() => {
             setDebouncedSearch(searchTerm);
@@ -60,17 +58,14 @@ const ManageReviews = () => {
         return () => clearTimeout(handler);
     }, [searchTerm]);
 
-    // Khi bộ lọc số sao thay đổi, reset về trang 1
     useEffect(() => {
         setCurrentPage(1);
     }, [filterRating]);
 
-    // Khi từ khóa đã debounce thay đổi, reset về trang 1
     useEffect(() => {
         setCurrentPage(1);
     }, [debouncedSearch]);
 
-    // Một useEffect duy nhất chịu trách nhiệm fetch dữ liệu khi trang, bộ lọc hoặc từ khóa debounce thay đổi
     useEffect(() => {
         fetchReviewsAPI(debouncedSearch, currentPage, filterRating);
     }, [currentPage, debouncedSearch, filterRating]);
@@ -78,7 +73,7 @@ const ManageReviews = () => {
     // ================= PHÂN TRANG =================
     const indexOfLastReview = currentPage * reviewsPerPage;
     const indexOfFirstReview = indexOfLastReview - reviewsPerPage;
-    const currentReviews = reviews; // Đã lọc và phân trang ở Backend
+    const currentReviews = reviews;
     const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
     // ================= XÓA =================
@@ -93,7 +88,6 @@ const ManageReviews = () => {
         }
     };
 
-    // Hàm vẽ ngôi sao
     const renderStars = (rating) => {
         return (
             <div className="flex items-center gap-1">

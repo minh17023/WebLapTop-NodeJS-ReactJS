@@ -93,7 +93,7 @@ const Login = () => {
                         <div className="space-y-2">
                             <div className="flex justify-between items-center">
                                 <label className="text-xs font-bold text-gray-500 uppercase tracking-wider">Mật khẩu</label>
-                                <Link to="#" className="text-xs font-bold text-[#0071E3] hover:text-red-700 transition-colors">Quên mật khẩu?</Link>
+                                {/* <Link to="#" className="text-xs font-bold text-[#0071E3] hover:text-red-700 transition-colors">Quên mật khẩu?</Link> */}
                             </div>
                             <div className="relative">
                                 <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">

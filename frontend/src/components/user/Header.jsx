@@ -17,7 +17,6 @@ const Header = () => {
 
     const cartCount = cartItems.reduce((total, item) => total + item.quantity, 0);
 
-    // Live Search Logic (Debounce)
     useEffect(() => {
         const delayDebounceFn = setTimeout(async () => {
             if (keyword.trim()) {
@@ -40,7 +39,6 @@ const Header = () => {
 
     const formatPrice = (price) => new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(price);
 
-    // Close dropdown when clicking outside
     useEffect(() => {
         const handleClickOutside = (event) => {
             if (searchRef.current && !searchRef.current.contains(event.target)) {

@@ -2,16 +2,13 @@ const { GoogleGenerativeAI } = require('@google/generative-ai');
 const { Product, ProductVariant, ChatMessage } = require('../models');
 
 class ChatService {
-    // Xử lý gửi tin nhắn AI và lưu DB
     async handleChat(userId, message) {
         try {
-            // 1. LẤY TOÀN BỘ SẢN PHẨM KÈM BIẾN THỂ
             const products = await Product.findAll({
                 where: { status: 'active' },
                 include: [{ model: ProductVariant, as: 'variants' }]
             });
 
-            // Format lại khối text đưa cho Bot cực kỳ chi tiết
             const productListText = products.map((p, index) => {
                 const variants = p.variants || [];
                 const defaultVariant = variants[0];
@@ -19,9 +16,7 @@ class ChatService {
                 let stock = 'Đã hết hàng';
                 
                 if (defaultVariant) {
-                    // Lấy giá của cấu hình mặc định làm giá tham khảo
                     currentPrice = defaultVariant.discount_price ? `${defaultVariant.discount_price} VNĐ (Gốc: ${defaultVariant.price} VNĐ)` : `${defaultVariant.price} VNĐ`;
-                    // Tính tổng tồn kho của tất cả cấu hình
                     const totalStock = variants.reduce((sum, v) => sum + v.stock_quantity, 0);
                     stock = totalStock > 0 ? `Còn hàng (${totalStock} chiếc)` : 'Đã hết hàng';
                 }
@@ -37,7 +32,6 @@ class ChatService {
    - Ưu điểm nổi bật: ${desc}`;
             }).join('\n\n');
 
-            // 2. CẬP NHẬT KỊCH BẢN KỶ LUẬT THÉP (SYSTEM INSTRUCTION)
             const systemInstruction = `Bạn là chuyên gia tư vấn bán hàng của "HNC Laptop". Khách hàng cần thông tin NHANH, GỌN, CHÍNH XÁC.
 
 Dữ liệu kho hàng hiện tại (CHỈ tư vấn máy có trong danh sách này):
@@ -50,7 +44,6 @@ NGUYÊN TẮC TRẢ LỜI BẮT BUỘC (TUYỆT ĐỐI TUÂN THỦ):
 4. HIỂU NGỮ CẢNH: Dựa vào lịch sử chat để tự biết khách đang nói về máy nào khi họ dùng từ "nó", "máy đó".
 5. XỬ LÝ HẾT HÀNG: Nếu máy khách hỏi báo "Đã hết hàng", trả lời thẳng là hết và đưa ra đúng 1 gợi ý thay thế tốt nhất cùng tầm giá.`;
 
-            // 3. LẤY LỊCH SỬ CHAT CŨ CỦA USER (Lấy 20 câu gần nhất)
             const pastMessages = await ChatMessage.findAll({
                 where: { user_id: userId },
                 order: [['created_at', 'ASC']],
@@ -62,10 +55,9 @@ NGUYÊN TẮC TRẢ LỜI BẮT BUỘC (TUYỆT ĐỐI TUÂN THỦ):
                 parts: [{ text: msg.message }]
             }));
 
-            // 4. GỌI GEMINI API
             const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
             const model = genAI.getGenerativeModel({ 
-                model: "gemini-2.5-flash", // Bạn đang dùng bản 2.5 flash cực kỳ nhạy bén
+                model: "gemini-2.5-flash",
                 systemInstruction: systemInstruction 
             });
 
@@ -73,7 +65,6 @@ NGUYÊN TẮC TRẢ LỜI BẮT BUỘC (TUYỆT ĐỐI TUÂN THỦ):
             const result = await chatSession.sendMessage(message);
             const responseText = result.response.text();
 
-            // 5. LƯU LỊCH SỬ MỚI VÀO DB
             await ChatMessage.bulkCreate([
                 { user_id: userId, sender: 'user', message: message },
                 { user_id: userId, sender: 'model', message: responseText }
@@ -87,7 +78,6 @@ NGUYÊN TẮC TRẢ LỜI BẮT BUỘC (TUYỆT ĐỐI TUÂN THỦ):
         }
     }
 
-    // Lấy lịch sử chat hiển thị cho Frontend
     async getChatHistory(userId) {
         try {
             const messages = await ChatMessage.findAll({

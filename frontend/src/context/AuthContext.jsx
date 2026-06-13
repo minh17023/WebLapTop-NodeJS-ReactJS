@@ -8,7 +8,6 @@ export const AuthProvider = ({ children }) => {
     const [loading, setLoading] = useState(true);
     const navigate = useNavigate();
 
-    // Kiểm tra xem user có token trong localStorage không khi vừa vào web
     useEffect(() => {
         const storedUser = localStorage.getItem('user');
         const token = localStorage.getItem('token');
@@ -18,14 +17,12 @@ export const AuthProvider = ({ children }) => {
         setLoading(false);
     }, []);
 
-    // Hàm xử lý khi đăng nhập thành công
     const loginContext = (userData, token) => {
         setUser(userData);
         localStorage.setItem('user', JSON.stringify(userData));
         localStorage.setItem('token', token);
     };
 
-    // Hàm đăng xuất
     const logout = () => {
         setUser(null);
         localStorage.removeItem('user');

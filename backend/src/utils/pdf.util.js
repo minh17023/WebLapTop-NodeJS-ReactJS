@@ -2,19 +2,11 @@ const PDFDocument = require('pdfkit');
 const path = require('path');
 const fs = require('fs');
 
-/**
- * Hàm sinh file PDF Hóa Đơn và ghi thẳng vào stream (response)
- * @param {Object} order - Thông tin đơn hàng
- * @param {Array} items - Danh sách sản phẩm chi tiết của đơn
- * @param {Stream} res - Express response stream
- */
 function generateInvoicePDF(order, items, res) {
     const doc = new PDFDocument({ size: 'A4', margin: 40 });
 
-    // Ghi stream trực tiếp vào Express response
     doc.pipe(res);
 
-    // Đường dẫn font Arial mặc định trên Windows để hỗ trợ Tiếng Việt Unicode
     const fontRegular = 'C:\\Windows\\Fonts\\arial.ttf';
     const fontBold = 'C:\\Windows\\Fonts\\arialbd.ttf';
 
@@ -41,13 +33,11 @@ function generateInvoicePDF(order, items, res) {
     const formatPrice = (price) => new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(price);
 
     // ================= HEADER =================
-    // Logo Brand
     doc.fillColor('#dc2626')
        .font('Arial-Bold')
        .fontSize(24)
        .text('HNC LAPTOP', 40, 45);
 
-    // Shop Info
     doc.fillColor('#4b5563')
        .font('Arial')
        .fontSize(9)
@@ -55,7 +45,6 @@ function generateInvoicePDF(order, items, res) {
        .text('Địa chỉ: 123 Cầu Giấy, Quan Hoa, Cầu Giấy, Hà Nội', 40, 90)
        .text('Hotline: 1900 8198 | Email: contact@hnclaptop.vn', 40, 105);
 
-    // Invoice Meta (Số hóa đơn, Ngày xuất)
     const orderId = order.order_id || order.id;
     doc.fillColor('#1f2937')
        .font('Arial-Bold')
@@ -70,7 +59,6 @@ function generateInvoicePDF(order, items, res) {
        .text(`Thanh toán: ${order.payment_method || 'COD'}`, 380, 95, { align: 'right' })
        .text(`Trạng thái: ${order.payment_status === 'paid' ? 'Đã thanh toán' : 'Chưa thanh toán'}`, 380, 110, { align: 'right', colors: order.payment_status === 'paid' ? '#16a34a' : '#dc2626' });
 
-    // Đường kẻ ngang trên cùng
     doc.moveTo(40, 130).lineTo(550, 130).strokeColor('#e5e7eb').lineWidth(1).stroke();
 
     // ================= CUSTOMER INFO =================
@@ -86,7 +74,6 @@ function generateInvoicePDF(order, items, res) {
        .text(`Số điện thoại: ${order.phone}`, 40, 180)
        .text(`Địa chỉ giao: ${order.shipping_address}`, 40, 195, { width: 510, lineGap: 3 });
 
-    // Đường kẻ ngang phân cách
     doc.moveTo(40, 230).lineTo(550, 230).strokeColor('#e5e7eb').lineWidth(1).stroke();
 
     // ================= ITEMS TABLE =================
@@ -95,7 +82,6 @@ function generateInvoicePDF(order, items, res) {
        .fontSize(11)
        .text('DANH SÁCH SẢN PHẨM ĐÃ ĐẶT', 40, 245);
 
-    // Table Header
     const tableTop = 270;
     doc.fillColor('#374151')
        .font('Arial-Bold')
@@ -107,7 +93,6 @@ function generateInvoicePDF(order, items, res) {
     doc.text('SL', 430, tableTop, { width: 30, align: 'center' });
     doc.text('Thành tiền', 470, tableTop, { width: 80, align: 'right' });
 
-    // Đường kẻ dưới Header table
     doc.moveTo(40, 285).lineTo(550, 285).strokeColor('#9ca3af').lineWidth(1).stroke();
 
     let currentY = 295;
@@ -130,13 +115,11 @@ function generateInvoicePDF(order, items, res) {
         currentY += 28;
     });
 
-    // Đường kẻ chân Table
     doc.moveTo(40, currentY).lineTo(550, currentY).strokeColor('#e5e7eb').lineWidth(1).stroke();
 
     // ================= TOTALS SUMMARY =================
     currentY += 15;
     
-    // Tính tổng phụ
     const itemsAmount = items.reduce((sum, item) => sum + (Number(item.price_at_purchase) * Number(item.quantity)), 0);
     const shippingFee = Number(order.shipping_fee) || 0;
     const totalAmount = Number(order.total_amount) || (itemsAmount + shippingFee);
@@ -167,7 +150,6 @@ function generateInvoicePDF(order, items, res) {
        .text('Cảm ơn quý khách đã tin tưởng và mua sắm tại HNC Laptop!', 40, 750, { align: 'center' })
        .text('Mọi khiếu nại hoặc cần hỗ trợ bảo hành xin liên hệ Hotline 1900 8198.', 40, 765, { align: 'center' });
 
-    // Kết thúc và xuất file
     doc.end();
 }
 

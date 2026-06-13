@@ -10,7 +10,6 @@ export const CartProvider = ({ children }) => {
     const [cartItems, setCartItems] = useState([]);
     const [loading, setLoading] = useState(false);
 
-    // 🌟 ĐÃ SỬA: Đưa hàm này ra ngoài để làm hàm tái sử dụng (Exposed Function)
     const fetchCart = async () => {
         if (user) {
             try {
@@ -29,7 +28,6 @@ export const CartProvider = ({ children }) => {
 
                 const res = await cartService.getCart();
                 if (res.success) {
-                    // Dữ liệu sản phẩm được làm phẳng và trộn cấu hình
                     const mappedItems = res.data.map(item => ({
                         ...item.product,
                         variant_id: item.variant_id,
@@ -53,7 +51,6 @@ export const CartProvider = ({ children }) => {
         }
     };
 
-    // Tự động load khi user thay đổi trạng thái đăng nhập
     useEffect(() => {
         fetchCart();
     }, [user]);

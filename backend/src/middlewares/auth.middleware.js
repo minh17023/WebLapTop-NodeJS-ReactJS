@@ -1,6 +1,5 @@
 const jwtUtil = require('../utils/jwt');
 
-// Kiểm tra người dùng đã đăng nhập chưa (có Token không)
 const verifyToken = (req, res, next) => {
     const authHeader = req.headers.authorization;
     
@@ -17,14 +16,13 @@ const verifyToken = (req, res, next) => {
             return res.status(403).json({ success: false, message: 'Token đã hết hạn hoặc không hợp lệ!' });
         }
 
-        req.user = decoded; // Gán thông tin user vào request để dùng ở Controller
-        next(); // Cho phép đi tiếp
+        req.user = decoded;
+        next();
     } catch (error) {
         return res.status(500).json({ success: false, message: 'Lỗi xác thực máy chủ!' });
     }
 };
 
-// Kiểm tra quyền Admin
 const isAdmin = (req, res, next) => {
     if (req.user && req.user.role === 'admin') {
         next();

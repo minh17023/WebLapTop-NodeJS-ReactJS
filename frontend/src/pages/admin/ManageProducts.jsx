@@ -23,8 +23,6 @@ const ManageProducts = () => {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [editingId, setEditingId] = useState(null);
 
-    // 🌟 ĐÃ THÊM: Các trường thông số kỹ thuật vào State mặc định
-    // 🌟 ĐÃ THÊM: Các trường thông số kỹ thuật vào State mặc định
     const initialFormState = {
         name: '', category_id: '', brand: '', main_image: '', description: '',
         spec_cpu: '', spec_gpu: '', spec_screen: '',
@@ -80,7 +78,6 @@ const ManageProducts = () => {
         }
     };
 
-    // Debounce tìm kiếm
     useEffect(() => {
         const handler = setTimeout(() => {
             setDebouncedSearch(searchTerm);
@@ -88,19 +85,17 @@ const ManageProducts = () => {
         return () => clearTimeout(handler);
     }, [searchTerm]);
 
-    // Khi từ khóa đã debounce thay đổi, reset về trang 1
     useEffect(() => {
         setCurrentPage(1);
     }, [debouncedSearch]);
 
-    // Một useEffect duy nhất chịu trách nhiệm fetch dữ liệu khi trang hoặc từ khóa debounce thay đổi
     useEffect(() => {
         fetchProductsAPI(debouncedSearch, currentPage);
     }, [currentPage, debouncedSearch]);
 
     const indexOfLastProduct = currentPage * productsPerPage;
     const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
-    const currentProducts = products; // Đã phân trang ở Backend
+    const currentProducts = products;
     const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
     // ================= XỬ LÝ ẢNH =================
@@ -133,7 +128,6 @@ const ManageProducts = () => {
     const openEditModal = (product) => {
         setEditingId(product.product_id || product.id);
         
-        // 🌟 Bóc tách cục JSON specifications từ Database ra Form
         const specs = product.specifications || {};
 
         setFormData({
@@ -143,7 +137,6 @@ const ManageProducts = () => {
             main_image: product.main_image || '',
             description: product.description || '',
             variants: product.variants || [],
-            // Đổ dữ liệu Specs vào
             spec_cpu: specs.cpu || '',
             spec_gpu: specs.gpu || '',
             spec_screen: specs.screen || '',
@@ -170,7 +163,6 @@ const ManageProducts = () => {
                 return;
             }
 
-            // 🌟 Đóng gói lại cục JSON specifications trước khi gửi xuống Backend
             const payload = {
                 name: formData.name,
                 brand: formData.brand,

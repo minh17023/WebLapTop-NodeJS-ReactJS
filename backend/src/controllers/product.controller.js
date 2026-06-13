@@ -1,7 +1,6 @@
 const productService = require('../services/product.service');
 
 class ProductController {
-    // Lấy danh sách public (có phân trang)
     async getAll(req, res, next) {
         try {
             const page = parseInt(req.query.page) || 1;
@@ -21,7 +20,6 @@ class ProductController {
         } catch (error) { next(error); }
     }
 
-    // Lấy chi tiết
     async getBySlug(req, res, next) {
         try {
             const product = await productService.getProductBySlug(req.params.slug);
@@ -30,7 +28,6 @@ class ProductController {
         } catch (error) { next(error); }
     }
 
-    // Lấy danh sách sản phẩm theo danh mục (có phân trang)
     async getByCategory(req, res, next) {
         try {
             const page = parseInt(req.query.page) || 1;
@@ -50,10 +47,9 @@ class ProductController {
         } catch (error) { next(error); }
     }
 
-    // Tìm kiếm theo từ khóa
     async search(req, res, next) {
         try {
-            const { q } = req.query; // Lấy từ khóa từ url (?q=...)
+            const { q } = req.query; 
             if (!q) return res.status(200).json({ success: true, data: [] });
             
             const products = await productService.searchProducts(q);
@@ -61,7 +57,6 @@ class ProductController {
         } catch (error) { next(error); }
     }
 
-    // Thêm mới
     async create(req, res, next) {
         try {
             const newProduct = await productService.createProduct(req.body);
@@ -69,7 +64,6 @@ class ProductController {
         } catch (error) { next(error); }
     }
 
-    // Cập nhật
     async update(req, res, next) {
         try {
             const updatedProduct = await productService.updateProduct(req.params.id, req.body);
@@ -78,7 +72,6 @@ class ProductController {
         } catch (error) { next(error); }
     }
 
-    // Xóa
     async delete(req, res, next) {
         try {
             const isDeleted = await productService.deleteProduct(req.params.id);

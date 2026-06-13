@@ -3,7 +3,6 @@ const slugify = require('slugify');
 const { Op } = require('sequelize');
 
 class ProductService {
-    // 1. Lấy tất cả sản phẩm (phân trang, kèm tên danh mục)
     async getAllProducts(page = 1, limit = 12) {
         const offset = (page - 1) * limit;
         const { rows, count } = await Product.findAndCountAll({
@@ -25,7 +24,6 @@ class ProductService {
         };
     }
 
-    // 2. Lấy chi tiết sản phẩm theo Slug
     async getProductBySlug(slug) {
         return await Product.findOne({
             where: { slug },
@@ -36,14 +34,13 @@ class ProductService {
         });
     }
 
-    // Lấy sản phẩm theo Slug của danh mục (phân trang)
     async getProductsByCategorySlug(categorySlug, page = 1, limit = 12) {
         const offset = (page - 1) * limit;
         const { rows, count } = await Product.findAndCountAll({
             include: [
                 { 
                     model: Category, 
-                    where: { slug: categorySlug }, // Lọc theo danh mục
+                    where: { slug: categorySlug },
                     attributes: ['name', 'slug', 'description'] 
                 },
                 { model: ProductVariant, as: 'variants' }
@@ -67,7 +64,6 @@ class ProductService {
         return await Product.findAll({
             where: {
                 [Op.or]: [
-                    // Dùng iLike cho PostgreSQL để tìm kiếm KHÔNG phân biệt chữ hoa/thường
                     { name: { [Op.iLike]: `%${keyword}%` } },
                     { brand: { [Op.iLike]: `%${keyword}%` } }
                 ]
@@ -76,25 +72,21 @@ class ProductService {
                 { model: Category, attributes: ['name', 'slug'] },
                 { model: ProductVariant, as: 'variants' }
             ],
-            limit: 5 // Chỉ lấy 5 sản phẩm để hiển thị gợi ý nhanh trên Header
+            limit: 5
         });
     }
 
-    // 3. Thêm sản phẩm mới (Chỉ Admin)
     async createProduct(data) {
         const { variants, ...productData } = data;
         
-        // Tự động tạo slug từ tên laptop
         const slug = slugify(productData.name, { lower: true, locale: 'vi', strict: true });
         
-        // Đảm bảo specifications là một object JSON (nếu frontend gửi lên dạng chuỗi thì parse ra)
         if (typeof productData.specifications === 'string') {
             productData.specifications = JSON.parse(productData.specifications);
         }
 
         const newProduct = await Product.create({ ...productData, slug });
         
-        // Tạo biến thể nếu có
         if (variants && Array.isArray(variants) && variants.length > 0) {
             const variantsPayload = variants.map(v => ({
                 product_id: newProduct.product_id,
@@ -111,7 +103,6 @@ class ProductService {
         return newProduct;
     }
 
-    // 4. Cập nhật sản phẩm
     async updateProduct(id, data) {
         const product = await Product.findByPk(id);
         if (!product) return null;
@@ -127,7 +118,6 @@ class ProductService {
 
         await product.update(productData);
 
-        // Xử lý biến thể nếu có mảng variants truyền lên
         if (variants && Array.isArray(variants)) {
             const existingVariants = await ProductVariant.findAll({ where: { product_id: id } });
             
@@ -142,7 +132,6 @@ class ProductService {
             // Thêm mới hoặc cập nhật
             for (const v of variants) {
                 if (v.variant_id) {
-                    // Update
                     const ev = existingVariants.find(e => e.variant_id === v.variant_id);
                     if (ev) {
                         await ev.update({
@@ -155,7 +144,6 @@ class ProductService {
                         });
                     }
                 } else {
-                    // Create
                     await ProductVariant.create({
                         product_id: id,
                         sku: v.sku || null,
@@ -172,7 +160,6 @@ class ProductService {
         return product;
     }
 
-    // 5. Xóa sản phẩm
     async deleteProduct(id) {
         const product = await Product.findByPk(id);
         if (!product) return false;

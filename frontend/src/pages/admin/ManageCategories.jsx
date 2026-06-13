@@ -18,7 +18,6 @@ const ManageCategories = () => {
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [editingId, setEditingId] = useState(null);
 
-    // Form data cho Danh mục
     const initialFormState = {
         name: '', 
         slug: '',
@@ -48,7 +47,6 @@ const ManageCategories = () => {
         }
     };
 
-    // Debounce Tìm kiếm
     useEffect(() => {
         const delayDebounceFn = setTimeout(() => {
             fetchCategoriesAPI(searchTerm);
@@ -100,7 +98,6 @@ const ManageCategories = () => {
         const { name, value } = e.target;
         setFormData(prev => {
             const newData = { ...prev, [name]: value };
-            // Tự động tạo slug khi đang thêm mới (chưa có editingId) và người dùng gõ tên
             if (name === 'name' && !editingId) {
                 newData.slug = generateSlug(value);
             }

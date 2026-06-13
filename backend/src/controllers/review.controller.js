@@ -1,7 +1,6 @@
 const reviewService = require('../services/review.service');
 
 class ReviewController {
-    // 🌟 THÊM MỚI: Hàm lấy tất cả cho Admin (có phân trang, lọc theo rating)
     async getAll(req, res, next) {
         try {
             const page = parseInt(req.query.page) || 1;
@@ -24,7 +23,6 @@ class ReviewController {
         }
     }
 
-    // [GET] Lấy danh sách đánh giá theo ID sản phẩm (có phân trang)
     async getByProduct(req, res, next) {
         try {
             const page = parseInt(req.query.page) || 1;
@@ -58,7 +56,6 @@ class ReviewController {
         }
     }
 
-    // [POST] Gửi đánh giá mới (Cần đăng nhập)
     async create(req, res, next) {
         try {
             const { product_id, rating, comment } = req.body;
@@ -71,7 +68,6 @@ class ReviewController {
         } catch (error) { next(error); }
     }
 
-    // [DELETE] Xóa đánh giá (Chỉ Admin)
     async delete(req, res, next) {
         try {
             const isDeleted = await reviewService.deleteReview(req.params.id);

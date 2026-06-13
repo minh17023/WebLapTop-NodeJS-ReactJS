@@ -9,7 +9,7 @@ const Posts = () => {
     const [loading, setLoading] = useState(true);
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
-    const limit = 6; // 6 bài viết mỗi trang
+    const limit = 6; 
 
     useEffect(() => {
         const fetchPosts = async () => {
@@ -31,7 +31,6 @@ const Posts = () => {
         fetchPosts();
     }, [currentPage]);
 
-    // Format ngày hiển thị đẹp hơn
     const formatDate = (dateString) => {
         const options = { year: 'numeric', month: 'long', day: 'numeric' };
         return new Date(dateString).toLocaleDateString('vi-VN', options);

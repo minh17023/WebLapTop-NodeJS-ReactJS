@@ -7,7 +7,6 @@ import AdminHeader from './AdminHeader';
 const AdminLayout = () => {
     const { user, loading } = useContext(AuthContext);
 
-    // Đợi kiểm tra token login ngầm
     if (loading) {
         return (
             <div className="h-screen w-screen flex flex-col items-center justify-center bg-gray-50 text-gray-500 font-medium text-sm">
@@ -17,7 +16,6 @@ const AdminLayout = () => {
         );
     }
 
-    // BẢO MẬT: Không phải admin đẩy văng về trang chủ bán hàng
     if (!user || user.role !== 'admin') {
         return <Navigate to="/" replace />;
     }

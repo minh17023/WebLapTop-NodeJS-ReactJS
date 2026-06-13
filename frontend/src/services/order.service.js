@@ -1,7 +1,6 @@
 import api from './api';
 
 export const orderService = {
-    // 1. DÀNH CHO KHÁCH HÀNG
     create: async (data) => {
         const response = await api.post('/orders', data);
         return response.data;
@@ -10,7 +9,6 @@ export const orderService = {
         const response = await api.get(`/orders/my-orders?page=${page}&limit=${limit}`);
         return response.data;
     },
-    // User tự cập nhật trạng thái đơn hàng (Hủy đơn / Đã nhận hàng)
     userUpdateStatus: async (id, status) => {
         const response = await api.put(`/orders/${id}/user-status`, { status });
         return response.data;
@@ -25,7 +23,6 @@ export const orderService = {
         return response.data;
     },
 
-    // 2. DÀNH CHO ADMIN (Phải có 3 hàm này thì trang ManageOrders mới chạy được)
     getAll: async (page = 1, limit = 10) => {
         const response = await api.get(`/orders?page=${page}&limit=${limit}`);
         return response.data;

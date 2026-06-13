@@ -5,7 +5,7 @@ import { categoryService } from '../../services/category.service';
 import { ShoppingCart } from 'lucide-react';
 import { toast } from 'react-toastify';
 import ProductFilter from '../../components/user/ProductFilter';
-import { CartContext } from '../../context/CartContext'; // Import CartContext
+import { CartContext } from '../../context/CartContext';
 
 const Category = () => {
     const { slug } = useParams();
@@ -17,10 +17,8 @@ const Category = () => {
     const [totalPages, setTotalPages] = useState(1);
     const limit = 12;
 
-    // Lấy hàm addToCart từ CartContext
     const { addToCart } = useContext(CartContext);
 
-    // Khi thay đổi danh mục (slug) thì đưa số trang về lại 1 và tải danh mục mới
     useEffect(() => {
         setCurrentPage(1);
         const fetchCategory = async () => {
@@ -34,7 +32,6 @@ const Category = () => {
         fetchCategory();
     }, [slug]);
 
-    // Tải danh sách sản phẩm khi thay đổi trang hoặc thương hiệu
     useEffect(() => {
         const fetchProducts = async () => {
             setLoading(true);

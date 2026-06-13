@@ -5,24 +5,19 @@ import { LogOut, User, Bell } from 'lucide-react';
 import { toast } from 'react-toastify';
 
 const AdminHeader = () => {
-    // Lấy thêm setUser từ Context để xóa state ngay lập tức
     const { user, setUser } = useContext(AuthContext) || {};
     const navigate = useNavigate();
 
     const handleLogout = () => {
-        // 1. Xóa sạch dấu vết phiên đăng nhập trong trình duyệt
         localStorage.removeItem('token');
         localStorage.removeItem('user');
         
-        // 2. Reset lại state toàn cục (nếu có hàm setUser)
         if (typeof setUser === 'function') {
             setUser(null);
         }
         
-        // 3. Hiện thông báo
         toast.success("Đã đăng xuất khỏi tài khoản Quản trị!");
         
-        // 4. Điều hướng chính xác về lại trang Đăng nhập Admin
         navigate('/admin/login');
     };
 

@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react';
 import { DollarSign, ShoppingBag, Users, Package, TrendingUp, Calendar, RefreshCcw } from 'lucide-react';
 import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
-// Import các API của bạn
 import { orderService } from '../../services/order.service';
 import { userService } from '../../services/user.service';
 import { productService } from '../../services/product.service';
@@ -11,7 +10,6 @@ const Dashboard = () => {
     const [isLoading, setIsLoading] = useState(true);
 
     // ================= STATE BỘ LỌC NGÀY THÁNG =================
-    // Mặc định: Từ 7 ngày trước đến Ngày hôm nay
     const [startDate, setStartDate] = useState(() => {
         const d = new Date();
         d.setDate(d.getDate() - 6);
@@ -32,7 +30,6 @@ const Dashboard = () => {
         recentOrders: []
     });
 
-    // 🌟 BỔ SUNG: Gọi API lấy dữ liệu thống kê từ Server
     useEffect(() => {
         const fetchDashboardData = async () => {
             setIsLoading(true);
@@ -58,7 +55,6 @@ const Dashboard = () => {
         fetchDashboardData();
     }, [startDate, endDate]);
 
-    // Hàm reset ngày về mặc định (7 ngày qua)
     const handleResetFilter = () => {
         const d = new Date();
         d.setDate(d.getDate() - 6);

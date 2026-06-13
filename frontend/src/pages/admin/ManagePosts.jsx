@@ -9,7 +9,6 @@ const ManagePosts = () => {
     const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState('');
     
-    // 🌟 ĐÃ THÊM: State lưu trữ bộ lọc trạng thái
     const [filterStatus, setFilterStatus] = useState('all'); 
     
     const [currentPage, setCurrentPage] = useState(1);
@@ -58,14 +57,12 @@ const ManagePosts = () => {
     }, [searchTerm]);
 
     // ================= 🌟 LỌC DỮ LIỆU & PHÂN TRANG =================
-    // 1. Lọc mảng posts gốc dựa theo filterStatus trước
     const processedPosts = posts.filter(post => {
         if (filterStatus === 'published') return post.is_published === true;
         if (filterStatus === 'draft') return post.is_published === false;
-        return true; // Nếu là 'all' thì giữ nguyên
+        return true;
     });
 
-    // 2. Phân trang trên mảng đã lọc
     const indexOfLastPost = currentPage * postsPerPage;
     const indexOfFirstPost = indexOfLastPost - postsPerPage;
     const currentPosts = processedPosts.slice(indexOfFirstPost, indexOfLastPost);

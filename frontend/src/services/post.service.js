@@ -1,7 +1,6 @@
 import api from './api';
 
 export const postService = {
-    // Cho User xem bài viết
     getAll: async (page = 1, limit = 10) => {
         const response = await api.get(`/posts?page=${page}&limit=${limit}`);
         return response.data;
@@ -11,7 +10,6 @@ export const postService = {
         return response.data;
     },
 
-    // Cho Admin quản lý
     search: async (keyword) => {
         const response = await api.get(`/posts/search?q=${keyword}`);
         return response.data;

@@ -15,7 +15,6 @@ export const categoryService = {
         return response.data;
     },
     
-    // Các API dành cho Admin
     create: async (data) => {
         const response = await api.post('/categories', data);
         return response.data;

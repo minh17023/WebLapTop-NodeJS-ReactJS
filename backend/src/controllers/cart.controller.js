@@ -26,7 +26,7 @@ class CartController {
 
     async remove(req, res, next) {
         try {
-            const { variantId } = req.query; // Nhận variantId từ query string nếu gọi xóa
+            const { variantId } = req.query; 
             await cartService.removeItem(req.user.id, req.params.productId, variantId);
             res.status(200).json({ success: true, message: 'Đã xóa khỏi giỏ hàng' });
         } catch (error) { next(error); }

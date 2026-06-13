@@ -1,14 +1,11 @@
 import { useState, useEffect } from 'react';
 import { Save, Store, Mail, Phone, MapPin, Globe, ShieldAlert, Upload, Image as ImageIcon } from 'lucide-react';
 import { toast } from 'react-toastify';
-// Import API service của bạn nếu có
-// import { settingService } from '../../services/setting.service';
 
 const ManageSettings = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
 
-    // Cấu trúc dữ liệu cài đặt mặc định
     const [formData, setFormData] = useState({
         store_name: 'HNC LAPTOP',
         logo_url: '',
@@ -20,16 +17,11 @@ const ManageSettings = () => {
         maintenance_mode: false
     });
 
-    // Mô phỏng Fetch dữ liệu từ API khi vừa vào trang
     useEffect(() => {
         const fetchSettings = async () => {
             setIsLoading(true);
             try {
-                // Thay thế bằng API thật của bạn:
-                // const res = await settingService.getSettings();
-                // if (res.data) setFormData(res.data);
                 
-                // Giả lập delay tải dữ liệu
                 await new Promise(resolve => setTimeout(resolve, 500));
             } catch (error) {
                 toast.error("Không thể tải cấu hình hệ thống!");
@@ -40,7 +32,6 @@ const ManageSettings = () => {
         fetchSettings();
     }, []);
 
-    // Xử lý Upload Logo (Base64)
     const handleImageUpload = (e) => {
         const file = e.target.files[0];
         if (file) {
@@ -68,10 +59,7 @@ const ManageSettings = () => {
         e.preventDefault();
         setIsSubmitting(true);
         try {
-            // Thay thế bằng API lưu dữ liệu của bạn:
-            // await settingService.updateSettings(formData);
             
-            // Giả lập delay lưu dữ liệu
             await new Promise(resolve => setTimeout(resolve, 800));
             toast.success("Đã lưu cấu hình hệ thống thành công!");
         } catch (error) {

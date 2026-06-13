@@ -1,10 +1,8 @@
 const postService = require('../services/post.service');
 
 class PostController {
-    // [GET] Danh sách (Khách chỉ thấy bài đã xuất bản, Admin thấy hết, có phân trang)
     async getAll(req, res, next) {
         try {
-            // Kiểm tra xem người gọi API có phải admin không (dựa vào header token nếu có)
             const isAdmin = req.user && req.user.role === 'admin';
             const page = parseInt(req.query.page) || 1;
             const limit = parseInt(req.query.limit) || 10;
@@ -37,7 +35,6 @@ class PostController {
         }
     }
 
-    // [GET] Chi tiết
     async getBySlug(req, res, next) {
         try {
             const post = await postService.getPostBySlug(req.params.slug);
@@ -46,19 +43,16 @@ class PostController {
         } catch (error) { next(error); }
     }
 
-    // [POST] Thêm bài (Chỉ Admin)
     async create(req, res, next) {
         try {
             if (!req.body.title || !req.body.content) {
                 return res.status(400).json({ success: false, message: 'Tiêu đề và nội dung là bắt buộc' });
             }
-            // req.user.id được lấy từ middleware verifyToken
             const newPost = await postService.createPost(req.body, req.user.id);
             res.status(201).json({ success: true, message: 'Đăng bài thành công', data: newPost });
         } catch (error) { next(error); }
     }
 
-    // [PUT] Cập nhật
     async update(req, res, next) {
         try {
             const updatedPost = await postService.updatePost(req.params.id, req.body);
@@ -67,7 +61,6 @@ class PostController {
         } catch (error) { next(error); }
     }
 
-    // [DELETE] Xóa
     async delete(req, res, next) {
         try {
             const isDeleted = await postService.deletePost(req.params.id);

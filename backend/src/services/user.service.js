@@ -3,12 +3,10 @@ const bcrypt = require('bcryptjs');
 const { Op } = require('sequelize');
 
 class UserService {
-    // 1. Tìm người dùng theo Email (Dùng cho Login/Register)
     async getUserByEmail(email) {
         return await User.findOne({ where: { email } });
     }
 
-    // 2. Tạo người dùng mới (Register)
     async createUser(userData) {
         const salt = await bcrypt.genSalt(10);
         userData.password_hash = await bcrypt.hash(userData.password, salt);
@@ -16,7 +14,6 @@ class UserService {
         return await User.create(userToSave);
     }
 
-    // Thêm phương thức tìm kiếm vào UserService
     async search(keyword) {
         const term = `%${keyword.trim()}%`;
         return await User.findAll({
@@ -27,13 +24,12 @@ class UserService {
                 ]
             },
             attributes: { exclude: ['password_hash'] },
-            order: [['created_at', 'DESC']] // Đổi thành 'createdAt' nếu DB dùng camelCase
+            order: [['created_at', 'DESC']]
         });
     }
 
     // ================= CRUD API =================
 
-    // 3. Lấy danh sách tất cả người dùng (ẩn mật khẩu, có phân trang)
     async getAllUsers(page = 1, limit = 10) {
         const offset = (page - 1) * limit;
         const { rows, count } = await User.findAndCountAll({
@@ -52,19 +48,16 @@ class UserService {
         };
     }
 
-    // 4. Lấy chi tiết một người dùng
     async getUserById(id) {
         return await User.findByPk(id, {
             attributes: { exclude: ['password_hash'] }
         });
     }
 
-    // 5. Cập nhật thông tin người dùng
     async updateUser(id, updateData) {
         const user = await User.findByPk(id);
         if (!user) return null;
 
-        // Nếu có cập nhật mật khẩu, phải mã hóa lại
         if (updateData.password) {
             const salt = await bcrypt.genSalt(10);
             updateData.password_hash = await bcrypt.hash(updateData.password, salt);
@@ -74,7 +67,6 @@ class UserService {
         return await user.update(updateData);
     }
 
-    // 6. Xóa người dùng
     async deleteUser(id) {
         const user = await User.findByPk(id);
         if (!user) return false;

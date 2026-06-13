@@ -10,7 +10,6 @@ const ReviewSection = ({ productId }) => {
     const [newReview, setNewReview] = useState({ rating: 5, comment: '' });
     const [isSubmitting, setIsSubmitting] = useState(false);
 
-    // Fetch đánh giá khi component render
     useEffect(() => {
         fetchReviews();
     }, [productId]);
@@ -24,13 +23,12 @@ const ReviewSection = ({ productId }) => {
         }
     };
 
-    // Hàm render ngôi sao (vàng/xám)
     const renderStars = (rating, interactive = false) => {
         return [...Array(5)].map((_, index) => (
             <Star
                 key={index}
                 size={interactive ? 24 : 16}
-                fill={index < rating ? "#FFD700" : "none"} // Màu vàng cho sao
+                fill={index < rating ? "#FFD700" : "none"}
                 color={index < rating ? "#FFD700" : "#D1D5DB"}
                 className={interactive ? "cursor-pointer" : ""}
                 onClick={() => interactive && setNewReview({ ...newReview, rating: index + 1 })}
@@ -52,7 +50,7 @@ const ReviewSection = ({ productId }) => {
             if (res.success) {
                 toast.success("Đánh giá của bạn đã được gửi!");
                 setNewReview({ rating: 5, comment: '' });
-                fetchReviews(); // Tải lại danh sách ngay lập tức
+                fetchReviews();
             }
         } catch (error) {
             toast.error(error.response?.data?.message || "Lỗi khi gửi đánh giá");

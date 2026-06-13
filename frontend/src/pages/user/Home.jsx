@@ -50,7 +50,6 @@ const Home = () => {
     const [categories, setCategories] = useState([]);
     const [currentSlide, setCurrentSlide] = useState(0);
 
-    // Xử lý auto slide
     useEffect(() => {
         const timer = setInterval(() => {
             setCurrentSlide((prev) => (prev + 1) % slides.length);

@@ -26,7 +26,6 @@ const ProductDetail = () => {
                         setSelectedVariant(res.data.variants[0]);
                     }
                     
-                    // Fetch related products
                     let categorySlug = res.data.Category?.slug;
                     if (categorySlug) {
                         const relatedRes = await productService.getByCategory(categorySlug, 1, 5);

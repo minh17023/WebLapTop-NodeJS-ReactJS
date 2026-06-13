@@ -1,11 +1,8 @@
 const orderService = require('../services/order.service');
 
 class OrderController {
-    // Xử lý Request đặt hàng mới
     async create(req, res, next) {
         try {
-            // req.user.id lấy từ Middleware verifyToken sau khi giải mã JWT
-            // Toàn bộ dữ liệu (bao gồm district_id, ward_code, shipping_fee) từ req.body sẽ được ném sang Service
             const newOrder = await orderService.createOrder(req.user.id, req.body);
             
             res.status(201).json({
@@ -18,7 +15,6 @@ class OrderController {
         }
     }
 
-    // Xử lý Request xem lịch sử đơn hàng của User (có phân trang)
     async getMyOrders(req, res, next) {
         try {
             const page = parseInt(req.query.page) || 1;
@@ -41,7 +37,6 @@ class OrderController {
         }
     }
 
-    // API lấy chi tiết 1 đơn hàng: GET /api/orders/:id
     async getById(req, res) {
         try {
             const { id } = req.params; 
@@ -52,7 +47,6 @@ class OrderController {
                 return res.status(404).json(result);
             }
 
-            // Bảo mật: Chỉ Admin hoặc chính khách hàng mua đơn này mới được phép xem chi tiết
             const order = result.data;
             if (req.user.role !== 'admin' && req.user.id !== order.user_id) {
                 return res.status(403).json({ success: false, message: "Bạn không có quyền truy cập đơn hàng này!" });
@@ -65,7 +59,6 @@ class OrderController {
         }
     }
 
-    // [PUT] User tự cập nhật trạng thái đơn hàng (Hủy đơn / Đã nhận hàng)
     async userUpdateStatus(req, res, next) {
         try {
             const { status } = req.body;
@@ -80,7 +73,6 @@ class OrderController {
         }
     }
 
-    // Bắt request cập nhật thanh toán từ Admin
     async updatePaymentStatus(req, res) {
         try {
             const { id } = req.params;
@@ -107,10 +99,6 @@ class OrderController {
             return res.status(500).json({ success: false, message: "Lỗi Server nội bộ" });
         }
     }
-
-    // ===============================================
-    // CÁC HÀM DÀNH CHO ADMIN
-    // ===============================================
 
     async getAll(req, res, next) {
         try {
@@ -166,7 +154,7 @@ class OrderController {
         }
     }
 
-    // 🌟 BỔ SUNG: Lấy số liệu thống kê KPIs Dashboard
+    //Lấy số liệu thống kê KPIs Dashboard
     async getDashboardStats(req, res, next) {
         try {
             const { startDate, endDate } = req.query;
@@ -180,7 +168,7 @@ class OrderController {
         }
     }
 
-    // 🌟 BỔ SUNG: Lấy biểu đồ doanh thu theo ngày
+    //Lấy biểu đồ doanh thu theo ngày
     async getDashboardRevenueChart(req, res, next) {
         try {
             const { startDate, endDate } = req.query;
@@ -194,12 +182,11 @@ class OrderController {
         }
     }
 
-    // 🌟 BỔ SUNG: Xuất hóa đơn PDF
+    //Xuất hóa đơn PDF
     async exportInvoice(req, res, next) {
         try {
             const { id } = req.params;
             
-            // Lấy thông tin chi tiết đơn hàng cùng các món hàng
             const invoiceData = await orderService.getInvoiceData(id);
             if (!invoiceData) {
                 return res.status(404).json({ success: false, message: 'Đơn hàng không tồn tại' });
@@ -207,16 +194,13 @@ class OrderController {
 
             const { order, items } = invoiceData;
             
-            // Bảo mật: Chỉ Admin hoặc chính User mua hàng mới được xuất hóa đơn
             if (req.user.role !== 'admin' && req.user.id !== order.user_id) {
                 return res.status(403).json({ success: false, message: 'Bạn không có quyền truy cập hóa đơn này!' });
             }
 
-            // Cấu hình header tải về file PDF
             res.setHeader('Content-Type', 'application/pdf');
             res.setHeader('Content-Disposition', `attachment; filename=Invoice_#${id}.pdf`);
 
-            // Gọi tiện ích xuất PDF ghi trực tiếp vào response stream
             const { generateInvoicePDF } = require('../utils/pdf.util');
             generateInvoicePDF(order, items, res);
         } catch (error) {

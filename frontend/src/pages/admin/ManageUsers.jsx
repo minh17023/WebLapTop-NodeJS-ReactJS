@@ -57,7 +57,6 @@ const ManageUsers = () => {
         }
     };
 
-    // Debounce tìm kiếm
     useEffect(() => {
         const handler = setTimeout(() => {
             setDebouncedSearch(searchTerm);
@@ -65,12 +64,10 @@ const ManageUsers = () => {
         return () => clearTimeout(handler);
     }, [searchTerm]);
 
-    // Khi từ khóa đã debounce thay đổi, reset về trang 1
     useEffect(() => {
         setCurrentPage(1);
     }, [debouncedSearch]);
 
-    // Một useEffect duy nhất chịu trách nhiệm fetch dữ liệu khi trang hoặc từ khóa debounce thay đổi
     useEffect(() => {
         fetchUsersAPI(debouncedSearch, currentPage);
     }, [currentPage, debouncedSearch]);
@@ -78,7 +75,7 @@ const ManageUsers = () => {
     // ================= PHÂN TRANG =================
     const indexOfLastUser = currentPage * usersPerPage;
     const indexOfFirstUser = indexOfLastUser - usersPerPage;
-    const currentUsers = users; // Phân trang ở Backend
+    const currentUsers = users;
     const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
     // ================= XỬ LÝ FORM =================
@@ -98,7 +95,7 @@ const ManageUsers = () => {
         setFormData({
             full_name: user.full_name || user.fullName || '',
             email: user.email || '',
-            password: '', // Khi sửa thì mật khẩu mặc định rỗng (không đổi)
+            password: '',
             phone: user.phone || '',
             role: user.role || 'user'
         });

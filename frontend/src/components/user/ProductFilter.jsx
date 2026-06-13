@@ -13,13 +13,12 @@ const ProductFilter = ({ onFilterChange }) => {
         { id: 'over25', label: 'Trên 25 triệu' },
     ];
 
-    // Gửi dữ liệu lọc lên trang cha mỗi khi filters thay đổi
     useEffect(() => {
         onFilterChange(filters);
     }, [filters]);
 
     const handleBrandChange = (brand) => {
-        setFilters(prev => ({ ...prev, brand: prev.brand === brand ? '' : brand })); // Click lại thì bỏ chọn
+        setFilters(prev => ({ ...prev, brand: prev.brand === brand ? '' : brand }));
     };
 
     const handlePriceChange = (priceId) => {

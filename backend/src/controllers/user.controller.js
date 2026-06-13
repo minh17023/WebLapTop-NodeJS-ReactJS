@@ -3,7 +3,6 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
 
 class UserController {
-    // Đăng ký
     async register(req, res, next) {
         try {
             const { email } = req.body;
@@ -15,7 +14,6 @@ class UserController {
         } catch (error) { next(error); }
     }
 
-    // Đăng nhập
     async login(req, res, next) {
         try {
             const { email, password } = req.body;
@@ -49,9 +47,6 @@ class UserController {
         }
     }
 
-    // ================= CRUD API =================
-
-    // Lấy danh sách (Dành cho Admin, có phân trang)
     async getAll(req, res, next) {
         try {
             const page = parseInt(req.query.page) || 1;
@@ -71,10 +66,8 @@ class UserController {
         } catch (error) { next(error); }
     }
 
-    // Lấy chi tiết
     async getById(req, res, next) {
         try {
-            // Bảo mật: Chỉ Admin hoặc chính chủ tài khoản mới được xem thông tin chi tiết
             if (req.user.role !== 'admin' && req.user.id !== Number(req.params.id)) {
                 return res.status(403).json({ success: false, message: 'Bạn không có quyền truy cập thông tin này!' });
             }
@@ -85,10 +78,8 @@ class UserController {
         } catch (error) { next(error); }
     }
 
-    // Cập nhật người dùng
     async update(req, res, next) {
         try {
-            // Bảo mật: Chỉ Admin hoặc chính chủ tài khoản mới được cập nhật thông tin
             if (req.user.role !== 'admin' && req.user.id !== Number(req.params.id)) {
                 return res.status(403).json({ success: false, message: 'Bạn không có quyền cập nhật thông tin này!' });
             }
@@ -96,7 +87,6 @@ class UserController {
             const updatedUser = await userService.updateUser(req.params.id, req.body);
             if (!updatedUser) return res.status(404).json({ success: false, message: 'Không tìm thấy người dùng để cập nhật' });
             
-            // Ẩn hash khi trả về
             const userData = updatedUser.toJSON();
             delete userData.password_hash;
             
@@ -104,7 +94,6 @@ class UserController {
         } catch (error) { next(error); }
     }
 
-    // Xóa người dùng
     async delete(req, res, next) {
         try {
             const isDeleted = await userService.deleteUser(req.params.id);
