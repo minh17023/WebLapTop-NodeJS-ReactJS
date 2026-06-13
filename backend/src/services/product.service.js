@@ -12,7 +12,8 @@ class ProductService {
             ],
             limit: Number(limit),
             offset: Number(offset),
-            order: [['created_at', 'DESC']]
+            order: [['created_at', 'DESC']],
+            distinct: true
         });
 
         return {
@@ -47,7 +48,8 @@ class ProductService {
             ],
             limit: Number(limit),
             offset: Number(offset),
-            order: [['created_at', 'DESC']]
+            order: [['created_at', 'DESC']],
+            distinct: true
         });
 
         return {

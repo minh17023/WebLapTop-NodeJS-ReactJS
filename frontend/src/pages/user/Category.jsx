@@ -58,7 +58,8 @@ const Category = () => {
         if (filters.brand) result = result.filter(p => p.brand === filters.brand);
         if (filters.price) {
             result = result.filter(p => {
-                const price = p.discount_price || p.price;
+                const defaultV = p.variants && p.variants.length > 0 ? p.variants[0] : {};
+                const price = defaultV.discount_price || defaultV.price || 0;
                 if (filters.price === 'under15') return price < 15000000;
                 if (filters.price === '15-20') return price >= 15000000 && price <= 20000000;
                 if (filters.price === '20-25') return price >= 20000000 && price <= 25000000;

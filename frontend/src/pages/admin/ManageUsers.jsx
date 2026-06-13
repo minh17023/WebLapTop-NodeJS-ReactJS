@@ -162,9 +162,9 @@ const ManageUsers = () => {
                         <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={16} />
                         <input type="text" placeholder="Tìm tên hoặc email..." value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} className="w-full pl-9 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-blue-500 outline-none transition" />
                     </div>
-                    <button onClick={openAddModal} className="bg-blue-600 text-white font-bold text-xs uppercase tracking-wider px-4 py-3 rounded-xl hover:bg-blue-700 transition flex items-center gap-2 shadow-lg shadow-blue-200 whitespace-nowrap">
+                    {/* <button onClick={openAddModal} className="bg-blue-600 text-white font-bold text-xs uppercase tracking-wider px-4 py-3 rounded-xl hover:bg-blue-700 transition flex items-center gap-2 shadow-lg shadow-blue-200 whitespace-nowrap">
                         <Plus size={16} /> Thêm Tài Khoản
-                    </button>
+                    </button> */}
                 </div>
             </div>
 
@@ -312,12 +312,12 @@ const ManageUsers = () => {
                                     <input type="email" name="email" required value={formData.email} onChange={handleInputChange} disabled={editingId !== null} className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none text-sm font-medium transition disabled:opacity-60 disabled:cursor-not-allowed" />
                                 </div>
 
-                                <div>
+                                {/* <div>
                                     <label className="block text-[11px] font-bold text-gray-500 uppercase mb-2">
                                         Mật khẩu {editingId ? <span className="text-gray-400 normal-case font-normal">(Bỏ trống nếu không muốn đổi)</span> : <span className="text-blue-500">*</span>}
                                     </label>
                                     <input type="password" name="password" required={!editingId} minLength="6" value={formData.password} onChange={handleInputChange} className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none text-sm font-medium transition" />
-                                </div>
+                                </div> */}
 
                                 <div>
                                     <label className="block text-[11px] font-bold text-gray-500 uppercase mb-2">Số điện thoại</label>

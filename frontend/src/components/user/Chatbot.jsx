@@ -80,7 +80,7 @@ const Chatbot = () => {
     const formatMessage = (text) => {
         return text.split(/(\*\*.*?\*\*)/g).map((part, index) => {
             if (part.startsWith('**') && part.endsWith('**')) {
-                return <strong key={index} className="text-gray-900 font-black">{part.slice(2, -2)}</strong>;
+                return <span key={index}>{part.slice(2, -2)}</span>;
             }
             return <span key={index}>{part}</span>;
         });

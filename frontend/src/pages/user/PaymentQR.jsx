@@ -15,6 +15,29 @@ const PaymentQR = () => {
     const ACCOUNT_NAME = import.meta.env.VITE_ACCOUNT_NAME || ""; 
 
     const [isPaid, setIsPaid] = useState(false);
+    const [timeLeft, setTimeLeft] = useState(180);
+
+    useEffect(() => {
+        if (isPaid) return;
+        
+        if (timeLeft <= 0) {
+            toast.warning("Hết thời gian thanh toán, vui lòng thanh toán sau trong mục Đơn Hàng Của Tôi!");
+            navigate('/my-orders', { replace: true });
+            return;
+        }
+
+        const timer = setInterval(() => {
+            setTimeLeft(prev => prev - 1);
+        }, 1000);
+        
+        return () => clearInterval(timer);
+    }, [timeLeft, isPaid, navigate]);
+
+    const formatTime = (seconds) => {
+        const m = Math.floor(seconds / 60);
+        const s = seconds % 60;
+        return `${m}:${s < 10 ? '0' : ''}${s}`;
+    };
 
     useEffect(() => {
         window.history.pushState(null, null, window.location.pathname);
@@ -109,9 +132,14 @@ const PaymentQR = () => {
                             </div>
 
                             <div className="flex flex-col w-full gap-4">
-                                <div className="flex items-center justify-center gap-3 text-[#0a0a0a] font-bold bg-gray-50 px-6 py-4 rounded-xl border border-gray-100">
-                                    <Loader className="animate-spin text-[#0071E3]" size={20} />
-                                    Hệ thống đang quét giao dịch...
+                                <div className="flex flex-col items-center justify-center gap-2 bg-gray-50 px-6 py-4 rounded-xl border border-gray-100">
+                                    <div className="flex items-center gap-3 text-[#0a0a0a] font-bold">
+                                        <Loader className="animate-spin text-[#0071E3]" size={20} />
+                                        Hệ thống đang chờ thanh toán...
+                                    </div>
+                                    <div className="text-sm font-bold text-[#E30019]">
+                                        Thời gian còn lại: {formatTime(timeLeft)}
+                                    </div>
                                 </div>
                                 
                                 <Link to="/" className="flex items-center justify-center gap-2 text-gray-500 font-bold hover:text-[#0a0a0a] transition-colors py-2">
