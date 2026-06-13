@@ -3,6 +3,7 @@ import { Plus, Edit, Trash2, Search, X, Image as ImageIcon, ChevronLeft, Chevron
 import { toast } from 'react-toastify';
 import { productService } from '../../services/product.service';
 import { categoryService } from '../../services/category.service';
+import ConfirmModal from '../../components/admin/ConfirmModal';
 
 const ManageProducts = () => {
     // ================= STATE DỮ LIỆU =================
@@ -22,6 +23,7 @@ const ManageProducts = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [editingId, setEditingId] = useState(null);
+    const [confirmModal, setConfirmModal] = useState({ isOpen: false, id: null, title: '', message: '' });
 
     const initialFormState = {
         name: '', category_id: '', brand: '', main_image: '', description: '',
@@ -202,13 +204,22 @@ const ManageProducts = () => {
         }
     };
 
-    const handleDelete = async (id, name) => {
-        if (!window.confirm(`Bạn có chắc chắn muốn xóa laptop "${name}" không?`)) return;
+    const handleDelete = (id, name) => {
+        setConfirmModal({
+            isOpen: true,
+            id: id,
+            title: 'Xóa Sản Phẩm',
+            message: `Bạn có chắc chắn muốn xóa laptop "${name}" không? Hành động này không thể hoàn tác.`
+        });
+    };
+
+    const confirmDelete = async () => {
         try {
-            await productService.deleteProduct(id);
+            await productService.deleteProduct(confirmModal.id);
             toast.success("Đã xóa sản phẩm khỏi hệ thống!");
             fetchProductsAPI(searchTerm);
         } catch (error) {
+            console.error(error);
             toast.error("Không thể xóa sản phẩm này!");
         }
     };
@@ -554,6 +565,14 @@ const ManageProducts = () => {
                     </div>
                 </div>
             )}
+
+            <ConfirmModal 
+                isOpen={confirmModal.isOpen} 
+                onClose={() => setConfirmModal({ ...confirmModal, isOpen: false })} 
+                onConfirm={confirmDelete} 
+                title={confirmModal.title} 
+                message={confirmModal.message} 
+            />
         </div>
     );
 };

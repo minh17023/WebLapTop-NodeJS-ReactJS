@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Plus, Edit, Trash2, Search, X, Image as ImageIcon, ChevronLeft, ChevronRight, Upload } from 'lucide-react';
 import { toast } from 'react-toastify';
 import { categoryService } from '../../services/category.service';
+import ConfirmModal from '../../components/admin/ConfirmModal';
 
 const ManageCategories = () => {
     // ================= STATE DỮ LIỆU =================
@@ -17,6 +18,7 @@ const ManageCategories = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [editingId, setEditingId] = useState(null);
+    const [confirmModal, setConfirmModal] = useState({ isOpen: false, id: null, title: '', message: '' });
 
     const initialFormState = {
         name: '', 
@@ -88,8 +90,8 @@ const ManageCategories = () => {
             .replace(/ý|ỳ|ỷ|ỹ|ỵ/gi, 'y')
             .replace(/đ/gi, 'd')
             .replace(/\s+/g, '-') 
-            .replace(/[^\w\-]+/g, '') 
-            .replace(/\-\-+/g, '-') 
+            .replace(/[^\w-]+/g, '') 
+            .replace(/--+/g, '-') 
             .replace(/^-+/, '') 
             .replace(/-+$/, '');
     };
@@ -147,13 +149,22 @@ const ManageCategories = () => {
         }
     };
 
-    const handleDelete = async (id, name) => {
-        if (!window.confirm(`Bạn có chắc chắn muốn xóa danh mục "${name}" không? Các sản phẩm thuộc danh mục này có thể bị ảnh hưởng!`)) return;
+    const handleDelete = (id, name) => {
+        setConfirmModal({
+            isOpen: true,
+            id: id,
+            title: 'Xóa Danh Mục',
+            message: `Bạn có chắc chắn muốn xóa danh mục "${name}" không? Các sản phẩm thuộc danh mục này có thể bị ảnh hưởng!`
+        });
+    };
+
+    const confirmDelete = async () => {
         try {
-            await categoryService.delete(id);
+            await categoryService.delete(confirmModal.id);
             toast.success("Đã xóa danh mục khỏi hệ thống!");
             fetchCategoriesAPI(searchTerm);
         } catch (error) {
+            console.error(error);
             toast.error("Không thể xóa danh mục này!");
         }
     };
@@ -350,6 +361,14 @@ const ManageCategories = () => {
                     </div>
                 </div>
             )}
+
+            <ConfirmModal 
+                isOpen={confirmModal.isOpen} 
+                onClose={() => setConfirmModal({ ...confirmModal, isOpen: false })} 
+                onConfirm={confirmDelete} 
+                title={confirmModal.title} 
+                message={confirmModal.message} 
+            />
         </div>
     );
 };

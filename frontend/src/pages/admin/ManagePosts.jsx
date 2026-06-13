@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Plus, Edit, Trash2, Search, X, FileText, ChevronLeft, ChevronRight, Upload, Filter } from 'lucide-react';
 import { toast } from 'react-toastify';
 import { postService } from '../../services/post.service';
+import ConfirmModal from '../../components/admin/ConfirmModal';
 
 const ManagePosts = () => {
     // ================= STATE CƠ BẢN =================
@@ -17,6 +18,7 @@ const ManagePosts = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [editingId, setEditingId] = useState(null);
+    const [confirmModal, setConfirmModal] = useState({ isOpen: false, id: null, title: '', message: '' });
 
     const initialFormState = {
         title: '',
@@ -144,13 +146,22 @@ const ManagePosts = () => {
         }
     };
 
-    const handleDelete = async (id, title) => {
-        if (!window.confirm(`Bạn có chắc chắn muốn xóa bài viết "${title}" không?`)) return;
+    const handleDelete = (id, title) => {
+        setConfirmModal({
+            isOpen: true,
+            id: id,
+            title: 'Xóa Bài Viết',
+            message: `Bạn có chắc chắn muốn xóa bài viết "${title}" không? Hành động này không thể hoàn tác.`
+        });
+    };
+
+    const confirmDelete = async () => {
         try {
-            await postService.delete(id);
+            await postService.delete(confirmModal.id);
             toast.success("Đã xóa bài viết khỏi hệ thống!");
             fetchPostsAPI(searchTerm);
         } catch (error) {
+            console.error(error);
             toast.error("Không thể xóa bài viết này!");
         }
     };
@@ -385,6 +396,14 @@ const ManagePosts = () => {
                     </div>
                 </div>
             )}
+
+            <ConfirmModal 
+                isOpen={confirmModal.isOpen} 
+                onClose={() => setConfirmModal({ ...confirmModal, isOpen: false })} 
+                onConfirm={confirmDelete} 
+                title={confirmModal.title} 
+                message={confirmModal.message} 
+            />
         </div>
     );
 };

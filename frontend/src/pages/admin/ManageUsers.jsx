@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Plus, Edit, Trash2, Search, X, User as UserIcon, ShieldAlert, ChevronLeft, ChevronRight } from 'lucide-react';
 import { toast } from 'react-toastify';
 import { userService } from '../../services/user.service';
+import ConfirmModal from '../../components/admin/ConfirmModal';
 
 const ManageUsers = () => {
     // ================= STATE =================
@@ -18,6 +19,7 @@ const ManageUsers = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [editingId, setEditingId] = useState(null);
+    const [confirmModal, setConfirmModal] = useState({ isOpen: false, id: null, title: '', message: '' });
 
     const initialFormState = {
         full_name: '',
@@ -84,11 +86,11 @@ const ManageUsers = () => {
         setFormData(prev => ({ ...prev, [name]: value }));
     };
 
-    const openAddModal = () => {
-        setEditingId(null);
-        setFormData(initialFormState);
-        setIsModalOpen(true);
-    };
+    // const openAddModal = () => {
+    //     setEditingId(null);
+    //     setFormData(initialFormState);
+    //     setIsModalOpen(true);
+    // };
 
     const openEditModal = (user) => {
         setEditingId(user.user_id || user.id);
@@ -133,18 +135,26 @@ const ManageUsers = () => {
         }
     };
 
-    const handleDelete = async (id, name, role) => {
+    const handleDelete = (id, name, role) => {
         if (role === 'admin') {
             toast.error("Không thể xóa tài khoản Quản trị viên!");
             return;
         }
-        if (!window.confirm(`Bạn có chắc chắn muốn xóa người dùng "${name}"? Mọi đơn hàng của họ có thể bị ảnh hưởng!`)) return;
-        
+        setConfirmModal({
+            isOpen: true,
+            id: id,
+            title: 'Xóa Người Dùng',
+            message: `Bạn có chắc chắn muốn xóa người dùng "${name}"? Mọi đơn hàng của họ có thể bị ảnh hưởng!`
+        });
+    };
+
+    const confirmDelete = async () => {
         try {
-            await userService.delete(id);
+            await userService.delete(confirmModal.id);
             toast.success("Đã xóa tài khoản khỏi hệ thống!");
             fetchUsersAPI(searchTerm);
         } catch (error) {
+            console.error(error);
             toast.error("Không thể xóa tài khoản này!");
         }
     };
@@ -343,6 +353,14 @@ const ManageUsers = () => {
                     </div>
                 </div>
             )}
+
+            <ConfirmModal 
+                isOpen={confirmModal.isOpen} 
+                onClose={() => setConfirmModal({ ...confirmModal, isOpen: false })} 
+                onConfirm={confirmDelete} 
+                title={confirmModal.title} 
+                message={confirmModal.message} 
+            />
         </div>
     );
 };

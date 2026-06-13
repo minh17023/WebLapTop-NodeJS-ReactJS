@@ -1,10 +1,8 @@
 import { useState, useEffect } from 'react';
-import { DollarSign, ShoppingBag, Users, Package, TrendingUp, Calendar, RefreshCcw } from 'lucide-react';
+import { DollarSign, ShoppingBag, Users, Package, TrendingUp, RefreshCcw } from 'lucide-react';
 import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
 import { orderService } from '../../services/order.service';
-import { userService } from '../../services/user.service';
-import { productService } from '../../services/product.service';
 
 const Dashboard = () => {
     const [isLoading, setIsLoading] = useState(true);

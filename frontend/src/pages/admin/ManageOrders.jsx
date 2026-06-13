@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Search, Filter, Eye, Package, Check, X as CloseIcon, CreditCard, Truck, Download } from 'lucide-react'; 
 import { toast } from 'react-toastify';
 import { orderService } from '../../services/order.service';
+import ConfirmModal from '../../components/admin/ConfirmModal';
 
 const ManageOrders = () => {
     // ================= STATE =================
@@ -18,6 +19,7 @@ const ManageOrders = () => {
 
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [selectedOrder, setSelectedOrder] = useState(null);
+    const [confirmModal, setConfirmModal] = useState({ isOpen: false, orderId: null, newStatus: '', title: '', message: '' });
 
     // ================= FETCH DATA =================
     const fetchOrdersAPI = async (keyword = '', page = 1) => {
@@ -41,6 +43,7 @@ const ManageOrders = () => {
                 }
             }
         } catch (error) {
+            console.error(error);
             toast.error("Không thể tải danh sách đơn hàng!");
         } finally {
             setLoading(false);
@@ -71,18 +74,32 @@ const ManageOrders = () => {
     const currentOrders = processedOrders;
 
     // ================= LOGIC CHUYỂN TRẠNG THÁI GIAO HÀNG =================
-    const handleStatusChange = async (orderId, newStatus) => {
+    const handleStatusChangeClick = (orderId, newStatus) => {
         const actionName = newStatus === 'processing' ? 'Duyệt đơn' :
                            newStatus === 'shipped' ? 'Giao cho ĐVVC' :
                            newStatus === 'delivered' ? 'Xác nhận Đã giao' : 'Hủy đơn';
 
-        if (!window.confirm(`Bạn muốn "${actionName}" cho đơn hàng #${orderId}?`)) return;
+        setConfirmModal({
+            isOpen: true,
+            orderId,
+            newStatus,
+            title: 'Xác nhận trạng thái',
+            message: `Bạn muốn "${actionName}" cho đơn hàng #${orderId}?`
+        });
+    };
+
+    const confirmStatusChange = async () => {
+        const { orderId, newStatus } = confirmModal;
+        const actionName = newStatus === 'processing' ? 'Duyệt đơn' :
+                           newStatus === 'shipped' ? 'Giao cho ĐVVC' :
+                           newStatus === 'delivered' ? 'Xác nhận Đã giao' : 'Hủy đơn';
 
         try {
             await orderService.updateStatus(orderId, newStatus);
             toast.success(`${actionName} thành công!`);
             fetchOrdersAPI(searchTerm);
         } catch (error) {
+            console.error(error);
             toast.error("Lỗi cập nhật trạng thái!");
         }
     };
@@ -98,6 +115,7 @@ const ManageOrders = () => {
             await orderService.updatePaymentStatus(orderId, newStatus);
             toast.success('Cập nhật trạng thái thanh toán thành công!');
         } catch (error) {
+            console.error(error);
             setOrders(originalOrders);
             toast.error("Lỗi cập nhật thanh toán!");
         }
@@ -134,24 +152,35 @@ const ManageOrders = () => {
         }
     };
 
-    const renderActionButtons = (orderId, status) => {
+    const renderActionButtons = (orderId, status, payment_status) => {
         switch (status) {
             case 'pending':
                 return (
                     <div className="flex flex-col gap-1.5">
-                        <button onClick={() => handleStatusChange(orderId, 'processing')} className="bg-blue-600 text-white px-3 py-1.5 rounded-lg text-[11px] font-bold hover:bg-blue-700 transition w-full text-center shadow-sm">Duyệt Đơn</button>
-                        <button onClick={() => handleStatusChange(orderId, 'cancelled')} className="bg-gray-100 text-gray-600 px-3 py-1.5 rounded-lg text-[11px] font-bold hover:bg-gray-200 transition w-full text-center">Hủy</button>
+                        <button onClick={() => handleStatusChangeClick(orderId, 'processing')} className="bg-blue-600 text-white px-3 py-1.5 rounded-lg text-[11px] font-bold hover:bg-blue-700 transition w-full text-center shadow-sm">Duyệt Đơn</button>
+                        <button onClick={() => handleStatusChangeClick(orderId, 'cancelled')} className="bg-gray-100 text-gray-600 px-3 py-1.5 rounded-lg text-[11px] font-bold hover:bg-gray-200 transition w-full text-center">Hủy</button>
                     </div>
                 );
             case 'processing':
                 return (
-                    <button onClick={() => handleStatusChange(orderId, 'shipped')} className="bg-purple-600 text-white px-3 py-1.5 rounded-lg text-[11px] font-bold hover:bg-purple-700 transition w-full text-center shadow-sm">Giao Cho ĐVVC</button>
+                    <button onClick={() => handleStatusChangeClick(orderId, 'shipped')} className="bg-purple-600 text-white px-3 py-1.5 rounded-lg text-[11px] font-bold hover:bg-purple-700 transition w-full text-center shadow-sm">Giao Cho ĐVVC</button>
                 );
             case 'shipped':
                 return (
                     <div className="flex flex-col gap-1.5">
-                        <button onClick={() => handleStatusChange(orderId, 'delivered')} className="bg-green-600 text-white px-3 py-1.5 rounded-lg text-[11px] font-bold hover:bg-green-700 transition w-full text-center shadow-sm">Giao Thành Công</button>
-                        <button onClick={() => handleStatusChange(orderId, 'cancelled')} className="bg-blue-50 text-blue-600 border border-blue-200 px-3 py-1.5 rounded-lg text-[11px] font-bold hover:bg-blue-100 transition w-full text-center">Giao Thất Bại</button>
+                        <button 
+                            onClick={() => {
+                                if (payment_status !== 'paid') {
+                                    toast.warning('Vui lòng cập nhật thanh toán thành "Đã thanh toán" trước khi xác nhận Giao Thành Công!');
+                                    return;
+                                }
+                                handleStatusChangeClick(orderId, 'delivered');
+                            }} 
+                            className={`px-3 py-1.5 rounded-lg text-[11px] font-bold transition w-full text-center shadow-sm ${payment_status === 'paid' ? 'bg-green-600 text-white hover:bg-green-700' : 'bg-gray-200 text-gray-500 cursor-not-allowed opacity-80'}`}
+                        >
+                            Giao Thành Công
+                        </button>
+                        <button onClick={() => handleStatusChangeClick(orderId, 'cancelled')} className="bg-blue-50 text-blue-600 border border-blue-200 px-3 py-1.5 rounded-lg text-[11px] font-bold hover:bg-blue-100 transition w-full text-center">Giao Thất Bại</button>
                     </div>
                 );
             case 'delivered':
@@ -269,7 +298,7 @@ const ManageOrders = () => {
                                             </td>
 
                                             <td className="px-6 py-4 align-middle">
-                                                {renderActionButtons(orderId, order.status)}
+                                                {renderActionButtons(orderId, order.status, order.payment_status)}
                                             </td>
                                             <td className="px-6 py-4 text-right align-middle flex justify-end gap-2">
                                                 <button onClick={() => { setSelectedOrder(order); setIsModalOpen(true); }} className="p-2 text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-xl transition inline-flex items-center gap-2 text-xs font-bold">
@@ -442,6 +471,14 @@ const ManageOrders = () => {
                     </div>
                 </div>
             )}
+
+            <ConfirmModal 
+                isOpen={confirmModal.isOpen} 
+                onClose={() => setConfirmModal({ ...confirmModal, isOpen: false })} 
+                onConfirm={confirmStatusChange} 
+                title={confirmModal.title} 
+                message={confirmModal.message} 
+            />
         </div>
     );
 };

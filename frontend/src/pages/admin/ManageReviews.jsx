@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Trash2, Search, Filter, Star, ChevronLeft, ChevronRight, MessageSquareOff } from 'lucide-react';
 import { toast } from 'react-toastify';
 import { reviewService } from '../../services/review.service';
+import ConfirmModal from '../../components/admin/ConfirmModal';
 
 const ManageReviews = () => {
     // ================= STATE =================
@@ -15,6 +16,7 @@ const ManageReviews = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
     const [totalItems, setTotalItems] = useState(0);
+    const [confirmModal, setConfirmModal] = useState({ isOpen: false, id: null, title: '', message: '' });
     const reviewsPerPage = 6;
 
     // ================= FETCH DATA CHUẨN API =================
@@ -76,14 +78,22 @@ const ManageReviews = () => {
     const currentReviews = reviews;
     const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
-    // ================= XÓA =================
-    const handleDelete = async (id) => {
-        if (!window.confirm(`Bạn có chắc chắn muốn xóa đánh giá này không? Hành động này không thể hoàn tác!`)) return;
+    const handleDelete = (id) => {
+        setConfirmModal({
+            isOpen: true,
+            id: id,
+            title: 'Xóa Đánh Giá',
+            message: `Bạn có chắc chắn muốn xóa đánh giá này không? Hành động này không thể hoàn tác!`
+        });
+    };
+
+    const confirmDelete = async () => {
         try {
-            await reviewService.delete(id);
+            await reviewService.delete(confirmModal.id);
             toast.success("Đã xóa đánh giá vi phạm!");
             fetchReviewsAPI(searchTerm);
         } catch (error) {
+            console.error(error);
             toast.error("Không thể xóa đánh giá này!");
         }
     };
@@ -247,6 +257,14 @@ const ManageReviews = () => {
                     </div>
                 )}
             </div>
+
+            <ConfirmModal 
+                isOpen={confirmModal.isOpen} 
+                onClose={() => setConfirmModal({ ...confirmModal, isOpen: false })} 
+                onConfirm={confirmDelete} 
+                title={confirmModal.title} 
+                message={confirmModal.message} 
+            />
         </div>
     );
 };

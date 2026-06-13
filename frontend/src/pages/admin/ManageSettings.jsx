@@ -24,6 +24,7 @@ const ManageSettings = () => {
                 
                 await new Promise(resolve => setTimeout(resolve, 500));
             } catch (error) {
+                console.error(error);
                 toast.error("Không thể tải cấu hình hệ thống!");
             } finally {
                 setIsLoading(false);
@@ -63,6 +64,7 @@ const ManageSettings = () => {
             await new Promise(resolve => setTimeout(resolve, 800));
             toast.success("Đã lưu cấu hình hệ thống thành công!");
         } catch (error) {
+            console.error(error);
             toast.error("Lỗi khi lưu cấu hình!");
         } finally {
             setIsSubmitting(false);
