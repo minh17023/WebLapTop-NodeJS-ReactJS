@@ -6,8 +6,9 @@ import { toast } from 'react-toastify';
 import ProductFilter from '../../components/user/ProductFilter';
 
 const Products = () => {
-    const [products, setProducts] = useState([]);
+    const [allProducts, setAllProducts] = useState([]);
     const [filteredProducts, setFilteredProducts] = useState([]);
+    const [currentFilters, setCurrentFilters] = useState({ brand: '', price: '' });
     const [loading, setLoading] = useState(true);
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
@@ -17,13 +18,11 @@ const Products = () => {
         const fetchProducts = async () => {
             setLoading(true);
             try {
-                const res = await productService.getAll(currentPage, limit);
+                const res = await productService.getAll(1, 1000);
                 if (res.success) {
-                    setProducts(res.data);
+                    setAllProducts(res.data);
                     setFilteredProducts(res.data);
-                    if (res.pagination) {
-                        setTotalPages(res.pagination.totalPages);
-                    }
+                    setTotalPages(Math.ceil(res.data.length / limit) || 1);
                 }
             } catch (error) {
                 toast.error('Lỗi khi tải danh sách sản phẩm');
@@ -32,26 +31,40 @@ const Products = () => {
             }
         };
         fetchProducts();
+    }, []);
+
+    useEffect(() => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
     }, [currentPage]);
 
-    const handleFilterChange = (filters) => {
-        let result = [...products];
-        if (filters.brand) {
-            result = result.filter(p => p.brand === filters.brand);
+    useEffect(() => {
+        let result = [...allProducts];
+        if (currentFilters.brand) {
+            result = result.filter(p => p.brand?.toLowerCase() === currentFilters.brand.toLowerCase());
         }
-        if (filters.price) {
+        if (currentFilters.price) {
             result = result.filter(p => {
                 const defaultV = p.variants && p.variants.length > 0 ? p.variants[0] : {};
-                const price = defaultV.discount_price || defaultV.price || 0;
-                if (filters.price === 'under15') return price < 15000000;
-                if (filters.price === '15-20') return price >= 15000000 && price <= 20000000;
-                if (filters.price === '20-25') return price >= 20000000 && price <= 25000000;
-                if (filters.price === 'over25') return price > 25000000;
+                const price = Number(defaultV.discount_price || defaultV.price || 0);
+                if (currentFilters.price === 'under15') return price < 15000000;
+                if (currentFilters.price === '15-20') return price >= 15000000 && price <= 20000000;
+                if (currentFilters.price === '20-25') return price >= 20000000 && price <= 25000000;
+                if (currentFilters.price === 'over25') return price > 25000000;
                 return true;
             });
         }
         setFilteredProducts(result);
+        setTotalPages(Math.ceil(result.length / limit) || 1);
+        setCurrentPage(1);
+    }, [currentFilters, allProducts]);
+
+    const handleFilterChange = (filters) => {
+        setCurrentFilters(filters);
     };
+
+    const indexOfLastProduct = currentPage * limit;
+    const indexOfFirstProduct = indexOfLastProduct - limit;
+    const currentProducts = filteredProducts.slice(indexOfFirstProduct, indexOfLastProduct);
 
     const formatPrice = (price) => new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(price);
 
@@ -82,10 +95,10 @@ const Products = () => {
                             <div className="flex justify-center py-20">
                                 <div className="w-8 h-8 border-4 border-gray-200 border-t-[#0071E3] rounded-full animate-spin"></div>
                             </div>
-                        ) : filteredProducts.length > 0 ? (
+                        ) : currentProducts.length > 0 ? (
                             <>
                                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                                    {filteredProducts.map((product) => {
+                                    {currentProducts.map((product) => {
                                         const defaultV = product.variants && product.variants.length > 0 ? product.variants[0] : {};
                                         const originalPrice = defaultV.price || 0;
                                         const activePrice = defaultV.discount_price || originalPrice;
