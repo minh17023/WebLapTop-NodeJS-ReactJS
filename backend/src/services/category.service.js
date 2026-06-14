@@ -43,6 +43,14 @@ class CategoryService {
     async deleteCategory(id) {
         const category = await Category.findByPk(id);
         if (!category) return false;
+
+        const { Product } = require('../models');
+        const productCount = await Product.count({ where: { category_id: id } });
+        
+        if (productCount > 0) {
+            throw new Error(`Không thể xóa! Danh mục này đang chứa ${productCount} sản phẩm.`);
+        }
+
         await category.destroy();
         return true;
     }

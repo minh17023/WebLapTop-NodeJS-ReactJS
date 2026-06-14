@@ -16,8 +16,8 @@ export const shippingService = {
         return response.data;
     },
 
-    calculateFee: async (districtId, wardCode) => {
-        const response = await api.post('/shipping/fee', { districtId, wardCode });
+    calculateFee: async (districtId, wardCode, weight) => {
+        const response = await api.post('/shipping/fee', { districtId, wardCode, weight });
         return response.data;
     }
 };

@@ -32,12 +32,12 @@ class ShippingController {
 
     async calculateFee(req, res) {
         try {
-            const { districtId, wardCode } = req.body;
+            const { districtId, wardCode, weight } = req.body;
             if (!districtId || !wardCode) {
                 return res.status(400).json({ success: false, message: "Thiếu thông tin địa chỉ!" });
             }
             
-            const fee = await ghnService.calculateFee(districtId, wardCode);
+            const fee = await ghnService.calculateFee(districtId, wardCode, weight);
             return res.status(200).json({ success: true, fee: fee });
         } catch (error) {
             return res.status(500).json({ success: false, message: error.message });

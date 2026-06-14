@@ -123,7 +123,13 @@ const Checkout = () => {
         if (selectedDistrict.id && wardCode) {
             setIsCalculatingFee(true);
             try {
-                const res = await shippingService.calculateFee(selectedDistrict.id, wardCode);
+                // Tính tổng cân nặng đơn hàng. Mặc định 2000g mỗi sản phẩm nếu chưa có weight.
+                const totalWeight = selectedItems.reduce((total, item) => {
+                    const itemWeight = item.weight || 2000;
+                    return total + (itemWeight * item.quantity);
+                }, 0);
+
+                const res = await shippingService.calculateFee(selectedDistrict.id, wardCode, totalWeight);
                 if (res.success) setShippingFee(res.fee);
             } catch (error) {
                 toast.error("Không thể tính phí vận chuyển!");
