@@ -46,7 +46,10 @@ class OrderService {
 
             for (const item of orderData.items) {
                 if (!item.variant_id) throw new Error('Đơn hàng có sản phẩm thiếu cấu hình (variant_id)');
-                const variant = await ProductVariant.findByPk(item.variant_id, { transaction: t });
+                const variant = await ProductVariant.findByPk(item.variant_id, { 
+                    transaction: t,
+                    lock: t.LOCK.UPDATE // Khóa dòng (Row-level lock) để chống Race Condition
+                });
                 if (!variant) throw new Error(`Không tìm thấy biến thể sản phẩm (ID: ${item.variant_id})`);
                 if (variant.stock_quantity < item.quantity) {
                     throw new Error(`Sản phẩm không đủ hàng (Chỉ còn ${variant.stock_quantity} sản phẩm)`);
@@ -74,7 +77,6 @@ class OrderService {
         }
     }
 
-    //Xem Lịch sử Đơn hàng
     async getUserOrders(userId, page = 1, limit = 10) {
         const offset = (page - 1) * limit;
         const { rows, count } = await Order.findAndCountAll({
@@ -141,7 +143,6 @@ class OrderService {
         return order;
     }
 
-    // Cập nhật trạng thái thanh toán
     async updatePaymentStatus(orderId, payment_status) {
         try {
             const order = await Order.findByPk(orderId);
@@ -345,7 +346,7 @@ class OrderService {
         });
 
         const totalRevenue = filteredOrders
-            .filter(o => o.status !== 'cancelled')
+            .filter(o => o.status === 'delivered') // Chỉ tính các đơn đã giao thành công
             .reduce((sum, o) => sum + Number(o.total_amount), 0);
 
         const totalOrders = filteredOrders.length;
@@ -410,7 +411,7 @@ class OrderService {
         dateList.forEach(d => revenueMap[d] = 0);
 
         filteredOrders.forEach(o => {
-            if (o.status !== 'cancelled') {
+            if (o.status === 'delivered') { // Chỉ tính các đơn đã giao thành công
                 const dateStr = new Date(o.created_at || o.createdAt).toLocaleDateString('vi-VN', { day: '2-digit', month: '2-digit' });
                 if (revenueMap[dateStr] !== undefined) {
                     revenueMap[dateStr] += Number(o.total_amount);
