@@ -48,7 +48,7 @@ class OrderService {
                 if (!item.variant_id) throw new Error('Đơn hàng có sản phẩm thiếu cấu hình (variant_id)');
                 const variant = await ProductVariant.findByPk(item.variant_id, { 
                     transaction: t,
-                    lock: t.LOCK.UPDATE // Khóa dòng (Row-level lock) để chống Race Condition
+                    lock: t.LOCK.UPDATE 
                 });
                 if (!variant) throw new Error(`Không tìm thấy biến thể sản phẩm (ID: ${item.variant_id})`);
                 if (variant.stock_quantity < item.quantity) {
