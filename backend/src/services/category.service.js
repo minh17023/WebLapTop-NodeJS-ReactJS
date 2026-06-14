@@ -18,7 +18,7 @@ class CategoryService {
         return await Category.findAll({
             where: {
                 name: {
-                    [Op.iLike]: term // Tìm kiếm không phân biệt chữ hoa/thường
+                    [Op.iLike]: term 
                 }
             },
             order: [['created_at', 'DESC']]

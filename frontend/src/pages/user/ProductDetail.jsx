@@ -1,7 +1,7 @@
 import { useEffect, useState, useContext } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { productService } from '../../services/product.service';
-import { ShoppingCart, Check, Shield, ArrowLeft, Zap, CreditCard, ChevronRight } from 'lucide-react';
+import { ShoppingCart, Check, Shield, ArrowLeft, Zap, CreditCard, ChevronRight, Plus, Minus } from 'lucide-react';
 import { toast } from 'react-toastify';
 import ReviewSection from '../../components/user/ReviewSection';
 import { CartContext } from '../../context/CartContext'; 
@@ -11,6 +11,7 @@ const ProductDetail = () => {
     const navigate = useNavigate();
     const [product, setProduct] = useState(null);
     const [selectedVariant, setSelectedVariant] = useState(null);
+    const [quantity, setQuantity] = useState(1);
     const [loading, setLoading] = useState(true);
     const [relatedProducts, setRelatedProducts] = useState([]);
 
@@ -63,7 +64,7 @@ const ProductDetail = () => {
             ram: selectedVariant.ram,
             ssd: selectedVariant.ssd,
             main_image: product.main_image,
-            quantity: 1 
+            quantity: quantity 
         };
         navigate('/checkout', { state: { selectedItems: [directItem] } });
     };
@@ -196,6 +197,33 @@ const ProductDetail = () => {
                                 </div>
                             </div>
 
+                            {/* Chọn số lượng */}
+                            <div className="mb-8 flex items-center gap-6">
+                                <span className="text-sm font-bold text-[#0a0a0a] uppercase tracking-wider">Số lượng:</span>
+                                <div className="flex items-center bg-gray-50 border border-gray-200 rounded-xl p-1">
+                                    <button 
+                                        type="button" 
+                                        onClick={() => setQuantity(Math.max(1, quantity - 1))} 
+                                        disabled={quantity <= 1} 
+                                        className="w-10 h-10 flex items-center justify-center hover:bg-white hover:text-[#0071E3] rounded-lg transition-colors disabled:opacity-30"
+                                    >
+                                        <Minus size={18} />
+                                    </button>
+                                    <span className="w-12 text-center text-base font-bold text-[#0a0a0a]">{quantity}</span>
+                                    <button 
+                                        type="button" 
+                                        onClick={() => setQuantity(quantity + 1)} 
+                                        disabled={selectedVariant && quantity >= selectedVariant.stock_quantity}
+                                        className="w-10 h-10 flex items-center justify-center hover:bg-white hover:text-[#0071E3] rounded-lg transition-colors disabled:opacity-30"
+                                    >
+                                        <Plus size={18} />
+                                    </button>
+                                </div>
+                                {selectedVariant && quantity >= selectedVariant.stock_quantity && (
+                                    <span className="text-xs text-red-500 font-medium">Đạt số lượng tối đa trong kho</span>
+                                )}
+                            </div>
+
                             {/* Nút Mua Hàng */}
                             <div className="flex flex-col sm:flex-row gap-4 mb-8">
                                 <button
@@ -212,7 +240,7 @@ const ProductDetail = () => {
                                 </button>
 
                                 <button
-                                    onClick={() => addToCart(product, selectedVariant)}
+                                    onClick={() => addToCart(product, selectedVariant, quantity)}
                                     className="sm:w-20 h-[76px] flex items-center justify-center bg-white text-[#0a0a0a] rounded-2xl hover:bg-blue-50 hover:text-[#0071E3] transition-colors border border-gray-200 hover:border-blue-200"
                                     title="Thêm vào giỏ"
                                     disabled={!selectedVariant || selectedVariant.stock_quantity <= 0}

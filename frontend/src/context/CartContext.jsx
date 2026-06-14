@@ -55,7 +55,7 @@ export const CartProvider = ({ children }) => {
         fetchCart();
     }, [user]);
 
-    const addToCart = async (product, selectedVariant) => {
+    const addToCart = async (product, selectedVariant, quantityToAdd = 1) => {
         if (!selectedVariant || !selectedVariant.variant_id) {
              toast.error('Vui lòng chọn cấu hình sản phẩm!');
              return;
@@ -75,40 +75,40 @@ export const CartProvider = ({ children }) => {
         const existingItem = existingItemIndex >= 0;
 
         if (existingItem) {
-            if (cartItems[existingItemIndex].quantity + 1 > selectedVariant.stock_quantity) {
+            if (cartItems[existingItemIndex].quantity + quantityToAdd > selectedVariant.stock_quantity) {
                 toast.warning(`Sản phẩm này chỉ còn ${selectedVariant.stock_quantity} chiếc trong kho!`);
                 return;
             }
         } else {
-            if (selectedVariant.stock_quantity < 1) {
-                toast.warning(`Sản phẩm này đã hết hàng!`);
+            if (quantityToAdd > selectedVariant.stock_quantity) {
+                toast.warning(`Sản phẩm này chỉ còn ${selectedVariant.stock_quantity} chiếc trong kho!`);
                 return;
             }
         }
 
         if (user) {
             try {
-                const res = await cartService.addToCart(product.product_id, selectedVariant.variant_id, 1);
+                const res = await cartService.addToCart(product.product_id, selectedVariant.variant_id, quantityToAdd);
                 if (res.success) {
-                    toast.success(existingItem ? `Đã tăng số lượng ${product.name}` : `Đã thêm ${product.name} vào giỏ hàng`);
+                    toast.success(existingItem ? `Đã tăng thêm ${quantityToAdd} ${product.name} vào giỏ` : `Đã thêm ${quantityToAdd} ${product.name} vào giỏ hàng`);
                     setCartItems(prev => {
                         if (existingItem) {
-                            return prev.map((item, idx) => idx === existingItemIndex ? { ...item, quantity: item.quantity + 1 } : item);
+                            return prev.map((item, idx) => idx === existingItemIndex ? { ...item, quantity: item.quantity + quantityToAdd } : item);
                         }
-                        return [...prev, { ...cartItemToSave, quantity: 1 }];
+                        return [...prev, { ...cartItemToSave, quantity: quantityToAdd }];
                     });
                 }
             } catch (error) {
                 toast.error(error.response?.data?.message || "Lỗi không thể kết nối tới giỏ hàng hệ thống");
             }
         } else {
-            toast.success(existingItem ? `Đã tăng số lượng ${product.name}` : `Đã thêm ${product.name} vào giỏ hàng khách`);
+            toast.success(existingItem ? `Đã tăng thêm ${quantityToAdd} ${product.name} vào giỏ` : `Đã thêm ${quantityToAdd} ${product.name} vào giỏ hàng khách`);
             setCartItems(prev => {
                 let newCart;
                 if (existingItem) {
-                    newCart = prev.map((item, idx) => idx === existingItemIndex ? { ...item, quantity: item.quantity + 1 } : item);
+                    newCart = prev.map((item, idx) => idx === existingItemIndex ? { ...item, quantity: item.quantity + quantityToAdd } : item);
                 } else {
-                    newCart = [...prev, { ...cartItemToSave, quantity: 1 }];
+                    newCart = [...prev, { ...cartItemToSave, quantity: quantityToAdd }];
                 }
                 localStorage.setItem('cart_guest', JSON.stringify(newCart));
                 return newCart;
