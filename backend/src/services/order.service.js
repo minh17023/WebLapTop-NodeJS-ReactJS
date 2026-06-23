@@ -127,7 +127,8 @@ class OrderService {
 
     async userUpdateOrderStatus(userId, orderId, newStatus) {
         const order = await Order.findOne({
-            where: { order_id: orderId, user_id: userId }
+            where: { order_id: orderId, user_id: userId },
+            include: [{ model: OrderItem, as: 'items' }]
         });
         if (!order) return null;
 
@@ -136,6 +137,16 @@ class OrderService {
         }
         if (newStatus === 'delivered' && order.status !== 'shipped') {
             throw new Error('Chỉ có thể xác nhận khi đơn hàng đang được giao!');
+        }
+
+        if (newStatus === 'cancelled' && order.status !== 'cancelled') {
+            for (const item of order.items) {
+                const variant = await ProductVariant.findByPk(item.variant_id);
+                if (variant) {
+                    variant.stock_quantity += item.quantity;
+                    await variant.save();
+                }
+            }
         }
 
         order.status = newStatus;
@@ -303,6 +314,21 @@ class OrderService {
             });
 
             order.tracking_code = trackingCode;
+        }
+
+        if (newStatus === 'cancelled' && order.status !== 'cancelled') {
+            for (const item of order.items) {
+                if (item.variant) {
+                    item.variant.stock_quantity += item.quantity;
+                    await item.variant.save();
+                } else if (item.variant_id) {
+                    const variant = await ProductVariant.findByPk(item.variant_id);
+                    if (variant) {
+                        variant.stock_quantity += item.quantity;
+                        await variant.save();
+                    }
+                }
+            }
         }
 
         order.status = newStatus;

@@ -55,6 +55,10 @@ const ProductDetail = () => {
             toast.error('Vui lòng chọn cấu hình sản phẩm!');
             return;
         }
+        if (selectedVariant.stock_quantity <= 0) {
+            toast.error('Sản phẩm này đã hết hàng!');
+            return;
+        }
         const directItem = {
             product_id: product.product_id,
             name: product.name,
@@ -228,20 +232,23 @@ const ProductDetail = () => {
                             <div className="flex flex-col sm:flex-row gap-4 mb-8">
                                 <button
                                     onClick={handleBuyNow}
-                                    className="flex-1 group relative bg-[#0071E3] hover:bg-blue-700 text-white py-5 rounded-2xl transition-all shadow-[0_10px_20px_rgba(0,113,227,0.2)] hover:shadow-[0_15px_30px_rgba(0,113,227,0.3)] overflow-hidden"
+                                    disabled={!selectedVariant || selectedVariant.stock_quantity <= 0}
+                                    className="flex-1 group relative bg-[#0071E3] hover:bg-blue-700 disabled:bg-gray-300 disabled:hover:bg-gray-300 disabled:shadow-none disabled:cursor-not-allowed text-white py-5 rounded-2xl transition-all shadow-[0_10px_20px_rgba(0,113,227,0.2)] hover:shadow-[0_15px_30px_rgba(0,113,227,0.3)] overflow-hidden"
                                 >
                                     <div className="relative z-10 flex flex-col items-center justify-center">
                                         <span className="text-lg font-black tracking-widest flex items-center gap-2">
-                                            <Zap size={20} className="text-white" /> MUA NGAY
+                                            <Zap size={20} className="text-white group-disabled:text-gray-100" /> MUA NGAY
                                         </span>
-                                        <span className="text-[10px] text-blue-100 font-medium mt-1 uppercase tracking-wide">Giao hàng miễn phí toàn quốc</span>
+                                        <span className="text-[10px] text-blue-100 group-disabled:text-gray-100 font-medium mt-1 uppercase tracking-wide">Giao hàng miễn phí toàn quốc</span>
                                     </div>
-                                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent translate-x-[-100%] group-hover:animate-[shimmer_1.5s_infinite]"></div>
+                                    {selectedVariant && selectedVariant.stock_quantity > 0 && (
+                                        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent translate-x-[-100%] group-hover:animate-[shimmer_1.5s_infinite]"></div>
+                                    )}
                                 </button>
 
                                 <button
                                     onClick={() => addToCart(product, selectedVariant, quantity)}
-                                    className="sm:w-20 h-[76px] flex items-center justify-center bg-white text-[#0a0a0a] rounded-2xl hover:bg-blue-50 hover:text-[#0071E3] transition-colors border border-gray-200 hover:border-blue-200"
+                                    className="sm:w-20 h-[76px] flex items-center justify-center bg-white text-[#0a0a0a] rounded-2xl hover:bg-blue-50 hover:text-[#0071E3] disabled:bg-gray-50 disabled:text-gray-300 disabled:hover:bg-gray-50 disabled:hover:text-gray-300 disabled:hover:border-gray-200 disabled:cursor-not-allowed transition-colors border border-gray-200 hover:border-blue-200"
                                     title="Thêm vào giỏ"
                                     disabled={!selectedVariant || selectedVariant.stock_quantity <= 0}
                                 >
